@@ -1,0 +1,14 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Last Changes:
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Model ("Skeleton_Wait")
+{
+	meshAndTree ("HUM_BODY_NAKED0.ASC" DONT_USE_MESH)
+	aniEnum
+	{
+		modelTag ("DEF_HIT_LIMB" "ZS_RIGHTHAND")                                            
+		ani      ("S_RUN"        1               "S_RUN" 0.1 0.1 M.  "NWAITING.ASC" F 1 300)
+		ani      ("S_WALK"       1               "S_WALK" 0.1 0.1 M. "NWAITING.ASC" F 1 300)
+	}
+}

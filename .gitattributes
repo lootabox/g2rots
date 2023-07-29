@@ -1,0 +1,5 @@
+*.ZEN filter=lfs diff=lfs merge=lfs -text
+*.DAT filter=lfs diff=lfs merge=lfs -text
+OUINFO.INF filter=lfs diff=lfs merge=lfs -text
+OU.BIN filter=lfs diff=lfs merge=lfs -text
+OU.CSL filter=lfs diff=lfs merge=lfs -text

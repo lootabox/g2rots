@@ -1,0 +1,689 @@
+
+
+
+		MAJOR FEATURES AND CHANGES
+
+	Main menu
+
+Menu options are more clearly categorized:
+Game: Gameplay settings.
+Audio: Music, speech and sound effect settings.
+Video: Graphics card, resolution, color adjustment and video settings.
+Visual: View distance, details and user interface settings.
+Effect: Toggle visual effects on/off.
+
+Settings have been moved around to proper categories and following new settings are available:
+Ambient subtitles, Blood detail, Hitpoints per level, Inventory columns, Item effects, Lock scrambling, Mouse smoothing, Play intro, Turning speed, Video scaling, Weapon trails, Window animations.
+
+Default menu option when not ingame is load game instead of new game.
+Music is changed to the installation theme.
+
+
+	Ingame menu
+
+Status menu shows boosted and trained values for Strength and Dexterity.
+
+
+	Shrine of Beliar
+
+No stats can be sacrificed for gold.
+
+
+	NPCs
+
+NPCs only loot 20% of gold from NH.
+NPCs only loot gold from NH who was caught stealing or by people who are thieves themselves.
+NPCs only take the weapon from NH if he was caught doing something violent or threatening.
+
+
+	Story progression
+
+Addon is only accessible after chapter 3. Xardas will give the addon introduction after returning from the Valley of Mines. Vatras will not give the letter for Saturas before this. Likewise, Lares will not mention Vatras if joining the ring before receiving the addon introduction from Xardas.
+Fire Mages are only promoted into the High Order of the Fire Magicians in chapter 5 instead of the end of chapter 3.
+
+
+	Quests
+
+Quest changes which significantly affect specific quests requirements or rewards.
+This does not include minor changes to quest related dialog or obvious fixes, such as closing quests that can no longer be completed, etc.
+
+"A Brazen Thief"	Rengaru runs much further when confronted and if not caught will return to his regular spot.
+"Alone and Helpless"	Bengar gives half as much gold for hiring Wolf to guard the farm.
+"Bottoms up"	Contest is only won by Randolph if Rukhar does not notice someone has been to his chest.
+"Cavalorn's old hut"	Only begins once NH finds the bag of ore, since before that the NH does not really have a task that he knows about.
+"Finding Joe"	No longer has its own logged quest, since for all NH knows, he is just another missing person.
+"Gold for Brutus"	Den can only be found after Brutus mentions him, he will have spent some of the gold for provisions and the XP reward is only received upon finding Den.
+"Hunger"	Gerold is more satisfied with more valuable food.
+"I gotta get out of here!"	Requires Talbin to be escorted through the pass and he doesn't spawn on Bengars farm right away.
+"Merchant raid"	Requires finding the bandits who took Erol's stone tablets, before returning any stone tablets.
+"Quest for Lucia"	Is now just about delivering her note to Elvrich, after that she is just another missing person.
+"Razor hunt"	The razors that should be hunted are closer to the camp and the pirates won't go all the way to the orc camp.
+"Rescue Gorn"	Can only be finished after scouting at least one mining site.
+"Sheep Thieves"	Becomes available in chapter 2 already, after returning from the Valley of Mines.
+"The Claw of Beliar"	Requires talking to Saturas before praying to Beliar and the option to destroy it is only presented once.
+"The Seekers"	Can be finished by bringing all of the Almanacs to Pyrokar before leaving for Irdorath. There is no random Almanac on the ground in Chapter 5 anymore.
+"The man with the eyepatch"	Cancels if the first treasure is not given to him.
+"The simple way to the monastery"	Only reduces the gold offering required.
+"Unnerving Lurkers"	Cancels in chapter 4 if not finished, causing Kervo and Geppert to be killed by a lurker instead of disappearing.
+
+
+		MINOR IMPROVEMENTS AND FIXES
+
+	Random
+
+Added new teleport scroll to get out of the ruins behind broken bridge in Jharkendar.
+Black Ore effect ends on using transformation scrolls.
+Bloodfly poison is referred to as venom instead.
+Cannot level up when dead.
+Canyon has no wolves and deeper in more Razors can be found.
+Cornelius' diary details a much lesser compensation given to him for lying, so the bribe he demands from NH makes more sense.
+Embarla Firgasto correctly depletes NH's mana.
+Experience gain is not printed out if receiving 0 xp.
+Gold cannot be dropped.
+Gold mining skill does not improve by mining empty veins.
+Herring is categorized as food.
+Increased limit for alpha vobs/polys.
+Key from the orc shaman in the orc camp in the canyon no longer specifies what the temple near the orc camp is.
+Keys no longer have any value.
+Leather Satchels filled with gold can be sold for their full gold value, including special satchels.
+Main menu sounds are silenced after start a new game or loading one.
+Many items have their description now on one line instead of multiple lines.
+Nostalgia bonus properly awards levels to NH.
+Projectile AOE spells now have their spell type and charge level corrected for the AOE portion. In practice this means firestorm spells can make use of new fire spell mechanics and large firestorm deals appropriate damage with its AOE when charged up to higher tiers.
+Quarhodron summoning scroll visual changed from piece of paper into proper scroll.
+Quests from monastery for novices become obsolete after NH becomes a mage, not when they receive the key to the library.
+Quests to join mercenaries and the militia become obsolete already when joining the monastery as novice, not after becoming a mage.
+Rum drinking animations are slower.
+Sleep dialog has black overlay.
+Stone Sentinels will not awaken after Raven is dead.
+Stunt bonus can be received only after learning Malcom fell down the hole and there is no penalty for jumping more than once.
+Sun Aloe can't be eaten.
+Translated dialogs of CH, SH, SH_Oldworld and added addon skills to CH dialog.
+When NPC starts a dialog, NH stops moving.
+Zombie paladins are restored and replaces zombies in Irdorath.
+
+
+	Monster
+
+Young Wolves at the pass are now regular Wolves.
+
+
+	NPCs General
+
+Added ambient inventory for most NPCs alive or dead.
+Added annotation for giving and taking back letters for Elvrich, Greg, Opolos, Saturas and giving back the Sacred Hammer for Seprentes.
+Added dialog involving multiple NPCs at Ring of Water welcoming ceremony, reversal ritual at the Circle of the Sun, gate to the Valley of Mines.
+Added item preview window for NPCs offering items in dialogs for Bennet, Cassia, Engor, Harad, Huno, Jan, Lee, Lobart, Matteo, Orlan, Samuel, Vatras.
+Added logging for pickpocket failures and successes.
+Added pickpocketable items to NPCs inventories, except for traders.
+
+Changed NPCs that are considered "tough" to ignore ranged weapons as well as melee.
+Changed NPCs that are fleeing to ignore trespassing and not to engage in dialog while fleeing.
+Changed NPCs that are thieves or complicit to ignore theft for Attila, Cassia, Halvor, Jesper, Kardif, Moe, Nagur, Ramirez, Rengaru, Sarah.
+Changed NPCs to attack to kill for Girion, Parcival, Sylvio.
+Changed NPCs to engage in small talk 50% less frequently.
+Changed NPCs to move to the ice dragon cave once it is dead, if the ice golems at the gate are dead for Bullco, Sylvio.
+Changed NPCs to receive varying guild specific weapon on spawn, instead of always Heavy Branch, if their regular weapon is taken.
+Changed NPCs to refuse joining the crew with previously unused dialogue if dismissed twice for Lee, Lester, Mario.
+Changed NPCs to return to monastery after surviving the Trial of Fire for Agon, Igaraz, Ulf.
+Changed NPCs to wear farmer clothing and equip sickles after returning to Khorinis for Pardok, Telbor, Tonak.
+Changed ambient NPCs to not engage in dialog if they are in the middle of something.
+Changed default weapon from Heavy Branch to something that makes sense for Akil, Cornelius, Judge, Larius, Onar, Sekob.
+Changed dialog option for trading to what NH will actually say with Fisk, Garett, Huno, Juan, Miguel, Scatty.
+Changed document visual for Esteban's Bodyguard, Pablo, Senyan, Skip, a thug in Khorinis for reading NH's wanted poster and Saturas for reading a map.
+Changed option to comment about fake mining shares to only appear after browsing wares for Bosper, Canthar, Elena, Hakon, Matteo, Orlan, Rosi, Zuris.
+Changed what drinks NPCs drink, depending on gender and class.
+
+Fixed NPCs not always equipping correct armor after Ring of Water meeting for Cavalorn, Cord, Gaan, Lares, Martin, Orlan.
+Fixed NPCs not considering Heavy Militia armor as militia armor for Borka, Kardif, Meldor, Nagur, Nadja.
+Fixed NPCs referring to Lord Andre when telling NH to go settle his crimes for Fajeth, Tengron, Knight 263.
+Fixed NPCs showing wrong pick pocket difficulty in Valley of Mines for Carlos, Sylvio.
+Fixed NPCs speaking out NH's dialog lines for Pardos, Peck.
+Fixed NPCs talking to NH when he is transformed into an animal.
+Fixed NPCs with bald head texture not to use a head mesh with pony tail for Torlof, Sylvio.
+Fixed XP award for pickpocketing Cavalorn, Dobar, Engor, Francis, Franco, Salandril, Valentino.
+Fixed XP award for recruiting Lares, Lester.
+Fixed failed quests not immediately updating in journal for Alvin, Babo, Gorax, Greg, Dyrian, Opolos, Sekob, Hanna and the crew members.
+Fixed freed slaves leaving their corpses in a cave near the bandit camp for Patrick, Monty, Tonak, Telbor, Pardos.
+Fixed issue with dragon dialog restarting quest 'Dragon Eggs', if it was already completed.
+Fixed logical issues with dialogue of Baltram, Bartok, Bennet, Diego, Fernando, Lobart, Lothar, Lucia, Pyrokar, Ramon, Ulf, Vatras, Xardas.
+Fixed mages to not loot the NH while in the city for Daron, Myxir and Vatras.
+Fixed novices to not create additional sausages when given one.
+Fixed seekers, magicians, ghosts and prisoners receiving Heavy Branch as weapon after spawning in.
+Fixed skipping of NH dialog line when talking to possessed NPCs for Bromor, Brutus, Engrom, Fernando, Malak, Sekob, Vino.
+Fixed wrong or inconsistent style of text for most dialogs.
+
+Removed Dragon Scales and Dragon Blood from the Undead Dragon.
+Removed Goblin Berries and Pepper bags from ambient inventories.
+Removed bracketed meta information from dialogs that NH should not be aware of.
+Removed option to buy a sheep after escorting one to the monastery for Onar, Pepe.
+Removed option to discuss Lehmar's book of debt before reading it or otherwise learning of the debt for Coragon, Hanna, Thorben.
+Removed option to discuss joining the mercenaries once part of any guild for Alvares, Raoul, Wolf.
+Removed option to discuss rent after completing related quest for Onar, Sekob.
+Removed visual transforming to Seekers of possessed NPCs.
+
+
+	NPC Traders
+
+All traders no longer equip their best weapons if they already have one of that type equipped.
+Cronos does not sell Pitch, Sulfur, Tongues of Fire, fire runebooks or any fire spell scrolls, he has some more ice/water spell scrolls for sale.
+Matteo only sells his leather armor until beginning of chapter 3, dialogue adjusted accordingly.
+Rupert does not endlessly generate cheese.
+Scatty does not generate extra gold nuggets and potions.
+Traders only sells blank rune stones for novices/mages.
+Zuris sells an Elixir of Strength in Chapter 3 and Elixir of Dexterity in Chapter 2 instead of 3.
+
+
+	NPC Teachers
+
+Constantino will not teach alchemy to non-apprentices until chapter 3.
+Diego can teach strength in Khorinis.
+Grimbald does not teach NH for free without finishing the hunt.
+Jergan can now teach bow skill after moving to Fajeth's mine in the Valley of Mines.
+Logan teaches skinning reptiles instead of skinning off furs.
+Talbin will teach NH hunting once escorted to Khorinis.
+Torlof does not teach NH before he joins the mercenaries.
+
+
+	NPC Specific
+
+Abuyin talks about Jharkendar in his second trance instead of first.
+Agon ends the dialog after answering to "how's it going".
+Akil always notices return of Telbor and/or Tonak.
+Akil can die during his fight with the mercenaries.
+Akil can only be asked about Onar's farm if NH is not a mercenary or dragon hunter.
+Akil can only be asked about the missing people if they have not been returned yet.
+Akil initiates the dialog for returning the sheep, as NH has no good dialog opener there.
+Akil's sheep always returns to the bandit cave if NH gets too far from her.
+Akil's sheep dialog has options to tell the sheep to wait and "END".
+Akil's sheep stays at his farm once brought there, instead of going back to the bandit cave.
+Albrecht's dialog does not include options for receiving runes for paths which are completed.
+Alligator Jack gives previously unused item Swamprat meat for his delivery quest.
+Alligator Jack only takes meat from Swamprats.
+Alrik can only be challenged twice per chapter, instead of three times.
+Alvares noticing a pick pocket attempt causes the fight with the farmers to start.
+Alwin is asked about buying a sheep if NH is looking for a sheep for the monastery.
+Alwin vocally disapproves murdering of Fellan and will remember the crime.
+Andre actually takes and inspects the evidence from NH about Halvor being a fence and Canthar trying to frame Sarah.
+Andre can be told about Nagurs murder of Baltrams messenger, even after delivering Akils package to Baltram.
+Andre can't be told that Cornelius is lying if Hagen has already ordered Bennets release.
+Andre does not tell NH that Canthar came to him if he is dead or if he never gave the quest for framing Sarah.
+Andre only comments on allowing NH to join the militia after giving the letter of recommendation if NH is not in any guild.
+Andre only comments on not being able to use anyone without a clean record in the militia if NH is in the militia.
+Angar has same weapon everywhere as in the Valley of Mines.
+Attila will become a "tough guy" after handing out the key to NH, and will not automatically die if beaten.
+Attila's name corrected from Attile.
+Balthasar can only be asked about Bengar's farm if NH has not yet spoken with Bengar.
+Balthasar won't think his sheep are missing unless some of them are actually dead, so he won't mention it when avoiding the seekers.
+Balthasar's sheep properly move to Bengar's farm with him, instead of being duplicated.
+Baltram can only be asked about Akils farm if NH does yet know how to find it.
+Bandit 10008 warns NH not to wake up Skinner only if he has not already done so.
+Bartok now grants previously omitted XP bonus for finishing the hunt with him.
+Bartok only equips his hunting gear while hunting.
+Bartok wears a Rough Bastard Sword instead of Machete.
+Bengar always notices return of Pardos.
+Bengar can immediately be told to let Baltasar back on his pastures after getting rid of the militia.
+Bengar can only be asked about Onar after asking how does he make a living.
+Bengar can only be asked about the missing people if they have not been returned yet.
+Bengar returns to his normal routine after the militia are gone.
+Bennet cannot be given the magic ore or asked about his standing between farmers and mercenaries when he is in prison.
+Bennet grants a small amount of experience for finding the magic ore nuggets for him.
+Bennet makes NH dragon hunter only after giving the armor.
+Bennet will only give a map of Khorinis caves if NH does not already have it and Brahim is dead or otherwise a previously unused voice line is used to tell NH to go buy it himself.
+Bennet will only sell Minecrawler Belt once NH has received the armor.
+Betsy gives no experience when killed.
+Betsy stays with Opolos in the monastery once brought there, instead of going back to Pepe.
+Betsy will always disappear if NH gets too far away from her, instead of sometimes appearing back at Pepe's.
+Biff can be asked to rejoin the crew in the Valley of Mines after refusing him.
+Biff can only be hired after asking what is he doing in the Valley of Mines.
+Biff does not grant NH experience before he is hired.
+Biff will not ask for half of the booty unless the difference is 80+ gold.
+Biff will not run down from the mountain when encountering Feomathar and stays within hearing distance.
+Bloodwyn's head is visually removed when his head is "looted".
+Boltan takes into account presence of Bennet, Borka, Cornelius and Fernardo when he says that all the cells are empty.
+Bosper gives less gold for skins, but still much more then other traders.
+Bosper makes a short comment for giving him skins for which he has no specific voice line for.
+Bosper will give the fake mining shares for free as he says.
+Bosper will take Ice Wolf Skin when delivering skins to him.
+Brandon quest cancels if he is killed.
+Bromor will take his dish back even after being possessed.
+Bronko will not return to work when mocked or threatened while the seekers are on the farm.
+Buster buys Shadowbeast Horns, even if NH does not know how to remove them.
+Buster gives reduced gold for each Shadowbeast Horn, though still more then regular merchants.
+Canthar properly sits on the chair when imprisoned.
+Carlos has slightly altered dialog if NH entered camp without killing Franco.
+Cassia can give the Blood Chalice quest, even if NH was a wanted thief.
+Cassia cannot be paid for learning to pickpocket if it's already learned.
+Cassias quests become obsolete if the paladins kill her.
+Cavalorn gives much less gold for buying the farmer's clothes.
+Cornelius cannot be given gold for the diary twice.
+Cornelius' diary cannot be stolen before learning of him being a witness to the murder.
+Daron can only be asked about paladins after he mentions them.
+Daron considers NH to be poor with less than 100 gold instead of 10.
+Daron does not talk about donations when asked for a blessing if he has already given his blessing.
+Daron gives more learning points for donating, but only after donating all 1000 gold.
+Diego cannot be led to Pedrakhan.
+Diego's dialog has 6 more previously unused dialogue lines and 9 more if NH never met him in Valley of Mines.
+Diego's gold can be returned to him after finding and selling the satchel.
+Dragomir immediately equips his crossbow after receiving it.
+Edda does not have duplicate dialog option, moved dialog lines around appropriately.
+Edda gives her own fish soup instead of normal soup.
+Edgor only takes the gold for learning to take bloodfly trophies if NH has enough learning points.
+Elvrich won't react to weapons until he's returned to town.
+Engardo noticing a pick pocket attempt causes the fight with the farmers to start.
+Engor will not have his trade inventory on his body once the castle gate is breached.
+Engrom can be found further away from the Paladins, so they will no aggro if NH fights him.
+Engrom never spawns with Cheese in his inventory.
+Esteban does not turn to his guards if they are dead.
+Esteban first dialog sends Carlos to Ramon's guard post, if NH killed Ramon.
+Esteban only says Franco was a tough nut if he is dead.
+Esteban's bodyguards go running to meet Fisk.
+Farim will go down to the pub and drink one for his buddy William, just like he says he will.
+Fernando can only be accused after being told about the bandit weapons dealer by Vatras.
+Fernando will not consider a bandit rapier or the trade guild ring alone to be sufficient evidence.
+Fernando will properly close the bandit weapons dealer quest if NH gives him the evidence.
+Ferros actually takes an offered sword from NH and inspects it when the dialog indicates so.
+Ferros can be offered alternative sword more than one time.
+Ferros dialog options are properly ordered when learning from him.
+Ferros no longer stops the dialogue if NH asks him what he would give for finding his sword.
+Ferros' learning log entry is added to correct category.
+Francis' log book can still be given to him for gold after Greg is back.
+Franco can be asked about whereabouts of Edgor only before talking to him.
+Franco can be provoked into a fight only if Ramon is alive.
+Gaan can only be asked about hunting training once NH learns he is a hunter.
+Gaan dialog does not create unnecessary BACK options when learning hunting talents.
+Gaan wields a Wolf Blade instead of a branch.
+Gaan won't know about the death of the Snorting Dragon Snapper unless he is close to its location.
+Gaan's dialog option for asking who he is cannot glitch up and become unavailable.
+Garond can be told about Silvestro's mining site even if Diego has died.
+Garond is not informed about death of Silvestro, if NH does not know about his death.
+Garwig does not get stuck repeating himself after stealing the hammer.
+Garwig initiates the dialog about the Sacred Hammer disappearing if the NH has it or he knows he took it.
+Garwig will always loot or pick up the Sacred Hammer from NH after beating him.
+Garwig will know NH took the Sacred Hammer if NH has it equipped.
+Garwig will not tell NH about the hammer, if NH has the hammer.
+Garwig will talk with NH even if he has been caught for a crime.
+Gate Guard (10019) dialog line for when NH asks what happened to the prisoners is changed to one with fitting inflection.
+Geppert does not create a runestone or a lump of ore in his inventory if Kervo dies.
+Gerbrandt will run from upper quarter after receiving Diego's letter.
+Gerold can be asked whether he ever sleeps only before receiving the order from Garond to free Gorn.
+Gerold gives explicit options for giving stew and fish soup.
+Gerold will not keep the note for Gorn in his inventory.
+Gerold will not wait to say that he delivered the note if Gorn is already out of the prison.
+Girion does not count towards max ship crew.
+Gorax waits for NH at church gate to offer him the task to kill Pedro.
+Gorn leads the NH to the rock fortress instead of running ahead of him.
+Greg will comment in Jharkendar if the player did not finish his treasure hunt quest in Khorinis.
+Greg yelling at Francis makes Francis immediately get up, instead of at a later point in the dialog.
+Grimbald gives NH experience for killed snappers.
+Grimbald makes a remark once the hunt is over.
+Guard (1061) at Dexter's camp does not react to weapons or magic before talking to NH at least once.
+Hagen actually takes Cornelius' diary from NH.
+Hagen can only be told about carrying the eye if NH has it.
+Hagen will hint at NH joining paladins only when all requirements are fulfilled.
+Hagen will not make NH paladin before delivering the report from Valley of Mines to avoid issue with Pedro not letting NH in monastery.
+Hagens dialog has 1 more previously inaccessible dialogue lines.
+Halvor is not given the compromising note for reading.
+Hanna has 16 lines of dialogue and new interaction restored related to the thieves' guild.
+Hanna will not take Lehmar's book of debts if NH ratted out on thieves' guild.
+Harad accepts any orc weapon for his quest.
+Harad will take the best orc weapon NH has and inspect it before commenting on it.
+Henry will consider all higher tier armor as luxurious and will comment appropriately.
+Henry will only ask NH "friend or foe" once.
+Hermit doesn't care about what armor NH is wearing.
+Highwayman hides if he sees NH coming with Lares.
+Highwayman is not a friendly to Seekers, he will be dead in chapter 3.
+Highwayman only appears after returning from the Valley of Mines.
+Hilda only takes the required 20 turnips instead of all of them.
+Hilda will continue her normal routine in the next chapter if she is cured of her illness.
+Hilda will stop her dialog when she says she will see whether the new pan is any good.
+Hilda's dialog still includes NH's line asking for something to eat, even if she declines.
+Hodges can be asked about why Bennet was arrested after asking what happened.
+Huno does not complain about Esteban if he is dead.
+Huno only makes a vague comment about high price of his armor once Esteban is dead and does not say that he takes a share.
+Huno will sell armor even if NH asks about it without having enough gold and will not offer the option once the armor is bought.
+Hyglas will not end the dialog when asked what's in it for the NH for fetching a book for him.
+Igaraz can be asked about the living rock, even after moving north from the tavern.
+Ignaz' dialog does not create illogical log entry related to his spell. 
+Ignaz' dialog does not include lines without voice acting.
+Isgaroth can be asked for a blessing after he tells who he is.
+Isgaroth can be traded with as a mage, even if he was never spoken to before.
+Jergan can be asked about the area and how to get to the castle at Fajeth's mine, even if he was never spoken to before.
+Jergan does not create log entry for "Bad News" quest if Oric is already dead.
+Jergan's dialog now takes into consideration whether NH already returned the pack leader claws to Lutero before talking to him about it.
+Jesper will attack NH if he kills both of his friends.
+Jorgen wields a Short Sword in Irdorath instead of a Sickle.
+Kardif cannot be asked about who's in debt to Lehmar if NH already read the book.
+Kardif cannot be talked about Attila if he is nearby and the dialog option does not kill him.
+Karras does not offer his wares to non-mages.
+Kati can be asked about location of Bengar and Sekobs farms only before talking to them.
+Kati can die during his fight with the mercenaries.
+Kati can only be asked for Baltram's shipment and food after asking her whether she is alright.
+Kervo's quest fails if he is killed.
+Knight 263 can be asked for a report only if NH is paladin.
+Landlord will not give more then 5 beers per chapter and only 1 per day.
+Lares can be asked for help with other issues after asking for money.
+Lares has same sword in Irdorath as in Khorinis and doesn't carry an extra sword.
+Lares has voiced dialog on the patched glitch correction option, when retrieving the ornament from him in chapter 3.
+Lares properly closes the quest "Relief for Lares" in his dialog.
+Lares wears the armor of the 'Ring of Water' instead of citizen clothes in Irdorath.
+Lares won't comment on NH's choice of guild if he never was talked to before.
+Lares' dialog only shows options for the missing people when they are relevant.
+Lares's dialog has 5 more previously unused dialogue lines.
+Larius dialog has 2 more previously inaccessible dialogue lines.
+Lee can be told about lizard people only from chapter 4 onwards.
+Lee will only sell mercenary armour while the NH is a mercenary.
+Lee's dialog has 1 more previously unused dialogue lines.
+Lehmar attacking the NH causes Meldor to also attack the NH.
+Lehmar does not immediately notice the theft of his ledger.
+Lehmar does not lend money to NH if he attacked him, unless Oblivion is cast on him.
+Lobart will only give a discount for working clothes if NH has not already bought them or joined a guild.
+Lobart's quest for working clothes does not start if NH already has bought the clothes or has some other armor.
+Lothar can only be told about getting proof of dragons after talking to him about the dragons.
+Lothar can only be told about having proof about dragons after talking to him about the dragons.
+Lothar cannot be asked about the part of the metal ornament after already receiving it from Hagen.
+Lothar's dialog has 21 more previously unused dialogue lines.
+Lothar's few dialog options are not hidden after talking to Hagen.
+Maria cannot be asked to raise the salary from Onar before it has been agreed upon.
+Maria gives dragon hunters gold instead of increase in salary that they can't get anymore.
+Maria's golden plate can only be returned after asking who she is.
+Mario cannot be recruited to a full ship crew.
+Martin actually takes the evidence from NH and does not repeat it needlessly every time.
+Martin only hints at going to Vatras for the Wisp amulet, if NH does not already have it.
+Mika can be asked whether all is quiet, even if the mercenaries left Akil's farm themselves.
+Mika properly evaluates NH's armor before commenting on it.
+Mika won't talk to NH if Lares is in the party.
+Milten cannot be asked about the south gate if Gorn's satchel was found and sold.
+Milten does not simultaneously return the letter from Hagen and the key to the monastery.
+Milten returns to the monastery in the beginning of the third chapter instead of after giving the report to Hagen.
+Milten will not say Gorn is in prison if he is already released.
+Nadja wears previously unused skimpy clothes.
+Nagur can only be asked about finding Baltram if NH has not yet spoken with him.
+Nagur now grants previously omitted XP bonus for showing thieves' signal and returning Baltram's shipment.
+Onar's dialog for buying a sheep is only available if NH knows he needs one and is not part of any guild yet.
+Opolos can be talked about the recipe after becoming a magician.
+Opolos can be told about Pedro's betrayal also after the chase quest is completed.
+Opolos can only be told each bit of news once.
+Orcish Warlords always attack NH after taunting him.
+Oric can still be talked about visiting the mining sites after visiting one or two of them.
+Oric still offers the potion after starting quest to kill Hosh-Pak.
+Orlan can be given the wine only after asking who he is.
+Orlan does not run to his counter while Lares is still giving a speech during the 'Ring of Water' meeting.
+Parcival can be asked about Diego only after asking about scrapers in general.
+Parcival's dialog can't be exploited for infinite experience.
+Pardos can be given a potion of pure life energy for a greater reward.
+Pardos can be offered a potion or stew until one is given.
+Pardos drinking the meat soup won't create screen messages indicating NH attributes increased.
+Parlan eventually gives the key to mercenary/dragon hunter NH in his dialog, instead of spawning it in front of the library door.
+Parlan initiates dialog with non-monastery members for their first interaction.
+Parlan's dialog has 3 more previously unused dialogue lines for when NH keeps distracting novices.
+Peck and Vanja are now properly caught with pants down.
+Pedro cannot be asked about life in the monastery if NH is magician.
+Pepe's dialog for buying a sheep is only available if NH knows he needs one and is not part of any guild yet.
+Pyrokar only gives one potion for healing possession, as he states in his dialog lines.
+Pyrokar will not say a line with a wrong voice over regarding the missing people, log entry for it is also updated accordingly.
+Ramirez shows two dialogue options only after he sees the thieves' signal.
+Randolph always drinks the medicine when it is given to him.
+Randolph drinks only beer during his drinking contest.
+Randolph gives the experience bonus for winning Rukhar in the drinking competition, instead of Orlan.
+Randolph runs away from the bandits on the bridge and avoids fighting them.
+Raoul turns toward Sentenza when he calls for him.
+Regis will tell the whole story of Bosper's bow thief, if talking to him after the bow was returned.
+Rengaru will move to another location when threatened with prisonment.
+Rethon will only work with Jan after given the permission from Garond.
+Riordian mentions William in the initial dialogue instead of the dialogue about the west.
+Rod has his own sword in Valley of Mines instead of a rough 1h sword.
+Rod will give no experience for returning his sword later.
+Rod's dialog for trying to wield his sword has exactly same requirement as the sword.
+Rosi can only be asked about Bengar's farm if NH has not yet spoken with Bengar.
+Rosi will not create extra gold in her inventory when giving the reward to NH for escorting her.
+Rukhar drinks only beer during his drinking contest.
+Rupert can only be asked where Matteo can be found if NH did not find him yet.
+Salandril can be commented about fake mining shares before knowing he is behind it.
+Salandril can only be accused of distributing the fake mining shares after reading one and seeing his signature.
+Salandril does not care about NH wearing weapons or magic while in the monastery.
+Salandril will eventually return to the city, but does not trade with NH.
+Salandril will give you his fake mining shares before when leaving to the monastery to be judged.
+Samuel will actually drink Hasty Herrings with NH when he says so, but only once.
+Sarah can only be asked about Akils farm if NH does yet know how to find it.
+Sarah gives a Rough Longsword instead of Pirate's Cutlass as the gift for not framing her.
+Saturas can be asked for equipment in Jharkendar, in which case he will point towards the house the water mages have taken for themselves.
+Saturas properly completes "The power of the guardians of the dead" when he tells NH about the chambers of Adanos.
+Sekob can't be told Rosi is back if she is dead.
+Sekob's dialog no longer has option to go to talk to Onar if NH already talked with him.
+Sekob's dialog no longer sends Balthasar back to his original spot after dealing with the seekers, unless he is on the farm.
+Sekob's dialog no longer sends Bronko to the field, unless NH already told him to go back to work.
+Sengrath will not have his trade inventory on his body once he's gone to the orc palisade.
+Sengrath will only start the dialog with NH after he has climbed up from the ramp.
+Senyan is told by NH that Esteban is dead, instead of giving him other news about Esteban.
+Sergio can only be asked about access to library if NH has not already achieved it.
+Sergio only gives 50 gold when asked for a donation.
+Serpentes will not give fake mining share quest if none of the involved NPCs is alive.
+Skinner can be asked about the attack on Esteban during the daytime without him getting angry.
+Skip does not use a bow, like the rest of the pirates.
+Skip quest cancels if he is killed.
+Snaf actually does something when preparing the fire strips.
+Snaf won't comment on information about Huno being free, if he already said the information will be free.
+Sylvio attacking NH causes Biff to attack Bullco as well, if he is with NH.
+Talbin can only be asked about people passing by the river once the Dragon Hunters have moved to the river banks.
+Talbin never spawns with Cheese in his inventory in the Valley of Mines.
+Talbin wields a Wolf Blade instead of a branch.
+Talbins dialog creates a journal note of him being a teacher only after he agrees to teach NH.
+Thekla now grants previously omitted XP bonus for defeating Bullco.
+Thorben does not immediately take Lehmar's book of debts, instead another dialog option is created just for giving the book.
+Thorus can be pickpocketed for his key.
+Thorus will move to intercept player even if the player does not talk to Garaz after killing Bloodwyn.
+Till won't move back to his usual spot when mocked while the seekers are on the farm.
+Torlof won't be asked about location of Bengar or Sekobs farm if NH already met them.
+Ulf does not randomly die in the beginning of chapter 3.
+Ulf smokes a joint as well instead of watching as NH smokes one.
+Ur-Shak has an orcish axe, like the other orc shamans have.
+Ur-Shak will not wait for NH to talk to him.
+Ur-Shak will tell the NH to go over pass when spoken to, before realising the cause of Hosh-Pak's death.
+Vatras actually takes the orders from Raven and grants experience for all evidence not already reported.
+Vatras can be asked for help joining the monastery only if not already part of a guild.
+Vatras can be asked where to find a priest of Innos only before talking to Daron.
+Vatras cannot be donated to usually, but instead he asks for a donation for his blessing.
+Vatras cannot be told about Lucia before reading her letter or talking to Elvrich about it.
+Vatras closes quest "Wanted Notes and Bandits" if it is still open when returning the orders from Raven.
+Vatras dialog creates a journal note about Martin only once he mentions him.
+Vatras dialog no longer has "MORE" option, instead options are only shown when they are relevant and options are hidden when no longer relevant.
+Vatras dialog won't have a mention of the novice at monastery gate if NH did not meet him.
+Vatras gives different scrolls as reward for bringing stone tablets, if NH has corresponding runes.
+Vatras gives his first and last warning for killing innocents earlier and does not give a second chance if NH kills too many people.
+Vatras introduces Martin to NH when reporting Fernando, if he has not already been mentioned.
+Vatras' offer for the Will-o'-the-wisp amulet can be refused, so NH never receives the amulet.
+Vino has a new routine when being possessed, now the Seekers can actually be seen performing the ritual on him.
+Vino makes an attempt to run away from the ritual site if the Seekers get angry.
+Wolf will not join the crew if he gets pissed off at NH.
+Wulfgar makes comments on training of weapon skills.
+Xardas' dialog has 3 more previously unused dialogue lines.
+Xardas' first few happy dialog lines are replaced with classic Gothic II lines.
+
+
+Following actions no longer cause unnecessary journal updates:
+* Reading Cornelius' Diary, Xardas' Letter, Lucia's farewell letter, almanac in the secret library, Black Magician's Scroll, Diary of the novice black magician, "Pure mana" and "Pure health".
+* Akil, Alvares, Kati and Randolph talked to while mercenaries threaten the farm.
+* Alric asked to duel when he does not have his sword.
+* Alrik, Karl, Lares, Brahim, Ignaz and Kardif talked about who can teach and sell things.
+* Angar, Bennet, Diego, Gorn, Lee, Milten and Vatras told where the enemy is hiding.
+* Dobar, Garond, Keroloth, Sengrath, Tandor talked about who can teach and sell things.
+* Biff asked to work for NH.
+* Bones asked to give bandit armor before receiving permission from Greg.
+* Bones, Morgan and Henry talked to about who can teach what.
+* Cipher told that the swamp dragon is dead.
+* City Guard 310 talked to when NH was not allowed through the gate.
+* Cord talked about joining mercenaries.
+* Cronos asked whether he can sell equipment to NH.
+* Gaan asked "How is the hunt?"
+* Isgaroth, Pedro and Ulf telling the requirements of joining the monastery.
+* Jorgen asked to become captain
+* Lares asked what he knows about missing people.
+* Lee talked to about joining mercenaries before talking to Onar.
+* Lobart asked about clothing price after already offering cheapest price.
+* Malak talked to about returning to Bengars farm.
+* Mortis asked to help NH become stronger.
+* Randolph requesting to bring him a remedy from Sagitta.
+* Riordian and Saturas talked about William.
+* Riordian asked about temple locations.
+* Rod asked for his vote to join mercenaries.
+* Rod betting gold against NH being able to lift his sword.
+* Saturas talked to about activating portal before receiving letter from Vatras.
+* Sekob asked what has happened in the meantime while his wife is away.
+
+Following items can no longer be bought or looted from certain NPCs:
+* Abuyin: Any tobacco given to him.
+* Anyone: Steel Blanks and Lab Water Bottles.
+* Bennet: Dragon Scales.
+* Bennet: Gold used to buy Medium and Heavy Dragon Hunter's Armor.
+* Biff: Gold given for hiring him.
+* Bosper: Any skin or hide.
+* Bromor: His golden dish.
+* Buster: Shadowbeast Horns and Gold given for his hint about Sentenza.
+* Coragon: Lehmar's book of debts and Valentino's ring.
+* Cornelius: Gold given for bribing him.
+* Edda: Fish.
+* Edgor: Gold given for learning taking bloodfly trophies.
+* Engor: Gold used to buy Heavy Militia Armor.
+* Engor: Map of the Valley of Mines.
+* Fisk: Package of lockpicks (instead dozen lockpicks appear in his trade inventory).
+* Francis: Paybook.
+* Girion: Ring of the Orcish Warlords.
+* Godar: Gold for teaching how to gut dragons.
+* Gorax: Key to the monastery gate.
+* Hanna: A very old map.
+* Hanna: Lehmar's book of debts.
+* Huno: Gold used to buy Heavy Bandit's Armor.
+* Huno: Steel package.
+* Igaraz: Gold given for Babo's documents.
+* Jan: Dragon Blood given for Gold.
+* Jan: Dragon Scales given for making Medium Dragon Hunter's Armor.
+* Jan: Gold used to buy Medium Dragon Hunter's Armor.
+* Judge: Sacred Hammer.
+* Karras: Stone from Blessed Soil.
+* Lee: Gold used to buy Medium and Heavy Mercenary Armor.
+* Lobart: Gold used to buy Farmer's Clothing.
+* Lutero: Leader of the Pack's claws.
+* Matteo: Gold used to buy Leather Armor.
+* Neoras: Ingredients and Gold given to him for brewing potions.
+* Orlan: Gold used to buy Leather Armor.
+* Pedro: Valuable statue of Innos.
+* Pepe: Gold used to buy sheep.
+* Raoul: Hide of a Black Troll if accepting payment.
+* Sagitta: Sun Aloe and Thekla's Parcel.
+* Saturas: Vatras' letter for Saturas and the piece of the Ornament.
+* Serpentes: Khorinis Ore Mine Shares.
+* Thorben: Lehmar's book of debts.
+* Vatras: Almanac of the Possessed and the letter of orders from Raven.
+* Wasili: Old coins.
+
+Following actions now create a log entry:
+* Dialog with Bennet, asking to find magic ore nuggets.
+* Dialog with Dar, when he pretends he doesn't know about the package.
+* Dialog with Daron, when he says to take the statuette to the monastery.
+* Dialog with Grimbald, agreeing to teach taking animal trophies.
+* Dialog with Isgaroth, when receiving his blessing for Thorben's quest.
+* Dialog with Jergan, asking whether he can teach how to land a few trophies.
+* Dialog with Kati, handing out Baltram's shipment.
+* Dialog with Kervo, asking to take care of lurkers outside his cave.
+* Dialog with Lord Hagen, when receiving the ornament piece.
+* Dialog with Randolph, handing out Baltram's shipment.
+* Dialog with Saturas, returning colored tablets. (they created placeholder/invalid log entries)
+* Dialog with Saturas, when asked for the portal ring before having the letter from Vatras.
+* Dialog with Talbin, asking for a cheese.
+* Dialog with Xardas, when he introduces the new threat (addon).
+* Digging up Greg's treasures in Khorinis.
+* Finding Babo's documents.
+* Finding Blood Chaclices for Cassia's quest.
+* Finding Bosper's stolen bow.
+* Finding Bromor's golden bowl.
+* Finding Cavalorn's ore bag, opening it is not needed.
+* Finding Cipher's weed package.
+* Finding Constantino's ring for Cassia's quest.
+* Finding Daron's lost statuette.
+* Finding Den's body.
+* Finding Diego's bag of gold.
+* Finding Garett's Golden Compass.
+* Finding Huno's steel delivery.
+* Finding Lance's body.
+* Finding a sextant for Ramirez.
+* Finding an orc weapon for Harad.
+* Finding ring and rapier for bandit trader quest.
+* Finding stone tablet for Franco.
+* Finding the Claw of Beliar.
+* Finding the Eye of Innos without talking to the seekers first.
+* Finding the Sun Aloe.
+* Finding the blank runestone for the Path of Believers quest.
+* Finding the recipe for Neoras.
+* Killing Hosk-Pak.
+* Killing Juan.
+* Killing Orc Colonel.
+* Killing dragons in the Valley of Mines.
+* Looting Malcom after Owen tells what happened to him.
+* Reading Lutero's note about pawning his Blood Chalice.
+* Using Oblivion spell while Ignaz' quest is running.
+
+Following events do not create overlapping messages:
+* Kati handing out bread, water and meat.
+
+New/updated item models:
+* All potions
+* Animal trophy hearts: Dragon hearts (fire, ice, rock), Heart of a Demon, Heart of a Swamp Golem, Undead Dragon Soul Stone
+* Animal trophy skins: Boar/Warg Skin, Hide of a Black Troll, Ice Wolf Skin, Lurker Skin (Talbin's)
+* Animal trophy other: Field Raider Mandibles, Leader of the Pack's Claws, Lurker Claw, Mantis head, Minecrawler Mandibles and Plates
+* Books and documents: All maps, all books of Runemaking, 'The Halls of Irdorath', Almanac of the Possessed, Babo's pinup, Diary of the novice black magician, Message in a Bottle, NH's wanted note
+* Food and drinks: All rum and grog, Clam meat, Coragon's Beer, Fire strips, Fish Soup, Edda's Fish Soup, Herring, Honey, Milk, Sheep Sausage, Theckla's stew
+* Jewelry: All jewelery set items, Aquamarine rings, Divine Aura of Innos, Franco's amulet, Guild ring, Morgan's ring, Will-o'-the-wisp amulet, Ring of the Orcish Warlords, two new ring models
+* Plants: Dragonroot, King's Sorrel, Sun Aloe, Snapper Weed, Swampweed, Weed
+* Weapons: Fire and Magic ammunition, Krush Agash
+* Blood Chalice
+* Brush
+* Coragon's Silver
+* Gold/Silver Necklaces
+* Golden Compass
+* Green Novice
+* Heavy Gold Plate
+* Holy Water
+* Lab Water Bottle
+* Leather bags/satchels
+* Molerat fat
+* Oblivion scroll
+* Parcel of Weed
+* Raw and fried meat
+* Red Hot Pepper / Tobaccos
+* Red Hot Steel
+* Scratched silver bowl
+* Stone from Blessed Soil
+* Treasure Chest
+* Ulthar's Holy Water
+
+New/updated world models:
+* Stuffed wolf head
+
+
+	Sources
+
+PowerGamer @ worldofplayers.de
+	Original G2 NotR scripts with English dialogue and a lot of bug fixes.
+
+Korianous @ worldofplayers.de
+	English menu and other system script files.
+
+Gottfried and Lehona @ worldofplayers.de
+	Scripting package used for various functionality. (LeGo)
+
+Dimus @ worldofplayers.ru
+	Insane metric ton of bug fixes and improvements.
+
+felsenschmied @ worldofplayers.de
+	Graphical makeover of the game world. (G2 High Vegetation Mod)
+
+Caesum @ moddb.com
+	Restoration of G1 areas. (Wasteland Mod)
+
+mud-freak @ worldofplayers.de
+	New spell casting animations.
+
+szapp @ github.com
+	Free aiming mod for ranged weapons and spells.
+

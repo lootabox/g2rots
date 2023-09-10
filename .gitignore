@@ -1,0 +1,12 @@
+data/anims/
+data/meshes/
+data/music/
+data/presets/
+data/sound/
+data/textures/
+data/video/
+data/worlds/
+
+demo/
+tools/
+scripts.code-workspace

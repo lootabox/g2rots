@@ -632,7 +632,7 @@ New/updated item models:
 * Animal trophy skins: Boar/Warg Skin, Hide of a Black Troll, Ice Wolf Skin, Lurker Skin (Talbin's)
 * Animal trophy other: Field Raider Mandibles, Leader of the Pack's Claws, Lurker Claw, Mantis head, Minecrawler Mandibles and Plates
 * Books and documents: All maps, all books of Runemaking, 'The Halls of Irdorath', Almanac of the Possessed, Babo's pinup, Diary of the novice black magician, Message in a Bottle, NH's wanted note
-* Food and drinks: All rum and grog, Clam meat, Coragon's Beer, Fire strips, Fish Soup, Edda's Fish Soup, Herring, Honey, Milk, Sheep Sausage, Theckla's stew
+* Food and drinks: Raw and fried meat, All rum and grog, Clam meat, Coragon's Beer, Fire strips, Fish Soup, Edda's Fish Soup, Herring, Honey, Milk, Sheep Sausage, Theckla's stew, Meat stew
 * Jewelry: All jewelery set items, Aquamarine rings, Divine Aura of Innos, Franco's amulet, Guild ring, Morgan's ring, Will-o'-the-wisp amulet, Ring of the Orcish Warlords, two new ring models
 * Plants: Dragonroot, King's Sorrel, Sun Aloe, Snapper Weed, Swampweed, Weed
 * Weapons: Fire and Magic ammunition, Krush Agash
@@ -649,7 +649,6 @@ New/updated item models:
 * Molerat fat
 * Oblivion scroll
 * Parcel of Weed
-* Raw and fried meat
 * Red Hot Pepper / Tobaccos
 * Red Hot Steel
 * Scratched silver bowl

@@ -159,10 +159,10 @@ FUNC VOID B_ENTER_NEWWORLD_Kapitel_2 ()
  		EnterNW_Kapitel2 = TRUE;
 	};
 };
-// B_ENTER_NEWWORLD_Kapitel_3
+// B_ENTER_NEWWORLD_PreAddon
 //****************************************************
 	var int EnterNW_PreAddon;
-FUNC VOID B_ENTER_NEWWORLD_Kapitel_3 ()
+FUNC VOID B_ENTER_NEWWORLD_PreAddon ()
 {
 	if (EnterNW_PreAddon == FALSE)
 	{
@@ -978,6 +978,7 @@ FUNC VOID B_ENTER_NEWWORLD ()
 	B_InitNpcGlobals (); 
 	if (Kapitel >= 1)	{B_ENTER_NEWWORLD_Kapitel_1 ();	};
 	if (Kapitel >= 2)	{B_ENTER_NEWWORLD_Kapitel_2 ();	};
+	if (Kapitel >= 2 && EnterNW_PreAddon)	{ B_ENTER_NEWWORLD_PreAddon (); };
 	if (Kapitel >= 3)	{B_ENTER_NEWWORLD_Kapitel_3 ();	};
 	if (Kapitel >= 4)	{B_ENTER_NEWWORLD_Kapitel_4 ();	};
 	if (Kapitel >= 5)	{B_ENTER_NEWWORLD_Kapitel_5 ();	};

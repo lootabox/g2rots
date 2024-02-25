@@ -878,8 +878,8 @@ func void DIA_Lord_Hagen_BACKINTOWN_DelayChaseForEye ()
 {
 	AI_Output (self ,other, "DIA_Lord_Hagen_CUSTOM_04_01"); //Yes, of course. I stand by my word.
 	AI_Output (self ,other, "DIA_Lord_Hagen_CUSTOM_04_02"); //I shall see to it as quickly as possible.
-	AI_Output (self ,other, "DIA_Lord_Hagen_CUSTOM_04_03"); //However, I have much paperwork that I must do.
-	AI_Output (self ,other,"DIA_Lord_Hagen_NeedShip_04_06"); //Once that is done, then you can ask me again.
+	AI_Output (other,self ,"DIA_MiltenNW_KAP3_Entry_15_00"); //I need to get into the monastery. It's urgent!
+	AI_Output (self ,other, "DIA_Lord_Hagen_CUSTOM_04_03"); //I have much paperwork that I must do. Once that is done, then you can ask me again.
 	AI_Output (other,self ,"DIA_Pedro_Rules_15_05"); //I see.
 };
 func void DIA_Lord_Hagen_BACKINTOWN_StartChaseForEye ()

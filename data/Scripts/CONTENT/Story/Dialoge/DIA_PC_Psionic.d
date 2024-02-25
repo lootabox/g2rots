@@ -402,7 +402,7 @@ func void DIA_Lester_BACKINTOWN_Info ()
 {
 	AI_Output			(self, other, "DIA_Lester_BACKINTOWN_13_00"); //Hey, you're finally back! You have to go see Xardas right away, there's a problem.
 	AI_Output			(other, self, "DIA_Lester_BACKINTOWN_15_01"); //That I certainly believe.
-	AI_Output			(self, other, "DIA_Lester_BACKINTOWN_13_02"); //All hell's broken loose since you left.
+	//AI_Output			(self, other, "DIA_Lester_BACKINTOWN_13_02"); //All hell's broken loose since you left.
 	AI_Output			(self, other, "DIA_Lester_BACKINTOWN_13_03"); //Talk to Xardas, he's waiting for you!
 	AI_Output			(self, other, "DIA_Lester_BACKINTOWN_13_04"); //Xardas gave me this rune for you. It'll help you get to him faster. We'll meet again there.
 	

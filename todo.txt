@@ -1,8 +1,3 @@
-------------------------------------------------------------------------------------- ADDON AFTER XARDAS
-
-remove..? can xardas know this?
-	AI_Output			(self, other, "DIA_Xardas_DMTSINDDA_DMT_WhatToDo_14_02"); //Then go to the monastery and talk to Pyrokar. He must give you the Eye.
-	AI_Output			(self, other, "DIA_Xardas_DMTSINDDA_DMT_WhatToDo_14_03"); //Nothing is more important than getting this artifact away to safety.
 
 -------------------- old notepad tabs
 

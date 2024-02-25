@@ -61,8 +61,8 @@ FUNC VOID Rtn_XardasWeg_4()
 
 FUNC VOID Rtn_WaitForPlayer_4()//Übergang KAPITEL 2-3 schickt den Spieler zu Xardas 
 {	
-	TA_Stand_ArmsCrossed	(08,00,23,00,"LEVELCHANGE");   
-    TA_Stand_ArmsCrossed	(23,00,08,00,"LEVELCHANGE");
+	TA_Stand_ArmsCrossed	(08,00,23,00,"NW_TO_PASS_01"); // "LEVELCHANGE"
+    TA_Stand_ArmsCrossed	(23,00,08,00,"NW_TO_PASS_01"); // "LEVELCHANGE"
 };
 
 FUNC VOID Rtn_WaitForShip_4()

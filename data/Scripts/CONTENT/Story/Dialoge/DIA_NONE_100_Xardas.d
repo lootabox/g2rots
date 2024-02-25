@@ -752,7 +752,7 @@ func void DIA_Xardas_DMTSINDDA_Info () // Post-Addon
 	AI_Output			(self, other, "DIA_Xardas_DMTSINDDA_14_03"); //He has recognized the threat. It has forced him to leave his cover and openly attack.
 	AI_Output			(self, other, "DIA_Xardas_DMTSINDDA_14_04"); //The game of hide-and-seek is over. Yesterday nobody knew what the enemy's attack would look like. Now it has become only too obvious.
 
-	B_LogEntry (TOPIC_INNOSEYE, "The enemy's found it I'm looking for the Eye of Innos. It's time I found it, before it's too late.");
+	B_LogEntry (TOPIC_INNOSEYE, "The enemy's found that I'm looking for the Eye of Innos. It's time I get to it, before it's too late.");
 	
 	Info_ClearChoices	(DIA_Xardas_DMTSINDDA);
 	Info_AddChoice	(DIA_Xardas_DMTSINDDA, "I was attacked by magicians in black robes.", DIA_Xardas_DMTSINDDA_DMT );

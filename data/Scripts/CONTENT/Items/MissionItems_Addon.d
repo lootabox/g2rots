@@ -29,7 +29,7 @@ func void Use_SaturasFirstMessage ()
 					Doc_SetFont 	( nDocID, -1, FONT_Book		   		); 	
 					Doc_SetMargins	( nDocID, -1, 50, 50, 50, 50, 1   	);  
 					Doc_PrintLine	( nDocID,  0, "Dear Vatras,"					);
-					Doc_PrintLines	( nDocID,  0, "We have adanced to the portal. You were correct."					);
+					Doc_PrintLines	( nDocID,  0, "We have advanced to the portal. You were correct."					);
 					Doc_PrintLines	( nDocID,  0, "It indeed appears that they were believers in Adanos. I ask you to verify this once again with the help of my notes."					);
 					Doc_PrintLines	( nDocID,  0, "We have not spotted any of those curious stone beings for days."					);
 					Doc_PrintLines	( nDocID,  0, "Nevertheless, the earth continues to quake for no apparent reason."					);

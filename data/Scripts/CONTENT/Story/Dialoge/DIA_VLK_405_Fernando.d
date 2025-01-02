@@ -277,7 +277,7 @@ func void DIA_Addon_Fernando_BanditTrader_Info ()
 			Info_ClearChoices	(DIA_Addon_Fernando_BanditTrader);
 			Info_AddChoice	(DIA_Addon_Fernando_BanditTrader, "What will you pay me if I let you go?", DIA_Addon_Fernando_BanditTrader_preis );
 			Info_AddChoice	(DIA_Addon_Fernando_BanditTrader, "The militia is going to deal with you.", DIA_Addon_Fernando_BanditTrader_mil );
-			Info_AddChoice	(DIA_Addon_Fernando_BanditTrader, "I'm shaking, I'm shaking.", DIA_Addon_Fernando_BanditTrader_Uptown );
+			Info_AddChoice	(DIA_Addon_Fernando_BanditTrader, "Don't make me weep.", DIA_Addon_Fernando_BanditTrader_Uptown );
 		};
 	};
 };

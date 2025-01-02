@@ -42,6 +42,11 @@ Addon is only accessible after chapter 3. Xardas will give the addon introductio
 Fire Mages are only promoted into the High Order of the Fire Magicians in chapter 5 instead of the end of chapter 3.
 
 
+	Spells
+
+Spells deal +50% damage against monsters weak to those spells instead of double damage.
+
+
 	Quests
 
 Quest changes which significantly affect specific quests requirements or rewards.

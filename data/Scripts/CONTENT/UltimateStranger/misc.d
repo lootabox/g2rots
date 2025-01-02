@@ -1,5 +1,14 @@
 
 //************************************************
+//   Initialize game settings for new game
+//************************************************
+
+func void ReduceSpellDoubleDmgMultiplier_Init() {
+    const int oCVisualFX__ProcessCollision__DmgCalc__DoubleMultiplier = 4808268; // 0x495e4c
+    MEM_WriteInt(oCVisualFX__ProcessCollision__DmgCalc__DoubleMultiplier, 1069547520); // 0x3fc00000 // float for 1.5
+};
+
+//************************************************
 // Fix spell information for "aoe" vfx
 // https://forum.worldofplayers.de/forum/threads/1570744-Large-Firestorm-AoE-fix?s=a8fe7d97fc0784a054afc50b8f597571
 //************************************************

@@ -5,6 +5,50 @@ const float regenFrequencyMs = 100.0;
 // https://forum.worldofplayers.de/forum/threads/1578433-Performant-damage-over-time
 //************************************************
 
+
+
+func int Npc_GetHitpointRegenSpeed(var c_npc slf) {
+    return Npc_GetTalentValue(slf, NPC_TALENT_REGENERATE);
+};
+func int Npc_GetManaRegenSpeed(var c_npc slf) {
+    return Npc_GetTalentValue(slf, NPC_TALENT_FIREMASTER);
+};
+
+func void Npc_SetHitpointRegenSpeed(var c_npc slf, var int speed) {
+    if (speed >= 0) {
+        Npc_SetTalentValue(slf, NPC_TALENT_REGENERATE, speed);
+    };
+};
+func void Npc_SetManaRegenSpeed(var c_npc slf, var int speed) {
+    if (speed >= 0) {
+        Npc_SetTalentValue(slf, NPC_TALENT_FIREMASTER, speed);
+    };
+};
+
+/** Add (or remove) hitpoint regen. */
+func void B_AddHitpointRegen(var c_npc slf, var int amount, var int unlimited) {
+    const int newRegen = slf.attribute[ATR_REGENERATEHP] + amount;
+    if (newRegen < 0) {
+        slf.attribute[ATR_REGENERATEHP] = 0;
+    } else if (unlimited == FALSE) && (slf.attribute[ATR_HITPOINTS] + newRegen > slf.attribute[ATR_HITPOINTS_MAX]) {
+        slf.attribute[ATR_REGENERATEHP] = slf.attribute[ATR_HITPOINTS_MAX] - slf.attribute[ATR_HITPOINTS];
+    } else {
+        slf.attribute[ATR_REGENERATEHP] += amount;
+    };
+};
+
+/** Add (or remove) mana regen. */
+func void B_AddManaRegen(var c_npc slf, var int amount, var int unlimited) {
+    const int newRegen = slf.attribute[ATR_REGENERATEMANA] + amount;
+    if (newRegen < 0) {
+        slf.attribute[ATR_REGENERATEMANA] = 0;
+    } else if (unlimited == FALSE) && (slf.attribute[ATR_MANA] + newRegen > slf.attribute[ATR_MANA_MAX]) {
+        slf.attribute[ATR_REGENERATEMANA] = slf.attribute[ATR_MANA_MAX] - slf.attribute[ATR_MANA];
+    } else {
+        slf.attribute[ATR_REGENERATEMANA] += amount;
+    };
+};
+
 var int avg;
 func void hellohello() {
     var oCNpc her; her = Hlp_GetNpc(hero);

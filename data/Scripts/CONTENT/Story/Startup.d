@@ -52,6 +52,7 @@ func void INIT_GLOBAL()
 	RegenMechanic_Init();
 	AF_ItemPreview_Init();
 	ReduceSpellDoubleDmgMultiplier_Init();
+	ReduceAfterLoadWait_Init();
 };
 
 // *********

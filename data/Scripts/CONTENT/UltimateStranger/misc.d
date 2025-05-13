@@ -1,5 +1,18 @@
 
 //************************************************
+//   Reduce after load wait time
+//************************************************
+
+func void ReduceAfterLoadWait_Init() {
+    const int oCGame__Render__AfterLoadWaitTime = 7112509; // 0x6C873D
+    // OLD: D8 1D F8 99 83 00 (fcomp 2500)
+    // NEW: D8 1D B4 04 83 00 (fcomp 1000)
+    MEM_WriteByte(oCGame__Render__AfterLoadWaitTime +  2, 180); // 0xB4
+    MEM_WriteByte(oCGame__Render__AfterLoadWaitTime +  3,   4); // 0x04
+    MEM_WriteByte(oCGame__Render__AfterLoadWaitTime +  4, 131); // 0x83
+};
+
+//************************************************
 //   Initialize game settings for new game
 //************************************************
 

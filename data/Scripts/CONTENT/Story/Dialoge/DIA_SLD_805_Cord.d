@@ -406,14 +406,14 @@ func void B_Cord_ComeLaterWhenDone ()
 };
 func void B_Cord_IDoItForYou ()
 {
-	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_00"); //Ah yes. That's easy. Listen. Come back tomorrow. I'll have taken care of it by then.
+	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_00"); //Ah yes. That's easy. Listen, come back tomorrow. I'll have taken care of it by then.
 	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_01"); //But you're going to have to do something for me in return.
 	AI_Output	(other, self, "DIA_Addon_Cord_IDoItForYou_15_02"); //And what would that be?
 	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_03"); //Not far from here, to the south-east, there's a small bandit camp in the mountains.
 	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_04"); //If you go south-east from here you'll soon see the tower there.
 	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_05"); //One of my people, Patrick, left several days ago to do business with those varmints.
-	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_06"); //Well. I told him it was a rotten idea. But that idiot wouldn't listen to me.
-	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_07"); //I assume they've made short work of him. But I don't know for sure.
+	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_06"); //Well, I told him it was a rotten idea. But that idiot wouldn't listen to me.
+	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_07"); //I assume they've made short work of him, but I don't know for sure.
 	AI_Output	(self, other, "DIA_Addon_Cord_IDoItForYou_14_08"); //You're going to find out for me.
 
 	B_LogEntry (TOPIC_Addon_RangerHelpSLD,"Cord is going to take care of Torlof's test. Cord's buddy Patrick has disappeared. He wants me to go to the bandits' small mountain camp to the south-east and find out whether Patrick is there."); 
@@ -435,7 +435,7 @@ func void B_Cord_IDoItForYou_Dexter ()
 {
 	AI_Output			(other, self, "Dia_Addon_Cord_IDoItForYou_Dexter_15_00"); //And what makes you so sure that they won't make short work of ME, too?
 	AI_Output			(self, other, "Dia_Addon_Cord_IDoItForYou_Dexter_14_01"); //The fact that I know the name of their leader. It's Dexter. You'll simply claim that you know the guy.
-	AI_Output			(self, other, "Dia_Addon_Cord_IDoItForYou_Dexter_14_02"); //His men will think twice then before they wring your neck just for the heck of it.
+	AI_Output			(self, other, "Dia_Addon_Cord_IDoItForYou_Dexter_14_02"); //His men will think twice before they wring your neck just for the heck of it.
 	AI_Output			(self, other, "Dia_Addon_Cord_IDoItForYou_Dexter_14_03"); //It could still get dangerous, of course.
 	AI_Output			(self, other, "Dia_Addon_Cord_IDoItForYou_Dexter_14_04"); //But you can handle that.
 	Info_ClearChoices	(DIA_Addon_Cord_RangerHelp2GetSLD);	
@@ -462,7 +462,7 @@ func void DIA_Addon_Cord_RangerHelp2GetSLD_Info ()
 	}
 	else
 	{
-		AI_Output	(other, self, "DIA_Addon_Cord_RangerHelp2GetSLD_15_04"); //Yes. That's with the test and all.
+		AI_Output	(other, self, "DIA_Addon_Cord_RangerHelp2GetSLD_15_04"); //Yes. That's with the test and everything.
 		AI_Output	(self, other, "DIA_Addon_Cord_RangerHelp2GetSLD_14_05"); //Ah. What test would that be?
 		
 		if	(Torlof_ProbeBestanden == TRUE)

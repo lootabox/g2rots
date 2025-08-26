@@ -617,7 +617,7 @@ FUNC VOID DIA_Xardas_KdfSecret_Info()
 	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_01");	//I used to be a high member of the Circle. Even then I suspected that demon magic might be the key to the magic barrier.
 	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_02"); //But I could never have convinced the other members of the Circle to follow this path.
 	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_03"); //So I left the Circle in order to study the Black Arts.
-	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_04"); //That is a crime for which the Fire Magicians, (snidely) the 'Ordained of Innos', the ever 'Good' and 'Virtuous' will accept no excuse.
+	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_04"); //That is a crime for which the Fire Magicians, the 'Ordained of Innos', the ever 'Good' and 'Virtuous' will accept no excuse.
 	AI_Output	(self, other,"DIA_Xardas_KdfSecret_14_05"); //They are certain that I am still alive, but they have no idea where to find me - and that's a good thing, too.
 };
 

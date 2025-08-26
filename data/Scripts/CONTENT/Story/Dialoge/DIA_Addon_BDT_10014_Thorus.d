@@ -424,7 +424,7 @@ FUNC VOID DIA_Addon_Thorus_Raventot_Info()
 	AI_Output (self, other, "DIA_Addon_BDT_10014_Thorus_Raventot_12_01");//That means you've given Beliar a swift kick.
 	AI_Output (self, other, "DIA_Addon_BDT_10014_Thorus_Raventot_12_02");//Then you'll be moving on?
 	AI_Output (other, self, "DIA_Addon_BDT_10014_Thorus_Raventot_15_03");//My job in this valley is done. I could use a few days' rest.
-	AI_Output (self, other, "DIA_Addon_BDT_10014_Thorus_Raventot_12_04");//(laughs) Yeah, you're constantly on the move, aren't you? (seriously) Have a good journey.
+	AI_Output (self, other, "DIA_Addon_BDT_10014_Thorus_Raventot_12_04");//(laughs) Yeah, you're constantly on the move, aren't you? Have a good journey.
 	AI_Output (other, self, "DIA_Addon_BDT_10014_Thorus_Raventot_15_05");//Who knows, maybe we'll run into each other again.
 	AI_Output (self, other, "DIA_Addon_BDT_10014_Thorus_Raventot_12_06");//Who knows. There will be lots of gates and passages for you to go through. And you're bound to find me on one of them...
 	

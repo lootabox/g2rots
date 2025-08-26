@@ -338,9 +338,9 @@ func void DIA_Addon_Daron_GuildHelp_Info ()
 	AI_Output	(other, self, "DIA_Addon_Daron_GuildHelp_15_02"); //What's the problem?
 	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_03"); //A very valuable statuette has been sent to the monastery from the mainland. But it never arrived at the monastery.
 	AI_Output	(other, self, "DIA_Addon_Daron_GuildHelp_15_04"); //Has the ship been raided?
-	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_05"); //(ashamed) No. It got to Khorinis safe and sound, and I went to collect it there.
+	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_05"); //No! It got to Khorinis safe and sound, and I went to collect it there.
 	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_06"); //Then, when I was on my way to the monastery, a band of goblins got hold of it.
-	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_07"); //(angrily) Now don't you look at me that way. We magicians are only human, too, you know.
+	AI_Output	(self, other, "DIA_Addon_Daron_GuildHelp_10_07"); //Now don't you look at me that way. We magicians are only human, too, you know.
 	
 	MIS_Addon_Vatras_Go2Daron = LOG_SUCCESS;
 	MIS_Addon_Daron_GetStatue = LOG_RUNNING;

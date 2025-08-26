@@ -108,7 +108,7 @@ FUNC VOID DIA_Gritta_WantsMoney_Info()
 {	
 	AI_Output (other,self ,"DIA_Gritta_WantsMoney_15_00"); //Matteo sent me. You still owe him some gold.
 	AI_Output (self ,other,"DIA_Gritta_WantsMoney_16_01"); //He wants his money? What for? The goods he delivered were flawed, bad fabric and bad seams.
-	AI_Output (self ,other,"DIA_Gritta_WantsMoney_16_02"); //And did you look at the colors? Those are not the colors I ordered. That's fraud, it is!
+	AI_Output (self ,other,"DIA_Gritta_WantsMoney_16_02"); //And did you look at the colors? Those are not the colors I ordered. That's fraud, that is!
 	AI_Output (self ,other,"DIA_Gritta_WantsMoney_16_03"); //Let me tell you, back when my husband was alive, he wouldn't have dared to do that. Oh, my poor husband...
 
 	Info_ClearChoices (DIA_Gritta_WantsMoney);

@@ -410,7 +410,7 @@ func void DIA_Till_BRONKOWIEDERANARBEIT_Info ()
 	
 	if (Till_Angebot <= 50)
 		{
-			AI_Output			(self, other, "DIA_Till_BRONKOWIEDERANARBEIT_03_03"); //(hesitantly) Hmm. Well. Business is business, right?
+			AI_Output			(self, other, "DIA_Till_BRONKOWIEDERANARBEIT_03_03"); //Hmm. Well. Business is business, right?
 
 			CreateInvItems (self, ItMi_Gold, Till_Angebot);									
 			B_GiveInvItems (self, other, ItMi_Gold, Till_Angebot);

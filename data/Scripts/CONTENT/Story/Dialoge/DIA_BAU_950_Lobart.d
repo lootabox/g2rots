@@ -663,7 +663,7 @@ func void DIA_Lobart_RuebenRunning_Info ()
 		
 		if (hero.guild == GIL_NONE)
 		{
-			AI_Output (self, other, "DIA_Lobart_RuebenRunning_05_07"); //Did you eat the rest?! I hope not, my boy, otherwise you can forget your pay!
+			AI_Output (self, other, "DIA_Lobart_RuebenRunning_05_07"); //Did you eat the rest?! I hope not, buddy, otherwise you can forget your pay!
 			AI_Output (self, other, "DIA_Lobart_RuebenRunning_05_08"); //Get out there, and get more! Go back to work or I'll make you!
 		};
 		

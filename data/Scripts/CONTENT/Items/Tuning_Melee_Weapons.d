@@ -75,7 +75,7 @@ const int Condition_Schmiedehammer		= 10;
 const int Range_Schmiedehammer			= 30;
 const int Value_Schmiedehammer			= 200;
 //Kurzschwert der Miliz - MILIZ - NEUE INSTANZ
-const int Damage_ShortSword1 			= 16; //10
+const int Damage_ShortSword1 			= 10;
 const int Condition_ShortSword1			= 10;
 const int Range_ShortSword1				= 50;
 const int Value_ShortSword1				= 500;
@@ -100,7 +100,7 @@ const int Condition_Wolfsklinge			= 5;
 const int Range_Wolfsklinge				= 30;
 const int Value_Wolfsklinge				= 10;
 //grobes Kurzschwert - NEUE INSTANZ 
-const int Damage_ShortSword2 			= 10; //12
+const int Damage_ShortSword2 			= 12;
 const int Condition_ShortSword2			= 10;
 const int Range_ShortSword2				= 50;
 const int Value_ShortSword2				= 250;
@@ -270,7 +270,7 @@ const int Value_Orkschwert_01		=  50;
 // Kapitel 1 - Händler
 // *******************
 //Kurzschwert - NEUE INSTANZ
-const int Damage_ShortSword3 		= 12; 
+const int Damage_ShortSword3 		= 16; 
 const int Condition_ShortSword3		= 10;
 const int Range_ShortSword3			= 50;
 const int Value_ShortSword3			= 250;

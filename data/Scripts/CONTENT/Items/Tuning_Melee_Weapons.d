@@ -145,7 +145,7 @@ const int Value_MiscAxe					= 20;
 //rostiger Zweihänder - STANDARDOBJEKTIERUNG - ItMw_2H_Sword_M_01
 const int Damage_Misc2hSword			= 25; 
 const int Condition_Misc2hSword			= 25;
-const int Range_Misc2hSword				= 100;
+const int Range_Misc2hSword				= 110; //100
 const int Value_Misc2hSword				= 30; 
 //grobes Breitschwert - NUR MILIZ - ItMw_1h_Mil_Sword
 const int Damage_MilSchwert				= 25; 
@@ -181,7 +181,7 @@ const int Value_Sld2hAxe				= 60;
 //grober Zweihänder (2h) - SÖLDNER - ItMw_2h_Sld_Sword
 const int Damage_Sld2hSchwert			= 35;
 const int Condition_Sld2hSchwert		= 40;
-const int Range_Sld2hSchwert			= 100; //130
+const int Range_Sld2hSchwert			= 110; //130
 const int Value_Sld2hSchwert			= 60; 
 //Addon
 //PIR2hAxe
@@ -491,7 +491,7 @@ const int Value_Special_1H_1		= 750;
 // selbstgeschmiedeter Zweihänder - ItMw_2H_Special_01
 const int Damage_Special_2H_1		= 50; //+10%
 const int Condition_Special_2H_1	= 50;  
-const int Range_Special_2H_1		= 100;
+const int Range_Special_2H_1		= 110; //100
 const int Value_Special_2H_1		= 900;
 
 // *******************
@@ -525,7 +525,7 @@ const int Value_Streitkolben		= 1000;
 //Zweihänder - NEUE INSTANZ
 const int Damage_Zweihaender2 		= 55; 
 const int Condition_Zweihaender2	= 60; 
-const int Range_Zweihaender2		= 100;
+const int Range_Zweihaender2		= 110; //110
 const int Value_Zweihaender2		= 1050;
 //Machete 2h - NEUE INSTANZ	//ADDON
 const int Damage_Hacker 			= 55; 
@@ -589,7 +589,7 @@ const int Value_Special_1H_2		= 1200;
 //selbstgeschmiedeter Zweihänder II - ItMw_2H_Special_02
 const int Damage_Special_2H_2		= 70; //+10%
 const int Condition_Special_2H_2	= 70;
-const int Range_Special_2H_2		= 110;
+const int Range_Special_2H_2		= 120; //110
 const int Value_Special_2H_2		= 1500;
 
 // *******************
@@ -630,7 +630,7 @@ const int Value_Orkschlaechter		= 1300;
 //Schwerer Zweihänder
 const int Damage_Zweihaender4 		= 68; 
 const int Condition_Zweihaender4	= 68; 
-const int Range_Zweihaender4		= 100; //120
+const int Range_Zweihaender4		= 110; //120
 const int Value_Zweihaender4		= 1350;
 //Schlachtaxt (2h) - NEUE INSTANZ
 const int Damage_Schlachtaxt 		= 70; 

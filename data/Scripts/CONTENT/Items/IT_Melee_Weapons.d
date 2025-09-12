@@ -2357,6 +2357,8 @@ INSTANCE ItMw_Sturmbringer (C_Item)		//Joly: trägt None_101_Mario_DI, aber erst 
 	cond_value[2]  		=	Condition_Sturmbringer;
 	visual 				=	"ItMw_075_2h_sword_heavy_03.3DS";
 
+	effect 				=	"SPELLFX_LIGHTNINGSWORD";
+
 	description			= name;
 	TEXT[1]				= NAME_Dam_Edge;				COUNT[1]	= damageTotal;
 	TEXT[2] 			= NAME_Str_needed;				COUNT[2]	= cond_value[2];

@@ -463,8 +463,8 @@ instance ItAr_FireArmor_Addon (C_Item)
 	wear 					=	WEAR_TORSO | WEAR_EFFECT;
 	effect					=	"SPELLFX_FIREARMOR";
 
-	visual 					=	"ItAr_Xardas.3ds";
-	visual_change 			=	"Armor_Xardas.asc";
+	visual 					=	"ItAr_KdF_H.3ds";
+	visual_change 			=	"Armor_Kdf_H.asc";
 	visual_skin 			=	0;
 	material 				=	MAT_LEATHER;
 

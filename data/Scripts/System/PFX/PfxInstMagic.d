@@ -11414,7 +11414,8 @@ INSTANCE FIRE_MODEL_KAIRO (C_PARTICLEFX)
      shpscalefps = 2;
      dirmode_s = "RAND";
      velavg = 0.00999999978;
-     lsppartavg = 1200;
+     //lsppartavg = 1200;
+     lsppartavg = 800;
      lsppartvar = 200;
      flygravity_s = "0 0 0";
      visname_s = "SHADOWBEAST_FIRE.TGA";
@@ -11423,8 +11424,9 @@ INSTANCE FIRE_MODEL_KAIRO (C_PARTICLEFX)
      vistexaniislooping = 2;
      vistexcolorstart_s = "255 255 255";
      vistexcolorend_s = "255 255 255";
-     vissizestart_s = "20 20";
-     vissizeendscale = 5;
+     vissizestart_s = "25 25";
+     //vissizeendscale = 5;
+     vissizeendscale = 2.0;
      visalphafunc_s = "ADD";
      visalphastart = 255;
 };
@@ -11507,9 +11509,54 @@ PROTOTYPE FIRE_SWORD_PROTO (C_PARTICLEFX)
 //	trlFadeSpeed		= 0.3;
 //	trlWidth			= 3;
 };
+
+PROTOTYPE LIGHTNING_SWORD_PROTO (C_PARTICLEFX)
+{
+     ppsvalue = 10.000000000;
+     ppsscalekeys_s = "1 2 1 0.7 0.4 0.1";
+     ppsissmooth = 1;
+     ppsfps = 2.000000000;
+     ppsIsLooping =1;
+     shpfor_s = "object";
+     //shptype_s = "MESH";
+     //shpoffsetvec_s		= "=";
+     //shpdim_s = "7";
+     shpdistribtype_s = "UNIFORM";
+     shptype_s = "BOX";
+     shpoffsetvec_s = "-60 0 0";
+     shpdim_s = "50 2 6";
+     //shpisvolume = 1;
+     shpscalekeys_s = "1";
+     shpscaleislooping = 1;
+     shpscaleissmooth = 1;
+     shpscalefps = 2.000000000;
+     dirmode_s = "MESH";
+     dirangleheadvar = 180.000000000;
+     dirangleelevvar = 180.000000000;
+     velavg = 0.001000000;
+     velvar = 0.000100000;
+     lsppartavg = 500.000000000;
+     flygravity_s = "0 0 0";
+     visname_s = "KOPFBALL.TGA";
+     visorientation_s = "VELO";
+     vistexisquadpoly = 1;
+     vistexanifps = 10.000000000;
+     vistexaniislooping = 1;
+     vistexcolorstart_s = "80 200 255";
+     vistexcolorend_s = "20 100 150";
+     vissizestart_s = "2 2";
+     vissizeendscale = 2.000000000;
+     visalphafunc_s = "ADD";
+     visalphastart = 255.000000000;
+     visalphaend = 150.000000000;
+};
 ////////////////////////////////////////////////////////////////////////////////
 
 INSTANCE FIRE_SWORD (FIRE_SWORD_PROTO)
+{
+};
+
+INSTANCE LIGHTNING_SWORD (LIGHTNING_SWORD_PROTO)
 {
 };
 

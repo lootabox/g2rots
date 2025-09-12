@@ -5101,7 +5101,7 @@ INSTANCE SPELLFX_FIREARMOR (CFX_BASE_PROTO)
      secsperdamage			= -1;
      emAdjustShpToOrigin	= 1;
      
-     emFXCreate_S			= "SPELLFX_FIREARMOR_SMOKE";
+     //emFXCreate_S			= "SPELLFX_FIREARMOR_SMOKE";
      
 };
 
@@ -5219,6 +5219,18 @@ INSTANCE SPELLFX_FIRESWORD_KEY_INVEST_5 (C_PARTICLEFXEMITKEY)
 	lightrange				= 100;
 	pfx_ppsValue			= 150;
 };
+
+//***************************************************************************
+
+instance SPELLFX_LIGHTNINGSWORD			(CFx_Base_Proto)
+{
+	visname_S 				= "LIGHTNING_SWORD";
+	visAlpha				= 1;
+	emtrjmode_s				= "FIXED";
+	lightPresetname			= "FIRESMALL";
+	emAdjustShpToOrigin		= 1;
+};
+
 
 //***************************************************************************
 

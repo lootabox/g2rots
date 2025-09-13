@@ -196,7 +196,7 @@ FUNC VOID DIA_Addon_Pardos_trank_Soup()
 	};	
 	Pardos_Geheilt = TRUE;
 	AI_Output (self, other, "DIA_Addon_Pardos_trank_03_01");//Thank you, I feel a little stronger now.
-	B_GivePlayerXP (XP_Ambient*8);
+	B_GivePlayerXP (XP_Ambient*5);
 };
 //---------------------------------------------------------------------
 //	Info perm

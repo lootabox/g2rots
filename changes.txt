@@ -322,6 +322,7 @@ Greg will comment in Jharkendar if the player did not finish his treasure hunt q
 Greg yelling at Francis makes Francis immediately get up, instead of at a later point in the dialog.
 Grimbald gives NH experience for killed snappers.
 Grimbald makes a remark once the hunt is over.
+Gritta cannot be persuaded to give Matteos' gold after beating it out of her.
 Guard (1061) at Dexter's camp does not react to weapons or magic before talking to NH at least once.
 Hagen actually takes Cornelius' diary from NH.
 Hagen can only be told about carrying the eye if NH has it.

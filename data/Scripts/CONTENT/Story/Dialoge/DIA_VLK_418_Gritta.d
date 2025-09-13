@@ -149,12 +149,20 @@ FUNC VOID DIA_Gritta_WantsMoney_Continue03 ()
 FUNC VOID DIA_Gritta_WantsMoney_WhereMoney ()
 {
 	AI_Output (other,self ,"DIA_Gritta_WantsMoney_WhereMoney_15_00"); //Cut it out. Where's the gold?
-	AI_Output (self ,other,"DIA_Gritta_WantsMoney_WhereMoney_16_01"); //But I don't have the gold, I'm only a poor widow!
-	
-	Info_ClearChoices (DIA_Gritta_WantsMoney);
-	Info_AddChoice (DIA_Gritta_WantsMoney,"Fork over the dough, or I'll slug you one!",DIA_Gritta_WantsMoney_BeatUp);
-	Info_AddChoice (DIA_Gritta_WantsMoney,"Guess we'll just have to sell your stuff...",DIA_Gritta_WantsMoney_EnoughStuff);
-	Info_AddChoice (DIA_Gritta_WantsMoney,"I'm going to pay the sum for you.",DIA_Gritta_WantsMoney_IWillPay);
+	if (Npc_HasItems (self, itmi_gold) >= 100)
+	{
+		AI_Output (self ,other,"DIA_Gritta_WantsMoney_WhereMoney_16_01"); //But I don't have the gold, I'm only a poor widow!
+		
+		Info_ClearChoices (DIA_Gritta_WantsMoney);
+		Info_AddChoice (DIA_Gritta_WantsMoney,"Fork over the dough, or I'll slug you one!",DIA_Gritta_WantsMoney_BeatUp);
+		Info_AddChoice (DIA_Gritta_WantsMoney,"Guess we'll just have to sell your stuff...",DIA_Gritta_WantsMoney_EnoughStuff);
+		Info_AddChoice (DIA_Gritta_WantsMoney,"I'm going to pay the sum for you.",DIA_Gritta_WantsMoney_IWillPay);
+	}
+	else
+	{
+		AI_Output (self, other, "DIA_Gritta_PERM_16_03"); //What else do you want? You've got my gold! Go away!
+		AI_StopProcessInfos (self);
+	};
 };
 FUNC VOID DIA_Gritta_WantsMoney_EnoughStuff ()
 {

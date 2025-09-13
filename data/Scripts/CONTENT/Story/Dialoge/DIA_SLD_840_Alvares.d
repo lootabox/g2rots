@@ -206,7 +206,7 @@ func void DIA_Alvares_PICKPOCKET_DoIt()
 	}
 	else
 	{
-		B_ResetThiefLevel();
+		//B_ResetThiefLevel();
 		B_LogEntry(Topic_PickPocket, ConcatStrings(self.name, PRINT_PickPocketFailed));
 		AI_StopProcessInfos	(self);
 		B_Attack (self, other, AR_SuddenEnemyInferno, 1); //reagiert trotz IGNORE_Theft mit NEWS

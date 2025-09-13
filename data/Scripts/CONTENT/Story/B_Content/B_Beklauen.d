@@ -34,7 +34,7 @@ func void B_Beklauen ()
 	}
 	else
 	{
-		B_ResetThiefLevel();
+		//B_ResetThiefLevel();
 		B_LogEntry(Topic_PickPocket, ConcatStrings(self.name, PRINT_PickPocketFailed));
 		AI_StopProcessInfos	(self);
 		B_Attack (self, other, AR_Theft, 1); //reagiert trotz IGNORE_Theft mit NEWS
@@ -69,7 +69,7 @@ func int B_StealItem(var int TheftDex,var int itemInstance)
 	}
 	else
 	{
-		B_ResetThiefLevel();
+		//B_ResetThiefLevel();
 		B_LogEntry(Topic_PickPocket, ConcatStrings(self.name, PRINT_PickPocketFailed));
 		AI_StopProcessInfos(self);
 		B_Attack(self,other,AR_Theft,1);

@@ -1,8 +1,6 @@
 var int VictimCount;
 var int VictimLevel;
 var int ThiefLevel;
-
-const int ThiefXP = 50;
 //------------------------------------------------------------------
 FUNC VOID B_GiveThiefXP()
 {
@@ -12,7 +10,7 @@ FUNC VOID B_GiveThiefXP()
 	
 	if (VictimLevel == 0)
 	{
-		VictimLevel = 2; //Start
+		VictimLevel = 1; //Start
 	};
 	
 	if (VictimCount >= VictimLevel)
@@ -27,17 +25,17 @@ FUNC VOID B_GiveThiefXP()
 		
 		//-------------------XP-----------------------
 		
-		B_GivePlayerXP (ThiefXP + (ThiefLevel * 10));  
+		B_GivePlayerXP (ThiefLevel * 10);  
 };
 //------------------------------------------------------------------ 
-FUNC VOID B_ResetThiefLevel()
-{
-
-	
-	if (VictimCount > ThiefLevel)
-	{
-		VictimCount = (VictimCount - 1); 
-	};
-	
-	
-};
+//FUNC VOID B_ResetThiefLevel()
+//{
+//
+//	
+//	if (VictimCount > ThiefLevel)
+//	{
+//		VictimCount = (VictimCount - 1); 
+//	};
+//	
+//	
+//};

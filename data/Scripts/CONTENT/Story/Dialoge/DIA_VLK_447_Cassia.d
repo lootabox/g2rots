@@ -650,9 +650,9 @@ FUNC VOID DIA_Cassia_Pickpocket_Info()
 	
 	if B_TeachThiefTalent (self, other, NPC_TALENT_PICKPOCKET)
 	{
-		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_01");//If you want to empty somebody's pockets, distract him. Just start talking to him, have a chat.
+		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_01");//If you want to empty somebody's pockets, distract him. Just start talking to him.
 		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_02");//While you're talking to him, size him up. Look out for bulging pockets, jewelry, or leather straps around the neck. And, most of all, note how keen the fellow seems.
-		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_03");//Robbing a drunk day-laborer is not the same as stealing from a watchful merchant, mind you.
+		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_03");//Robbing a drunk day-laborer is not the same as stealing from a watchful merchant.
 		AI_Output (self, other, "DIA_Cassia_Pickpocket_16_04");//If you're too clumsy, of course, he'll smell a rat. So, above all: keep your cool.
 	};
 };

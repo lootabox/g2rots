@@ -179,7 +179,7 @@ FUNC INT DIA_Addon_10018_Torwache_Hi_Condition()
 FUNC VOID DIA_Addon_10018_Torwache_Hi_Info()
 {	
 	AI_Output (other, self, "DIA_Addon_BDT_10018_Torwache_Hi_15_00");//It is damned important that I get to him.
-	AI_Output (self, other, "DIA_Addon_BDT_10018_Torwache_Hi_04_01");//No. It isn't. Only Bloodwyn has permission to stay in there.
+	AI_Output (self, other, "DIA_Addon_BDT_10018_Torwache_Hi_04_01");//No, it isn't. Only Bloodwyn has permission to stay in there.
 	
 	B_LogEntry (Topic_Addon_Tempel,"Only Bloodwyn is allowed to stay in the temple. Maybe I can get into the temple through him.");
 };

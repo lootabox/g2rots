@@ -693,7 +693,7 @@ func void DIA_Addon_Martin_GetMiliz_Info ()
 	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_01"); //Oh, yeah. You want to join the militia, right?
 	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_02"); //You've already proven your abilities to me.
 	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_03"); //Well. Let me put it this way. I'd rather know you were on our side than on someone else's.
-	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_04"); //That's why I'll help you. Take this letter of recommendation from me and show it to Andre, our commanding paladin.
+	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_04"); //That's why I'll help you. Take this letter of recommendation from me and show it to Andre, our paladin commander.
 	CreateInvItems (self, ItWr_Martin_MilizEmpfehlung_Addon, 1);									
 	B_GiveInvItems (self, other, ItWr_Martin_MilizEmpfehlung_Addon, 1);		
 	AI_Output	(self, other, "DIA_Addon_Martin_GetMiliz_07_05"); //You'll find him in the barracks. I'm sure he can use you.

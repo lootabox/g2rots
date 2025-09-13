@@ -401,7 +401,7 @@ FUNC VOID DIA_Thorben_PleaseTeach_Info()
 	}
 	else if (Thorben_GotGold == TRUE) //100 Gold bekommen
 	{
-		AI_Output (self, other,"DIA_Thorben_PleaseTeach_06_03"); //You have brought me the 100 gold pieces. That was very decent of you.
+		AI_Output (self, other,"DIA_Thorben_PleaseTeach_06_03"); //You have brought me the 100 gold pieces. That is very decent of you.
 		AI_Output (self, other,"DIA_Thorben_PleaseTeach_06_04"); //I am almost embarrassed, but I must ask even more of you.
 		AI_Output (self, other,"DIA_Thorben_PleaseTeach_06_05"); //If I cannot pay back my debt to Lehmar soon, he's going to send his thugs after me.
 		AI_Output (self, other,"DIA_Thorben_PleaseTeach_06_06"); //Give me another 100 gold pieces, and I shall instruct you.

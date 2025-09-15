@@ -224,6 +224,7 @@ Balthasar's sheep properly move to Bengar's farm with him, instead of being dupl
 Baltram can only be asked about Akils farm if NH does yet know how to find it.
 Bandit 10008 warns NH not to wake up Skinner only if he has not already done so.
 Bartok now grants previously omitted XP bonus for finishing the hunt with him.
+Bartok occasional muttering about the orc fixed.
 Bartok only equips his hunting gear while hunting.
 Bartok wears a Rough Bastard Sword instead of Machete.
 Bengar always notices return of Pardos.
@@ -261,6 +262,7 @@ Cassia can give the Blood Chalice quest, even if NH was a wanted thief.
 Cassia cannot be paid for learning to pickpocket if it's already learned.
 Cassias quests become obsolete if the paladins kill her.
 Cavalorn gives much less gold for buying the farmer's clothes.
+Chef "meat cleaver" bullying fixed.
 Cornelius cannot be given gold for the diary twice.
 Cornelius' diary cannot be stolen before learning of him being a witness to the murder.
 Daron can only be asked about paladins after he mentions them.

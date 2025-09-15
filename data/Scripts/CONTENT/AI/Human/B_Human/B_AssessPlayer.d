@@ -156,7 +156,8 @@ func void B_AssessPlayer ()
 	};	
 	
 	// ------ sonst den Spieler einfach grüßen (wenn ich ihm entgegenkomme) ------
-	if (C_BodyStateContains(self,BS_WALK))
+	if (C_BodyStateContains(self,BS_WALK) ||
+		(Hlp_GetInstanceID(self)==Hlp_GetInstanceID(Koch) /*MEATCLEAVER*/))
 	&& (Npc_GetDistToNpc(self,other) <= PERC_DIST_DIALOG)			// Npc_CanSeeNpc hier sowieso == TRUE; sonst keine ASSESSPLAYER-Wahrnehmung
 	&& (Npc_RefuseTalk(other) == FALSE)		//Damit kein Gruß-Maschinengewehr losgeht
 	&& (!C_NpcIsGateGuard (self))	//GateGuards benutzen RefuseTalk-Counter, um zu verhindern, daß der Spieler von hinten kommend auch angequatscht wird

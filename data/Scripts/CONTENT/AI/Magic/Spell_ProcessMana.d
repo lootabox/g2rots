@@ -32,6 +32,7 @@ func INT Spell_ProcessMana (VAR INT manaInvested)
 	if (activeSpell == SPL_TeleportOWDemonTower)	{	return  Spell_Logic_TeleportOWDemonTower(manaInvested); };
 	if (activeSpell == SPL_TeleportTaverne		)	{	return  Spell_Logic_TeleportTaverne		(manaInvested); };
 	if (activeSpell == SPL_Teleport_Maya		)	{	return  Spell_Logic_Teleport_Maya		(manaInvested); };
+	if (activeSpell == SPL_Teleport_3			)	{	return  Spell_Logic_Teleport_3			(manaInvested); };
 	//Runen und Scrolls
 	//Kreis 1
 	if (activeSpell == SPL_LIGHT				)	{	return  Spell_Logic_Light				(manaInvested); };

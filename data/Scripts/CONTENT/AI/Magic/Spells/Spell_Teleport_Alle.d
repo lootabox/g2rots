@@ -235,6 +235,24 @@ func void Spell_Cast_Teleport_Maya ()
 	AI_PlayAni		(self, "T_HEASHOOT_2_STAND" );
 };
 
+// ------ Circle of the Sun ------
+func int Spell_Logic_Teleport_3 (var int manaInvested)
+{
+	var int logicResult; logicResult = Spell_Logic_Basic(self, SPL_Cost_Teleport);
+	if (logicResult == SPL_SENDCAST)	{ return SPL_SENDCAST; };
+	return SPL_NEXTLEVEL;
+};
+
+func void Spell_Cast_Teleport_3 ()
+{
+	B_PrintTeleportTooFarAway (NEWWORLD_ZEN);
+	
+	Spell_Cast_Basic(self, SPL_Cost_Teleport);
+
+	AI_Teleport		(self, "NW_TROLLAREA_RITUALPATH_02");
+	AI_PlayAni		(self, "T_HEASHOOT_2_STAND" );
+};
+
 
 
 // ----- neu 1.21 Verteiler für die Cast-Funcs -------
@@ -251,7 +269,7 @@ func void Spell_Cast_Teleport()
 	if (Npc_GetActiveSpell(self) == SPL_TeleportOWDemonTower)	{	Spell_Cast_TeleportOWDemonTower (); };
 	if (Npc_GetActiveSpell(self) == SPL_TeleportTaverne		)	{	Spell_Cast_TeleportTaverne		(); };
 	if (Npc_GetActiveSpell(self) == SPL_Teleport_Maya		)	{	Spell_Cast_Teleport_Maya		(); };
-//	if (Npc_GetActiveSpell(self) == SPL_Teleport_3			)	{	Spell_Cast_XXX					(); };
+	if (Npc_GetActiveSpell(self) == SPL_Teleport_3			)	{	Spell_Cast_Teleport_3			(); };
 
 };
 

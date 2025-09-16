@@ -253,7 +253,7 @@ const string TXT_SPELLS[MAX_SPELL] =
 	"To Castle",					// 14	SPL_TeleportOC
 	"To Old Demon Tower",	// 15	SPL_TeleportOWDemonTower
 	"To Tavern",				// 16	SPL_TeleportTaverne
-	"TXT_SPL_TELEPORT_3",		// 17	SPL_Teleport_3
+	"To Circle of the Sun",		// 17	SPL_Teleport_3
 
 	// Kreis 1
 	"Light",					// 18	SPL_Light
@@ -396,7 +396,7 @@ const string NAME_SPL_TeleportPassOW		= "Teleport to Valley of Mines Pass";
 const string NAME_SPL_TeleportOC			= "Teleport to Castle";
 const string NAME_SPL_TeleportOWDemonTower	= "Teleport to Ancient Demon Tower";
 const string NAME_SPL_TeleportTaverne		= "Teleport to Tavern";
-const string NAME_SPL_Teleport_3			= "NAME_SPL_TELEPORT_3";
+const string NAME_SPL_Teleport_3			= "Teleport to Circle of the Sun";
 
 // Kreis 1
 const string NAME_SPL_LIGHT					= "Light";

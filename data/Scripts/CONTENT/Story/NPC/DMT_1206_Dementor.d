@@ -23,6 +23,7 @@ instance DMT_1206_Dementor (Npc_Default)
 
 	// ------ Inventory ------
 	B_CreateAmbientInv 	(self);
+	CreateInvItems (self, ItRu_Teleport_3, 1);
 		
 	// ------ visuals ------																			
 	B_SetNpcVisual 		(self, MALE, "Hum_Head_Bald", Face_N_MadPsi, BodyTex_N, ITAR_Dementor);	

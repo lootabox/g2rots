@@ -45,6 +45,7 @@ Fire Mages are only promoted into the High Order of the Fire Magicians in chapte
 	Spells
 
 Spells deal +50% damage against monsters weak to those spells instead of double damage.
+Restored teleport rune to Circle of the Sun.
 
 
 	Quests

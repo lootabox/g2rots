@@ -84,7 +84,7 @@ func void DIA_Schwarzmagier_HELLO_meister ()
 
 	if (Npc_HasItems (other,ItAm_Prot_BlackEye_Mis))
 	{
-	AI_Output			(other, self, "DIA_Schwarzmagier_HELLO_meister_15_02"); //(to himself) Without that soul summoning amulet, I'd have a serious problem now.
+	AI_Output			(other, self, "DIA_Schwarzmagier_HELLO_meister_15_02"); //(to himself) Without the soul summoning amulet, I'd have a serious problem now.
 	}
 	else
 	{

@@ -421,7 +421,7 @@ func void DIA_Jack_BEMYCAPTAIN_Info ()
 {
 	AI_Output			(other, self, "DIA_Jack_BEMYCAPTAIN_15_00"); //Wouldn't you like going back to sea?
 	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_14_01"); //I'd give my right arm if only they'd hire me on a big schooner just one more time.
-	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_14_02"); //But for an old sea dog like me, that's not so easy, my lad. Anyway, who would take care of the lighthouse then?
+	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_14_02"); //But for an old sea dog like me, that's not easy, my lad. Anyway, who would take care of the lighthouse then?
 
 	Info_ClearChoices	(DIA_Jack_BEMYCAPTAIN);
 	Info_AddChoice	(DIA_Jack_BEMYCAPTAIN, "Never mind. It was just an idea.", DIA_Jack_BEMYCAPTAIN_no );
@@ -434,7 +434,7 @@ func void DIA_Jack_BEMYCAPTAIN_seaman ()
 	AI_Output			(other, self, "DIA_Jack_BEMYCAPTAIN_seaman_15_00"); //I need your experience as a sailor.
 	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_seaman_14_01"); //Shiver me timbers. What are you planning to do, matey? You're not fixing to board the King's war galley, are you?
 	AI_Output			(other, self, "DIA_Jack_BEMYCAPTAIN_seaman_15_02"); //Who knows?
-	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_seaman_14_03"); //(laughs) That would be something. Oh well. But I can't give up my lighthouse just like that. Hmm. What shall we do about that?
+	AI_Output			(self, other, "DIA_Jack_BEMYCAPTAIN_seaman_14_03"); //(laughs) That would be something. Oh well. But I can't give up me lighthouse just like that. Hmm. What shall we do about that?
 	
 	Log_CreateTopic (TOPIC_Captain, LOG_MISSION);                                                                                                                        
 	Log_SetTopicStatus(TOPIC_Captain, LOG_RUNNING);                                                                                                                      

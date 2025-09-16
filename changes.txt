@@ -223,6 +223,7 @@ Balthasar won't think his sheep are missing unless some of them are actually dea
 Balthasar's sheep properly move to Bengar's farm with him, instead of being duplicated.
 Baltram can only be asked about Akils farm if NH does yet know how to find it.
 Bandit 10008 warns NH not to wake up Skinner only if he has not already done so.
+Bandit 10018 can't be told its important to get to Bloodwyn if he is dead.
 Bartok now grants previously omitted XP bonus for finishing the hunt with him.
 Bartok occasional muttering about the orc fixed.
 Bartok only equips his hunting gear while hunting.

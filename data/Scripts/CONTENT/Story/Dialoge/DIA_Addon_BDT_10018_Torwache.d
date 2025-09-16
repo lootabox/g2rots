@@ -174,7 +174,10 @@ INSTANCE DIA_Addon_BDT_10018_Torwache_Hi   (C_INFO)
 };
 FUNC INT DIA_Addon_10018_Torwache_Hi_Condition()
 {	
-	return TRUE;
+	if (!Npc_IsDead (Bloodwyn))
+	{
+		return TRUE;
+	};
 };
 FUNC VOID DIA_Addon_10018_Torwache_Hi_Info()
 {	

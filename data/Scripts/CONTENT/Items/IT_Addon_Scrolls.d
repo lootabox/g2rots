@@ -136,6 +136,8 @@ INSTANCE ItSc_Thunderstorm (C_Item)
 
 	TEXT	[3]			=	NAME_IceStorm_Info;
 	
+	TEXT	[4]			=	NAME_AreaOfEffect_Large;
+
 	TEXT	[5]			=	NAME_Value;					
 	COUNT	[5]			=	value;
 };

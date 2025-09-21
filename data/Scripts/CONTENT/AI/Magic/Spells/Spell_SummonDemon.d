@@ -3,7 +3,7 @@
 // ***************
 
 const int SPL_Cost_SummonDemon		= 100;
-const int SPL_Duration_SummonDemon	= 10; // MONSTER_SUMMON_TIME
+const int SPL_Duration_SummonDemon	= 20; // MONSTER_SUMMON_TIME
 
 
 INSTANCE Spell_SummonDemon (C_Spell_Proto)	//ehem. Spell_Demon

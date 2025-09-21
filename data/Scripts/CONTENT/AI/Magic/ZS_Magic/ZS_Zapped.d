@@ -39,8 +39,8 @@ func int ZS_Zapped ()
 func int ZS_Zapped_Loop ()
 {	
 	if	(!MageStaff_Blades_2H_03_Equipped)
-	&&	(Npc_GetStateTime(self) >= SPL_TIME_ZAPPED)
-	||	(Npc_GetStateTime(self) >= SPL_TIME_ZAPPED*2)
+	&&	(self.aivar[AIV_FreezeStateTime] >= SPL_TIME_ZAPPED)
+	||	(self.aivar[AIV_FreezeStateTime] >= SPL_TIME_ZAPPED*2)
 	{
 		return LOOP_END;
 	};

@@ -133,6 +133,10 @@ INSTANCE Summoned_Skeleton (Mst_Default_Skeleton)
 	guild							=	GIL_SUMMONED_SKELETON;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_SKELETON;
 	level							=	0;
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton;
+	if (MageStaff_Normal_2H_03_Equipped) {
+		aivar[AIV_SummonTime] += SPL_Duration_SummonSkeleton;
+	};
 	
 	fight_tactic	=	FAI_HUMAN_NORMAL;
 	
@@ -195,6 +199,10 @@ INSTANCE Summoned_Lesser_Skeleton (Mst_Default_Skeleton)
 	guild							=	GIL_SUMMONED_SKELETON;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_SKELETON;
 	level							=	0;
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton;
+	if (MageStaff_Normal_2H_03_Equipped) {
+		aivar[AIV_SummonTime] += SPL_Duration_SummonSkeleton;
+	};
 	
 	//----- Attribute ----	
 	attribute	[ATR_STRENGTH]		=	60;

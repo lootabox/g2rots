@@ -5,7 +5,7 @@
 // aus ZS_Zapped aufgerufen
 // **************************************
 
-const int SPL_TIME_SHORTZAPPED = 1;
+const int SPL_TIME_SHORTZAPPED = 2;
 
 // **********************************
 // ZS_ShortZapped
@@ -39,8 +39,8 @@ func int ZS_ShortZapped()
 func int ZS_ShortZapped_Loop ()
 {	
 	if	(!MageStaff_Blades_2H_03_Equipped)
-	&&	(Npc_GetStateTime(self) >= SPL_TIME_SHORTZAPPED)
-	||	(Npc_GetStateTime(self) >= SPL_TIME_SHORTZAPPED*2)
+	&&	(self.aivar[AIV_FreezeStateTime] >= SPL_TIME_SHORTZAPPED)
+	||	(self.aivar[AIV_FreezeStateTime] >= SPL_TIME_SHORTZAPPED*2)
 	{
 		return LOOP_END;
 	};
@@ -48,7 +48,7 @@ func int ZS_ShortZapped_Loop ()
 	if (Npc_GetStateTime(self) != self.aivar[AIV_FreezeStateTime])
 	{
 		self.aivar[AIV_FreezeStateTime] = Npc_GetStateTime(self);
-		B_MagicHurtNpc(other, self, SPL_ZAPPED_DAMAGE_PER_SEC);
+		//B_MagicHurtNpc(other, self, SPL_ZAPPED_DAMAGE_PER_SEC);
 	};
 	return LOOP_CONTINUE;
 };

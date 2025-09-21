@@ -809,7 +809,7 @@ INSTANCE ItRu_SumGobSkel (C_Item)
 
 	TEXT	[2]			=	NAME_SumGobSkel_Info;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Sec_Duration);
+	TEXT	[3]			=	NAME_Sec_Duration;
 	COUNT	[3]			=	SPL_Duration_SummonGoblinSkeleton;
 	
 	TEXT	[5]			=	NAME_Value;
@@ -921,7 +921,7 @@ INSTANCE ItRu_SumWolf (C_Item)
 
 	TEXT	[2]			=	NAME_SumWolf_Info;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Sec_Duration);
+	TEXT	[3]			=	NAME_Sec_Duration;
 	COUNT	[3]			=	SPL_Duration_SummonWolf;
 
 	TEXT	[5]			=	NAME_Value;
@@ -994,7 +994,7 @@ INSTANCE ItRu_Sleep (C_Item)
 	TEXT	[2]			=	NAME_SEC_Duration;
 	COUNT	[2]			=	SPL_TIME_Sleep;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Instant);
+	TEXT	[3]			=	NAME_Instant;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -1070,7 +1070,8 @@ INSTANCE ItRu_LightningFlash (C_Item)
 	TEXT	[3]			=	ConcatStrings(NAME_Zap_Living, NAME_Sec_Duration);
 	COUNT	[3]			=	SPL_TIME_ZAPPED;
 
-	TEXT	[4]			=	NAME_Instant;
+	TEXT	[4]			=	ConcatStrings(NAME_Instant, NAME_DamagePerSec);
+	COUNT	[4]			=	SPL_ZAPPED_DAMAGE_PER_SEC;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -1145,7 +1146,7 @@ INSTANCE ItRu_SumSkel (C_Item)
 
 	TEXT	[2]			=	NAME_SumSkel_Info;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Sec_Duration);
+	TEXT	[3]			=	NAME_Sec_Duration;
 	COUNT	[3]			=	SPL_Duration_SummonSkeleton;
 	
 	TEXT	[5]			=	NAME_Value;
@@ -1265,7 +1266,7 @@ INSTANCE ItRu_ThunderBall (C_Item)
 	count 	[2]			=   SPL_Damage_ChargeZap;
 
 	TEXT	[3]			=	ConcatStrings(NAME_Zap_Living, NAME_Sec_Duration);
-	COUNT	[3]			=	SPL_TIME_ZAPPED;
+	COUNT	[3]			=	SPL_TIME_SHORTZAPPED;
 
 	TEXT	[4]			=	NAME_Nonlethal;
 	
@@ -1499,7 +1500,7 @@ INSTANCE ItRu_SumDemon (C_Item)
 
 	TEXT	[2]			=	NAME_SumDemon_Info;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Sec_Duration);
+	TEXT	[3]			=	NAME_Sec_Duration;
 	COUNT	[3]			=	SPL_Duration_SummonDemon;
 	
 	TEXT	[5]			=	NAME_Value;
@@ -1755,7 +1756,7 @@ INSTANCE ItRu_Shrink (C_Item)
 	TEXT	[2]			=	NAME_Shrink_Penalty;
 	COUNT	[2]			=	SPL_Shrink_Penalty;
 
-	TEXT	[3]			=	ConcatStrings(NAME_ShortRange, NAME_Instant);
+	TEXT	[3]			=	NAME_Instant;
 
 	TEXT	[4]			=	NAME_Shrink_Info;
 	

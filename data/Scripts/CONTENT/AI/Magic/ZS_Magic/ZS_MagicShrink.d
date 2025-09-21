@@ -41,12 +41,12 @@ func int ZS_MagicShrink_Loop ()
 		Npc_ChangeAttribute (self,ATR_HITPOINTS_MAX,	-(self.attribute[ATR_HITPOINTS_MAX]		* SPL_Shrink_Penalty / 100));
 		Npc_ChangeAttribute (self,ATR_STRENGTH,			-(self.attribute[ATR_STRENGTH]			* SPL_Shrink_Penalty / 100));
 		Npc_ChangeAttribute (self,ATR_DEXTERITY,		-(self.attribute[ATR_DEXTERITY]			* SPL_Shrink_Penalty / 100));
-		if (self.protection[PROT_BLUNT] > 0)	{ self.protection[PROT_BLUNT]	=	self.protection[PROT_BLUNT]	* (100 - SPL_Shrink_Penalty) / 100; }
-		if (self.protection[PROT_EDGE] > 0)		{ self.protection[PROT_EDGE]	=	self.protection[PROT_EDGE]	* (100 - SPL_Shrink_Penalty) / 100; }
-		if (self.protection[PROT_FIRE] > 0)		{ self.protection[PROT_FIRE]	=	self.protection[PROT_FIRE]	* (100 - SPL_Shrink_Penalty) / 100; }
-		if (self.protection[PROT_FLY] > 0)		{ self.protection[PROT_FLY]		=	self.protection[PROT_FLY]	* (100 - SPL_Shrink_Penalty) / 100; }
-		if (self.protection[PROT_MAGIC] > 0)	{ self.protection[PROT_MAGIC]	=	self.protection[PROT_MAGIC]	* (100 - SPL_Shrink_Penalty) / 100; }
-		if (self.protection[PROT_POINT] > 0)	{ self.protection[PROT_POINT]	=	self.protection[PROT_POINT]	* (100 - SPL_Shrink_Penalty) / 100; }
+		if (self.protection[PROT_BLUNT] > 0)	{ self.protection[PROT_BLUNT]	=	self.protection[PROT_BLUNT]	* (100 - SPL_Shrink_Penalty) / 100; };
+		if (self.protection[PROT_EDGE] > 0)		{ self.protection[PROT_EDGE]	=	self.protection[PROT_EDGE]	* (100 - SPL_Shrink_Penalty) / 100; };
+		if (self.protection[PROT_FIRE] > 0)		{ self.protection[PROT_FIRE]	=	self.protection[PROT_FIRE]	* (100 - SPL_Shrink_Penalty) / 100; };
+		if (self.protection[PROT_FLY] > 0)		{ self.protection[PROT_FLY]		=	self.protection[PROT_FLY]	* (100 - SPL_Shrink_Penalty) / 100; };
+		if (self.protection[PROT_MAGIC] > 0)	{ self.protection[PROT_MAGIC]	=	self.protection[PROT_MAGIC]	* (100 - SPL_Shrink_Penalty) / 100; };
+		if (self.protection[PROT_POINT] > 0)	{ self.protection[PROT_POINT]	=	self.protection[PROT_POINT]	* (100 - SPL_Shrink_Penalty) / 100; };
 
 		if (self.damagetype & DAM_FLY)
 		{

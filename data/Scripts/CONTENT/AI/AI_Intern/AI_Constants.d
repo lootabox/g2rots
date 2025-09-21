@@ -425,7 +425,7 @@ const int FIGHT_DIST_MONSTER_FLEE		= 300;	// Ab wann fliehe ich vor einem Feind
 const int FIGHT_DIST_DRAGON_MAGIC		= 500;
 //---------------------------------------------
 const int MONSTER_THREATEN_TIME			= 4; 	// Sekunden, die Monster drohen, bevor sie angreifen (wenn Gegner nicht zu weit und nicht zu nah)
-const int MONSTER_SUMMON_TIME			= 10;
+const int MONSTER_SUMMON_TIME			= 60;
 
 /********************************************************************
 **					Konstanten für Distanzen					   **

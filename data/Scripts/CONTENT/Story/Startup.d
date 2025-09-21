@@ -51,6 +51,7 @@ func void INIT_GLOBAL()
 	FixSpellInfoForVFX_Init();
 	RegenMechanic_Init();
 	AF_ItemPreview_Init();
+	G12_FadeAway_Init();
 	ReduceSpellDoubleDmgMultiplier_Init();
 	ReduceAfterLoadWait_Init();
 };

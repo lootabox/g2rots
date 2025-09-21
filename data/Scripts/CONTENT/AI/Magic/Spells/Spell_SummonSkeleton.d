@@ -3,7 +3,7 @@
 // ******************
 
 const int SPL_Cost_SummonSkeleton			= 30;
-const int SPL_Duration_SummonSkeleton		= 10; // MONSTER_SUMMON_TIME
+const int SPL_Duration_SummonSkeleton		= 20; // MONSTER_SUMMON_TIME
 
 
 INSTANCE Spell_SummonSkeleton (C_Spell_Proto)	//ehem. Spell_Skeleton

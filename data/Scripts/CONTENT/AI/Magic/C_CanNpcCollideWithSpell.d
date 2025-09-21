@@ -289,7 +289,6 @@ func int C_CanNpcCollideWithSpell(var int spellType)
 		var int applyState; applyState = COLL_DONOTHING;
 		if	(!C_NpcIsUndead(self))
 		&&	(!C_NpcIsGolem(self))
-		&&	(self.attribute[ATR_HITPOINTS] >= self.attribute[ATR_HITPOINTS_MAX])
 		{
 			applyState = applyState | COLL_APPLYVICTIMSTATE;
 		};

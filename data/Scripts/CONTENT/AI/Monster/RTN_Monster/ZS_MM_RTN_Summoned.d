@@ -55,6 +55,10 @@ func int ZS_MM_Rtn_Summoned_Loop()
 			
 			// ------ Summon Time -------
 			self.aivar[AIV_SummonTime] = (self.aivar[AIV_SummonTime] - 1); //weil AI_Goto länger dauern kann
+			if (MageStaff_Normal_2H_03_Equipped)
+			{
+				self.aivar[AIV_SummonTime] = (self.aivar[AIV_SummonTime] - 1);
+			};
 			if	(self.aivar[AIV_SummonTime] <= 0)
 			{
 				 Npc_ChangeAttribute (self, ATR_HITPOINTS, -self.attribute[ATR_HITPOINTS_MAX]);

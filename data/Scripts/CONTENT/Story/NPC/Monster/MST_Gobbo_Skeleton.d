@@ -87,10 +87,7 @@ INSTANCE Summoned_Gobbo_Skeleton (Mst_Default_Gobbo_Skeleton)
 	guild							= GIL_SUMMONED_GOBBO_SKELETON;
 	aivar[AIV_MM_REAL_ID]			= ID_SUMMONED_GOBBO_SKELETON;
 	level							= 0;
-	aivar[AIV_SummonTime]			= SPL_Duration_SummonGoblinSkeleton;
-	if (MageStaff_Normal_2H_03_Equipped) {
-		aivar[AIV_SummonTime] += SPL_Duration_SummonGoblinSkeleton;
-	};
+	aivar[AIV_SummonTime]			= SPL_Duration_SummonGoblinSkeleton * 2;
 
 	aivar[AIV_PARTYMEMBER] = TRUE;
 	B_SetAttitude (self, ATT_FRIENDLY); 

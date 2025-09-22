@@ -85,10 +85,7 @@ INSTANCE Summoned_Demon_Hostile (Mst_Default_Demon)
 	guild							= GIL_SUMMONED_DEMON;
 	aivar[AIV_MM_REAL_ID]			= ID_SUMMONED_DEMON;
 	level							= 0;
-	aivar[AIV_SummonTime]			= SPL_Duration_SummonDemon;
-	if (MageStaff_Normal_2H_03_Equipped) {
-		aivar[AIV_SummonTime] += SPL_Duration_SummonDemon;
-	};
+	aivar[AIV_SummonTime]			= SPL_Duration_SummonDemon * 2;
 
 	B_SetVisuals_Demon();
 	Npc_SetToFistMode(self);
@@ -102,10 +99,7 @@ INSTANCE Summoned_Demon (Mst_Default_Demon)
 	guild							= GIL_SUMMONED_DEMON;
 	aivar[AIV_MM_REAL_ID]			= ID_SUMMONED_DEMON;
 	level							= 0;
-	aivar[AIV_SummonTime]			= SPL_Duration_SummonDemon;
-	if (MageStaff_Normal_2H_03_Equipped) {
-		aivar[AIV_SummonTime] += SPL_Duration_SummonDemon;
-	};
+	aivar[AIV_SummonTime]			= SPL_Duration_SummonDemon * 2;
 	
 	aivar[AIV_PARTYMEMBER] = TRUE;
 	B_SetAttitude (self, ATT_FRIENDLY);

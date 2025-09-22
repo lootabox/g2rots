@@ -125,10 +125,7 @@ INSTANCE Summoned_Wolf	(Mst_Default_Wolf)
 	guild							=	GIL_SUMMONED_WOLF;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_WOLF;
 	level							=	0;
-	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonWolf;
-	if (MageStaff_Normal_2H_03_Equipped) {
-		aivar[AIV_SummonTime] += SPL_Duration_SummonWolf;
-	};
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonWolf * 2;
 	
 	aivar[AIV_PARTYMEMBER] = TRUE;
 	B_SetAttitude (self, ATT_FRIENDLY); 
@@ -148,10 +145,7 @@ INSTANCE Summoned_BlackWolf	(Mst_Default_Wolf)
 	guild							=	GIL_SUMMONED_WOLF;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_WOLF;
 	level							=	0;
-	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonWolf;
-	if (MageStaff_Normal_2H_03_Equipped) {
-		aivar[AIV_SummonTime] += SPL_Duration_SummonWolf;
-	};
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonWolf * 2;
 	
 	aivar[AIV_PARTYMEMBER] = TRUE;
 	B_SetAttitude (self, ATT_FRIENDLY); 

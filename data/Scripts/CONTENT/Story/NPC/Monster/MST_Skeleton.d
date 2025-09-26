@@ -149,8 +149,6 @@ INSTANCE Summoned_Skeleton (Mst_Default_Skeleton)
 	B_SetAttitude (self, ATT_FRIENDLY);
 	
 	start_aistate = ZS_MM_Rtn_Summoned;
-	
-	Wld_PlayEffect("spellFX_SummonCreature_ORIGIN", self, self, 0, 0, 0, FALSE);
 };
 
 //**************
@@ -226,8 +224,6 @@ INSTANCE Summoned_Lesser_Skeleton (Mst_Default_Skeleton)
 	B_SetAttitude (self, ATT_FRIENDLY); 
 	
 	start_aistate = ZS_MM_Rtn_Summoned;
-	
-	Wld_PlayEffect("spellFX_SummonCreature_ORIGIN", self, self, 0, 0, 0, FALSE);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

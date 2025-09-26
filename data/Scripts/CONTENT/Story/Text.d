@@ -746,11 +746,12 @@ const string NAME_IceStorm_Info			= "May hit multiple times. ";
 
 const string NAME_BeliarsRage_Info		= "Deals halved damage against evil targets. ";
 
-const string NAME_SumGobSkel_Info		= "Summons a goblin skeleton, two if charged. ";
-const string NAME_SumWolf_Info			= "Summons a wolf, a black wolf if charged. ";
-const string NAME_SumSkel_Info			= "Summons a lesser skeleton, a skeleton if charged. ";
+const string NAME_SumGobSkel_Info		= "Invest for more goblin skeletons. ";
+const string NAME_SumWolf_Info			= "Invest for a black wolf. ";
+const string NAME_SumSkel_Info			= "Invest for a stronger skeleton. ";
 const string NAME_SumGol_Info			= "Awakens a nearby golem. ";
-const string NAME_SumDemon_Info			= "Summons a demon, friendly only if charged. ";
+const string NAME_SumDemon_Info			= "Invest for a less hostile demon. ";
+const string NAME_SumArmy_Info			= "Invest for more skeletons. ";
 const string NAME_SummonZombie_Info		= "Animates nearby human corpses. ";
 const string NAME_SummonIngredient_Info	= "Required spell component: ";
 

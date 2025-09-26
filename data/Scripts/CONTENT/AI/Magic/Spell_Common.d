@@ -301,7 +301,7 @@ func void Spell_Cast_Focus(var C_NPC slf, var C_NPC oth, var int spellID, var in
 	Wld_PlayEffect(spellFX, oth, oth, 0, 0, 0, FALSE);
 };
 
-func int Spell_Logic_Invest_Summon(var C_NPC slf, var int manaInvested, var int manaCost)
+func int Spell_Logic_Invest_Summon(var C_NPC slf, var int manaInvested, var int manaCost, var int maxLevel)
 {
 	// Npcs cant handle charge summons...
 	if (!Npc_IsPlayer(slf))
@@ -309,14 +309,14 @@ func int Spell_Logic_Invest_Summon(var C_NPC slf, var int manaInvested, var int 
 		return Spell_Logic_Basic(slf, manaCost);
 	};
 
-	return Spell_Logic_Invest(slf, manaInvested, manaCost, 2, FALSE);
+	return Spell_Logic_Invest(slf, manaInvested, manaCost, maxLevel, FALSE);
 };
 
-func void Spell_Cast_Summon(var C_NPC slf, var int spellLevel, var int npcSummonInstance, var int playerSummonInstance, var int playerSummonInstance2) {
+func void Spell_Cast_Summon(var C_NPC slf, var int npcSummonInstance, var int playerSummonInstance, var int summonCount) {
 	// Npcs cant handle charge summons...
 	if (!Npc_IsPlayer(slf))
 	{
-		Wld_SpawnNpcRange	(slf,	npcSummonInstance,			1,	500);
+		Wld_SpawnNpcRange	(slf,	npcSummonInstance,			summonCount,	500);
 		slf.aivar[AIV_SelectSpell] += 1;
 		return;
 	};
@@ -325,30 +325,15 @@ func void Spell_Cast_Summon(var C_NPC slf, var int spellLevel, var int npcSummon
 	{
 		if (Move_Aim_Waypoint(slf))
 		{
-			if (spellLevel > 1)
-			{
-				if (playerSummonInstance == playerSummonInstance2) {
-					Wld_InsertNpc(playerSummonInstance2, SPL_BLINK_WP);
-					Wld_InsertNpc(playerSummonInstance2, SPL_BLINK_WP);
-				} else {
-					Wld_InsertNpc(playerSummonInstance2, SPL_BLINK_WP);
-				};
-			}
-			else
-			{
+			repeat(i, summonCount); var int i;
 				Wld_InsertNpc(playerSummonInstance, SPL_BLINK_WP);
-			};
+			end;
+			//Vob_PlayEffect (SPL_BLINK_WP, "spellFX_SummonCreature_ORIGIN");
+			//Wld_PlayEffect("spellFX_SummonCreature_ORIGIN", self, self, 0, 0, 0, FALSE);
 			return;
 		};
 	};
 
 	// Fallback incase free aim is off or moving the aim waypoint is not possible for some reason
-	if (spellLevel > 1)
-	{
-		Wld_SpawnNpcRange(slf, playerSummonInstance2, 1, 500);
-	}
-	else
-	{
-		Wld_SpawnNpcRange(slf, playerSummonInstance, 1, 500);
-	};
+	Wld_SpawnNpcRange(slf, playerSummonInstance, summonCount, 500);
 };

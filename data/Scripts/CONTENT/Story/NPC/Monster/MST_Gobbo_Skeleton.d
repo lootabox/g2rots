@@ -97,8 +97,6 @@ INSTANCE Summoned_Gobbo_Skeleton (Mst_Default_Gobbo_Skeleton)
 	B_SetVisuals_Gobbo_Skeleton();
 	
 	Npc_SetToFightMode (self, ItMw_1h_MISC_Sword); //Waffe ist nur Optik - Schaden wird NUR über STR bestimmt (Gobbo ist als Monster im Fistmode)
-	
-	Wld_PlayEffect("spellFX_SummonCreature_ORIGIN", self, self, 0, 0, 0, FALSE);
 };
 
 //************************************

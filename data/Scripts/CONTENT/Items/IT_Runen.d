@@ -807,10 +807,10 @@ INSTANCE ItRu_SumGobSkel (C_Item)
 	TEXT	[1]			=	NAME_Manakosten_Per;
 	COUNT	[1]			=	SPL_Cost_SummonGoblinSkeleton;
 
-	TEXT	[2]			=	NAME_SumGobSkel_Info;
+	TEXT	[2]			=	NAME_Sec_Duration;
+	COUNT	[2]			=	SPL_Duration_SummonGoblinSkeleton;
 
-	TEXT	[3]			=	NAME_Sec_Duration;
-	COUNT	[3]			=	SPL_Duration_SummonGoblinSkeleton;
+	TEXT	[3]			=	NAME_SumGobSkel_Info;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -919,10 +919,10 @@ INSTANCE ItRu_SumWolf (C_Item)
 	TEXT	[1]			=	NAME_Manakosten_Per;
 	COUNT	[1]			=	SPL_Cost_SummonWolf;
 
-	TEXT	[2]			=	NAME_SumWolf_Info;
+	TEXT	[2]			=	NAME_Sec_Duration;
+	COUNT	[2]			=	SPL_Duration_SummonWolf;
 
-	TEXT	[3]			=	NAME_Sec_Duration;
-	COUNT	[3]			=	SPL_Duration_SummonWolf;
+	TEXT	[3]			=	NAME_SumWolf_Info;
 
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -1144,10 +1144,10 @@ INSTANCE ItRu_SumSkel (C_Item)
 	TEXT	[1]			=	NAME_Manakosten_Per;
 	COUNT	[1]			=	SPL_COST_SUMMONSKELETON;
 
-	TEXT	[2]			=	NAME_SumSkel_Info;
+	TEXT	[2]			=	NAME_Sec_Duration;
+	COUNT	[2]			=	SPL_Duration_SummonSkeleton;
 
-	TEXT	[3]			=	NAME_Sec_Duration;
-	COUNT	[3]			=	SPL_Duration_SummonSkeleton;
+	TEXT	[3]			=	NAME_SumSkel_Info;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -1498,10 +1498,10 @@ INSTANCE ItRu_SumDemon (C_Item)
 	TEXT	[1]			=	NAME_Manakosten_Per;
 	COUNT	[1]			=	SPL_COST_SUMMONDEMON;
 
-	TEXT	[2]			=	NAME_SumDemon_Info;
+	TEXT	[2]			=	NAME_Sec_Duration;
+	COUNT	[2]			=	SPL_Duration_SummonDemon;
 
-	TEXT	[3]			=	NAME_Sec_Duration;
-	COUNT	[3]			=	SPL_Duration_SummonDemon;
+	TEXT	[3]			=	NAME_SumDemon_Info;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -1718,8 +1718,13 @@ INSTANCE ItRu_ArmyOfDarkness (C_Item)
 	TEXT	[0]			=	NAME_Mag_Circle;
 	COUNT	[0]			=	mag_circle;
 	
-	TEXT	[1]			=	NAME_Manakosten;
+	TEXT	[1]			=	NAME_Manakosten_Per;
 	COUNT	[1]			=	SPL_COST_ARMYOFDARKNESS;
+
+	TEXT	[2]			=	NAME_Sec_Duration;
+	COUNT	[2]			=	SPL_Duration_SummonSkeleton;
+	
+	TEXT	[3]			=	NAME_SumArmy_Info;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;

@@ -68,7 +68,7 @@ func void MEM_RtnMan_Init () {
  *	 - returns waypoints name
  */
 func string zCWaypoint_GetName (var int wpPtr) {
-	if (!Hlp_Is_zCWaypoint (wpPtr)) { return ""; };
+	if (!Hlp_Is_zCWaypoint (wpPtr)) { return STR_EMPTY; };
 
 	var zCWaypoint wp; wp = _^ (wpPtr);
 	return wp.Name;
@@ -115,7 +115,68 @@ func void oCRtnManager_RemoveEntry (var int rtnEntryPtr) {
 };
 
 /*
- *
+ *	oCNpc_InitRoutines
+ */
+func void oCNpc_InitRoutine (var int slfInstance) {
+	//0x006C66D0 public: void __thiscall oCNpc_States::InitRoutine(void)
+	const int oCNpc_States__InitRoutine_G1 = 7104208;
+
+	//0x0076DC10 public: void __thiscall oCNpc_States::InitRoutine(void)
+	const int oCNpc_States__InitRoutine_G2 = 7789584;
+
+	var int statePtr; statePtr = Npc_GetNpcState(slfInstance);
+	if (!statePtr) { return; };
+
+	var oCNpc_States state; state = _^ (statePtr);
+	if (!state.hasRoutine) { return; };
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL__thiscall (_@ (statePtr), MEMINT_SwitchG1G2 (oCNpc_States__InitRoutine_G1, oCNpc_States__InitRoutine_G2));
+		call = CALL_End ();
+	};
+};
+
+/*
+ *	oCRtnManager_CreateWayBoxes
+ */
+func void oCRtnManager_CreateWayBoxes (var int npcPtr) {
+	//0x006CE8B0 public: void __thiscall oCRtnManager::CreateWayBoxes(class oCNpc *)
+	const int oCRtnManager__CreateWayBoxes_G1 = 7137456;
+
+	//0x00776960 public: void __thiscall oCRtnManager::CreateWayBoxes(class oCNpc *)
+	const int oCRtnManager__CreateWayBoxes_G2 = 7825760;
+
+	const int call = 0;
+	if (CALL_Begin (call)) {
+		var int rtnManPtr; rtnManPtr = MEMINT_SwitchG1G2 (MEMINT_RtnMan_Address_G1, MEMINT_RtnMan_Address_G2);
+		CALL_PtrParam (_@ (npcPtr));
+		CALL__thiscall (_@ (rtnManPtr), MEMINT_SwitchG1G2 (oCRtnManager__CreateWayBoxes_G1, oCRtnManager__CreateWayBoxes_G2));
+		call = CALL_End ();
+	};
+};
+
+/*
+ *	oCRtnManager_UpdateSingleRoutine
+ */
+func void oCRtnManager_UpdateSingleRoutine (var int npcPtr) {
+	//0x006CD240 public: void __thiscall oCRtnManager::UpdateSingleRoutine(class oCNpc *)
+	const int oCRtnManager__UpdateSingleRoutine_G1 = 7131712;
+
+	//0x00775080 public: void __thiscall oCRtnManager::UpdateSingleRoutine(class oCNpc *)
+	const int oCRtnManager__UpdateSingleRoutine_G2 = 7819392;
+
+	const int call = 0;
+	if (CALL_Begin (call)) {
+		var int rtnManPtr; rtnManPtr = MEMINT_SwitchG1G2 (MEMINT_RtnMan_Address_G1, MEMINT_RtnMan_Address_G2);
+		CALL_PtrParam (_@ (npcPtr));
+		CALL__thiscall (_@ (rtnManPtr), MEMINT_SwitchG1G2 (oCRtnManager__UpdateSingleRoutine_G1, oCRtnManager__UpdateSingleRoutine_G2));
+		call = CALL_End ();
+	};
+};
+
+/*
+ *	oCRtnManager_RemoveRoutine
  */
 func void oCRtnManager_RemoveRoutine (var int npcPtr) {
 	//0x006CE0C0 public: void __thiscall oCRtnManager::RemoveRoutine(class oCNpc *)
@@ -133,7 +194,10 @@ func void oCRtnManager_RemoveRoutine (var int npcPtr) {
 	};
 };
 
-func int oCRtnManager_FindRoutine (var int slfInstance, var int rtnBeforePtr, var int rtnNowPtr) {
+/*
+ *	oCRtnManager_FindRoutine
+ */
+func int oCRtnManager_FindRoutine (var int slfInstance, var int rtnNowPtr, var int rtnBeforePtr) {
 	//0x006CD720 public: int __thiscall oCRtnManager::FindRoutine(class oCNpc *,class oCRtnEntry * &,class oCRtnEntry * &)
 	const int oCRtnManager__FindRoutine_G1 = 7132960;
 
@@ -161,8 +225,8 @@ func int oCRtnManager_FindRoutine (var int slfInstance, var int rtnBeforePtr, va
 
 		CALL_PutRetValTo (_@ (retVal));
 
-		CALL_PtrParam (_@ (rtnNowPtr));
 		CALL_PtrParam (_@ (rtnBeforePtr));
+		CALL_PtrParam (_@ (rtnNowPtr));
 		CALL_PtrParam (_@ (slfPtr));
 		CALL__thiscall (_@ (rtnManPtr), MEMINT_SwitchG1G2 (oCRtnManager__FindRoutine_G1, oCRtnManager__FindRoutine_G2));
 		call = CALL_End ();
@@ -171,6 +235,9 @@ func int oCRtnManager_FindRoutine (var int slfInstance, var int rtnBeforePtr, va
 	return + retVal;
 };
 
+/*
+ *	oCRtnManager_GetRoutinePos
+ */
 func int oCRtnManager_GetRoutinePos (var int slfInstance) {
 	//0x006CD970 public: class zVEC3 __thiscall oCRtnManager::GetRoutinePos(class oCNpc *)
 	const int oCRtnManager__GetRoutinePos_G1 = 7133552;
@@ -189,6 +256,9 @@ func int oCRtnManager_GetRoutinePos (var int slfInstance) {
 	return CALL_RetValAsPtr ();
 };
 
+/*
+ *	oCRtnManager_RemoveAllRoutines
+ */
 func void oCRtnManager_RemoveAllRoutines () {
 	MEM_RtnMan_Init ();
 
@@ -207,6 +277,9 @@ func void oCRtnManager_RemoveAllRoutines () {
 	end;
 };
 
+/*
+ *	oCRtnManager_GetNpcRoutines
+ */
 func int oCRtnManager_GetNpcRoutines (var int slfInstance) {
 	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return 0; };
@@ -234,6 +307,43 @@ func int oCRtnManager_GetNpcRoutines (var int slfInstance) {
 	end;
 
 	return rtnArrayPtr;
+};
+
+/*
+ *	Npc_IsInRtnStateName
+ */
+func int Npc_IsInRtnStateName (var int slfInstance, var string stateName) {
+	stateName = STR_Upper (stateName);
+
+	var string rtnStateName; rtnStateName = STR_EMPTY;
+
+	//Get all routines
+	var int rtnArrayPtr; rtnArrayPtr = oCRtnManager_GetNpcRoutines (slfInstance);
+
+	var zCArray rtnList; rtnList = _^ (rtnArrayPtr);
+
+	repeat (i, rtnList.numInArray); var int i;
+		var int rtnPtr; rtnPtr = MEM_ArrayRead (rtnArrayPtr, i);
+
+		if (rtnPtr) {
+			var oCRtnEntry rtn; rtn = _^ (rtnPtr);
+
+			//If time matches ...
+			if (Wld_IsTime (rtn.hour1, rtn.min1, rtn.hour2, rtn.min2)) {
+				//Check if state matches
+				if (rtn.f_script) {
+					rtnStateName = GetSymbolName (rtn.f_script);
+				};
+
+				break;
+			};
+		};
+	end;
+
+	MEM_ArrayFree (rtnArrayPtr);
+
+	//We will allow single wild-card '*'
+	return + (STR_WildMatch(rtnStateName, stateName));
 };
 
 /*
@@ -324,6 +434,9 @@ func void zCRoute_InitWayNode (var int rt) {
 	};
 };
 
+/*
+ *	zCWayNet_FindRoute_Positions
+ */
 func int zCWayNet_FindRoute_Positions (var int fromPosPtr, var int toPosPtr, var int vobPtr) {
 	//0x007068D0 public: class zCRoute * __thiscall zCWayNet::FindRoute(class zVEC3 const &,class zVEC3 const &,class zCVob const *)
 	const int zCWayNet__FindRoute_G1 = 7366864;
@@ -353,6 +466,9 @@ func int zCWayNet_FindRoute_Positions (var int fromPosPtr, var int toPosPtr, var
 	return +retVal;
 };
 
+/*
+ *	zCWayNet_FindRoute_PosToWp
+ */
 func int zCWayNet_FindRoute_PosToWp (var int fromPosPtr, var int toWaypointPtr, var int vobPtr) {
 	//0x00706960 public: class zCRoute * __thiscall zCWayNet::FindRoute(class zVEC3 const &,class zCWaypoint *,class zCVob const *)
 	const int zCWayNet__FindRoute_G1 = 7367008;
@@ -382,6 +498,9 @@ func int zCWayNet_FindRoute_PosToWp (var int fromPosPtr, var int toWaypointPtr, 
 	return +retVal;
 };
 
+/*
+ *	zCWayNet_FindRoute_Waypoints
+ */
 func int zCWayNet_FindRoute_Waypoints (var int fromWaypointPtr, var int toWaypointPtr, var int vobPtr) {
 	//0x00706A40 public: class zCRoute * __thiscall zCWayNet::FindRoute(class zCWaypoint *,class zCWaypoint *,class zCVob const *)
 	const int zCWayNet__FindRoute_G1 = 7367232;
@@ -418,7 +537,7 @@ func string zCRoute_GetDesc (var int routePtr) {
 	//0x007B2980 public: class zSTRING __thiscall zCRoute::GetDesc(void)
 	const int zCRoute__GetDesc_G2 = 8071552;
 
-	if (!routePtr) { return ""; };
+	if (!routePtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (routePtr, MEMINT_SwitchG1G2 (zCRoute__GetDesc_G1, zCRoute__GetDesc_G2));
@@ -540,7 +659,7 @@ func string NPC_Route_GetWPName (var int slfInstance, var int index) {
 		return zCWaypoint_GetName (nextWPPtr);
 	};
 
-	return "";
+	return STR_EMPTY;
 };
 
 func void NPC_FindRoute (var int slfInstance, var string fromWP, var string toWP) {
@@ -569,47 +688,49 @@ func void NPC_FindRoute (var int slfInstance, var string fromWP, var string toWP
 };
 
 /*
+ *	zCRoute_Delete
+ *	 - *hacky* destructor - using oCNpc_SetRoute to delete route
+ */
+func void zCRoute_Delete (var int routePtr) {
+	if (!routePtr) { return; };
+	if (!Hlp_IsValidNPC (hero)) { return; };
+
+	var oCNpc slf; slf = Hlp_GetNpc (hero);
+
+	//Backup route
+	var int bRoute; bRoute = slf.route;
+	slf.route = 0;
+
+	//Setup new route and delete it
+	oCNpc_SetRoute (slf, routePtr);
+	oCNpc_SetRoute (slf, 0);
+
+	//Restore backed up route
+	slf.route = bRoute;
+};
+
+/*
  *	Function returns waypoint from last routine entry
  */
 func string NPC_GetLastRoutineWP (var int slfInstance) {
 	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
-	if (!statePtr) { return ""; };
+	if (!statePtr) { return STR_EMPTY; };
 
 	var oCNPC_States state; state = _^ (statePtr);
-	if (!state.hasRoutine) { return ""; };
+	if (!state.hasRoutine) { return STR_EMPTY; };
 
 	//If rtnBefore == rtnNow - then return blank string
-	if (state.rtnBefore == state.rtnNow) { return ""; };
+	if (state.rtnBefore == state.rtnNow) { return STR_EMPTY; };
 
-	// Unused engine variables
-	// state.walkmode_routine
-	// state.weaponmode_routine
+	var int rtnEntryPtr;
 
-	// state.aiStateDriven
-
-//
-
-	if (state.rntChangeCount == 0) {
-		state.walkmode_routine = TRUE;
+	if (state.rtnBefore) {
+		rtnEntryPtr = state.rtnBefore;
+	} else {
+		rtnEntryPtr = state.rtnNow;
 	};
 
-	if (state.walkmode_routine) {
-		if (Hlp_Is_oCNpc (state.npc)) {
-			var oCNpc slf; slf = _^ (state.npc);
-			if (Hlp_StrCmp (Npc_GetNearestWP (slf), slf.wpName)) {
-				state.walkmode_routine = FALSE;
-			};
-		} else {
-			state.walkmode_routine = FALSE;
-		};
-	};
-
-	if (state.walkmode_routine) {
-		return "";
-	};
-
-	var int rtnEntryPtr; rtnEntryPtr = state.rtnBefore;
-	if (!rtnEntryPtr) { return ""; };
+	if (!rtnEntryPtr) { return STR_EMPTY; };
 
 	var oCRtnEntry rtnEntry; rtnEntry = _^ (rtnEntryPtr);
 	return rtnEntry.wpname;
@@ -642,8 +763,6 @@ func int NPC_GetFreepoint (var int slfInstance, var string freePoint, var string
 	var int nearestPtr; nearestPtr = 0;
 	var int nearestPtr2; nearestPtr2 = 0;
 
-	var int canSee;
-
 	//Get Npc position
 	var int fromPos[3];
 	if (!zCVob_GetPositionWorldToPos (_@ (slf), _@ (fromPos))) { return 0; };
@@ -662,76 +781,96 @@ func int NPC_GetFreepoint (var int slfInstance, var string freePoint, var string
 
 		//Seems like engine still returns true when NPC is standing on freepoint
 		//(this function also checks if object is zCVobSpot)
-		if (zCVobSpot_IsAvailable (vobPtr, slfPtr)) {
-			if (searchFlags & SEARCHVOBLIST_CANSEE) {
-				canSee = oCNPC_CanSee (slfInstance, vobPtr, 1);
-			} else {
-				canSee = TRUE;
+		if (!zCVobSpot_IsAvailable (vobPtr, slfPtr)) {
+			continue;
+		};
+
+		if (searchFlags & SEARCHVOBLIST_CANSEE) {
+			if (!oCNPC_CanSee (slfInstance, vobPtr, 1)) {
+				continue;
 			};
+		};
 
-			//Check for portal room owner
-			if (searchFlags & SEARCHVOBLIST_CHECKPORTALROOMOWNER) {
-				var string portalName; portalName = Vob_GetPortalName (vobPtr);
+		//Check for portal room owner
+		if (searchFlags & SEARCHVOBLIST_CHECKPORTALROOMOWNER) {
+			var string portalName; portalName = Vob_GetPortalName (vobPtr);
 
-				//If portal room is owned by Npc
-				if (Wld_PortalGetOwnerInstanceID (portalName) > -1) {
-					//If this portal is not owned by me - ignore - pretend we don't see it :)
-					if (!Wld_PortalIsOwnedByNPC (portalName, slf)) {
-						canSee = FALSE;
-					};
+			//If portal room is owned by Npc
+			if (Wld_PortalGetOwnerInstanceID (portalName) > -1) {
+				//If this portal is not owned by me - ignore - pretend we don't see it :)
+				if (!Wld_PortalIsOwnedByNPC (portalName, slf)) {
+					continue;
+				};
+			};
+		};
+
+		if ((abs (NPC_GetHeightToVobPtr (slf, vobPtr)) < verticalLimit) || (verticalLimit == -1)) {
+			var zCVobSpot vobSpot; vobSpot = _^ (vobPtr);
+
+			//Ignore FP that Npc is currently standing on
+			if (searchFlags & SEARCHVOBLIST_IGNORECURRENTFP) {
+				if (vobSpot.inUseVob == slfPtr) {
+					continue;
 				};
 			};
 
-			if (canSee) {
-				if ((abs (NPC_GetHeightToVobPtr (slf, vobPtr)) < verticalLimit) || (verticalLimit == -1)) {
-					var zCVobSpot vobSpot; vobSpot = _^ (vobPtr);
+			var int index1; index1 = STR_IndexOf (vobSpot._zCObject_objectName, freePoint);
+			var int index2; index2 = STR_IndexOf (vobSpot._zCObject_objectName, deprioritizeFreePoint);
 
-					var int index1; index1 = STR_IndexOf (vobSpot._zCObject_objectName, freePoint);
-					var int index2; index2 = STR_IndexOf (vobSpot._zCObject_objectName, deprioritizeFreePoint);
+			//Matching freePoint name
+			if (index1 > -1) {
+				//Find route from Npc to vob - get total distance if Npc travels by waynet
+				if (searchFlags & SEARCHVOBLIST_USEWAYNET) {
+					if (zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
+						routePtr = zCWayNet_FindRoute_Positions (_@ (fromPos), _@ (toPos), 0);
+						dist = zCRoute_GetLength (routePtr); //float
+						zCRoute_Delete (routePtr);
 
-					//Matching freePoint name
-					if (index1 > -1) {
-						//Find route from Npc to vob - get total distance if Npc travels by waynet
-						if (searchFlags & SEARCHVOBLIST_USEWAYNET) {
-							if (zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
-								routePtr = zCWayNet_FindRoute_Positions (_@ (fromPos), _@ (toPos), 0);
-								dist = zCRoute_GetLength (routePtr); //float
-								dist = RoundF (dist);
-							};
-						} else {
-							dist = NPC_GetDistToVobPtr (slfInstance, vobPtr); //int
-						};
-
-						if ((dist <= distLimit) || (distLimit == -1)) {
-							if (!firstPtr) { firstPtr = vobPtr; };
-
-							if (dist < maxDist) {
-								nearestPtr = vobPtr;
-								maxDist = dist;
-							};
-						};
+						dist = RoundF (dist);
 					};
+				} else {
+					dist = NPC_GetDistToVobPtr (slfInstance, vobPtr); //int
+				};
 
-					//Matching freePoint name (not matching deprioritizeFreePoint)
-					if ((index1 > -1) && (index2 == -1) && (STR_Len (deprioritizeFreePoint) > 0)) {
+				if ((dist <= distLimit) || (distLimit == -1)) {
+					if (!firstPtr) { firstPtr = vobPtr; };
 
-						//Find route from Npc to vob - get total distance if Npc travels by waynet
-						if (searchFlags & SEARCHVOBLIST_USEWAYNET) {
-							if (zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
-								routePtr = zCWayNet_FindRoute_Positions (_@ (fromPos), _@ (toPos), 0);
-								dist2 = zCRoute_GetLength (routePtr); //float
-								dist2 = RoundF (dist2);
-							};
-						} else {
-							dist2 = NPC_GetDistToVobPtr (slfInstance, vobPtr); //int
-						};
+					if (dist < maxDist) {
+						nearestPtr = vobPtr;
+						maxDist = dist;
+					};
+				};
 
-						if ((dist2 <= distLimit) || (distLimit == -1)) {
-							if (dist2 < maxDist2) {
-								nearestPtr2 = vobPtr;
-								maxDist2 = dist2;
-							};
-						};
+				//'Randomize' outcome - this way we won't be searching for nearest FP
+				/*
+				if (searchFlags & SEARCHVOBLIST_IGNOREORDER) {
+					if (Hlp_Random (100) > 50) {
+						break;
+					};
+				};
+				*/
+			};
+
+			//Matching freePoint name (not matching deprioritizeFreePoint)
+			if ((index1 > -1) && (index2 == -1) && (STR_Len (deprioritizeFreePoint) > 0)) {
+
+				//Find route from Npc to vob - get total distance if Npc travels by waynet
+				if (searchFlags & SEARCHVOBLIST_USEWAYNET) {
+					if (zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
+						routePtr = zCWayNet_FindRoute_Positions (_@ (fromPos), _@ (toPos), 0);
+						dist2 = zCRoute_GetLength (routePtr); //float
+						zCRoute_Delete (routePtr);
+
+						dist2 = RoundF (dist2);
+					};
+				} else {
+					dist2 = NPC_GetDistToVobPtr (slfInstance, vobPtr); //int
+				};
+
+				if ((dist2 <= distLimit) || (distLimit == -1)) {
+					if (dist2 < maxDist2) {
+						nearestPtr2 = vobPtr;
+						maxDist2 = dist2;
 					};
 				};
 			};
@@ -747,7 +886,7 @@ func int NPC_GetFreepoint (var int slfInstance, var string freePoint, var string
 };
 
 /*
- *	Function returns freepoint which NPC is using
+ *	Function returns freepoint which NPC is standing on
  */
 func int NPC_GetCurrentFreepoint (var int slfInstance) {
 	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
@@ -771,10 +910,22 @@ func int NPC_GetCurrentFreepoint (var int slfInstance) {
 		vobPtr = MEM_ReadIntArray (vobList.array, i);
 
 		if (Hlp_Is_zCVobSpot (vobPtr)) {
-			//Seems like engine still returns true when NPC is standing on freepoint (also it updates freepoint if Npc is standing on it)
+			var zCVobSpot vobSpot; vobSpot = _^ (vobPtr);
+
+			//Override inUseVob (if not used by anyone) - zCVobSpot_IsAvailable will update it if Npc is not intersecting with freepoint
+			var int markAsUsed; markAsUsed = FALSE;
+
+			if (!vobSpot.inUseVob) {
+				vobSpot.inUseVob = slfPtr;
+				markAsUsed = TRUE;
+			};
+
 			if (zCVobSpot_IsAvailable (vobPtr, slfPtr)) {
-				var zCVobSpot vobSpot; vobSpot = _^ (vobPtr);
 				if (vobSpot.inUseVob == slfPtr) {
+					if (markAsUsed) {
+						zCVobSpot_MarkAsUsed (vobPtr, mkf (3000), slfPtr);
+					};
+
 					MEM_Free (arrPtr);
 					return vobPtr;
 				};
@@ -790,10 +941,20 @@ func int NPC_GetCurrentFreepoint (var int slfInstance) {
  *	Function returns freepoint name
  */
 func string FP_GetFreePointName (var int vobSpotPtr) {
-	if (!Hlp_Is_zCVobSpot (vobSpotPtr)) { return ""; };
+	if (!Hlp_Is_zCVobSpot (vobSpotPtr)) { return STR_EMPTY; };
 
 	var zCVobSpot vobSpot; vobSpot = _^ (vobSpotPtr);
 	return vobSpot._zCObject_objectName;
+};
+
+/*
+ *	Function checks if Npc is standing on freepoint
+ */
+func int Npc_IsOnFreepoint (var int slfInstance, var string searchFreePointName) {
+	var int fp; fp = NPC_GetCurrentFreepoint (slfInstance);
+	var string fpName; fpName = FP_GetFreePointName (fp);
+
+	return (STR_IndexOf (fpName, searchFreePointName) >= 0);
 };
 
 /*
@@ -1249,7 +1410,7 @@ func int WP_Create (var string waypointName, var int posPtr, var int connectWith
 	NewTrafo (_@(trafo));
 	PosDirToTrf (posPtr, 0, _@ (trafo));
 
-	var int vobWp; vobWp = InsertObject ("zCVobWaypoint", waypointName, "", _@ (trafo), 0);
+	var int vobWp; vobWp = InsertObject ("zCVobWaypoint", waypointName, STR_EMPTY, _@ (trafo), 0);
 
 	zCWaypoint_Init (newWpPtr, waypointName, vobWp, x, y, z);
 	zCWayNet_InsertWaypoint_ByPtr (newWpPtr);
@@ -1270,7 +1431,7 @@ func int WP_Create (var string waypointName, var int posPtr, var int connectWith
 	//	PosDirToTrf (_@ (newWP.pos), _@ (newWP.dir), _@ (trafo));
 
 	//	InsertObject(string class, string objName, string visual, int trafoPtr, int parentVobPtr)
-	//	newWP.wpvob = InsertObject ("zCVobWaypoint", waypointName, "", _@ (trafo), parentVobPtr);
+	//	newWP.wpvob = InsertObject ("zCVobWaypoint", waypointName, STR_EMPTY, _@ (trafo), parentVobPtr);
 	//};
 
 	//Set waypoint name
@@ -1303,7 +1464,7 @@ func string WP_GetNearestWPAtPos (var int posPtr) {
 func string WP_GetNearestWPAtVob (var int vobPtr) {
 	var int pos[3];
 	if (!zCVob_GetPositionWorldToPos (vobPtr, _@ (pos))) {
-		return "";
+		return STR_EMPTY;
 	};
 
 	return WP_GetNearestWPAtPos (_@ (pos));
@@ -1320,7 +1481,6 @@ func int WP_GetDistToPos (var string waypointName, var int posPtr) {
 	if (!wpPtr) { return FLOATNULL; };
 
 	var zCWaypoint wp; wp = _^ (wpPtr);
-
 	return + Pos_GetDistToPos (_@ (wp.pos), posPtr);
 };
 
@@ -1340,6 +1500,28 @@ func int WP_GetDistToVob (var string waypointName, var int vobPtr) {
 	var zCWaypoint wp; wp = _^ (wpPtr);
 
 	return + Pos_GetDistToPos (_@ (wp.pos), _@ (pos));
+};
+
+/*
+ *	WP_DeleteWay
+ *	 - disconnects 2 waypoints
+ */
+func void WP_DeleteWay (var string wp1, var string wp2) {
+	var int wpPtr1; wpPtr1 = SearchWaypointByName (wp1);
+	var int wpPtr2; wpPtr2 = SearchWaypointByName (wp2);
+
+	zCWayNet_DeleteWay (wpPtr1, wpPtr2);
+};
+
+/*
+ *	WP_CreateWay
+ *	 - connects 2 waypoints
+ */
+func void WP_CreateWay (var string wp1, var string wp2) {
+	var int wpPtr1; wpPtr1 = SearchWaypointByName (wp1);
+	var int wpPtr2; wpPtr2 = SearchWaypointByName (wp2);
+
+	zCWayNet_CreateWay (wpPtr1, wpPtr2);
 };
 
 /*
@@ -1503,7 +1685,7 @@ func string WP_GenerateNewName (var string waypointName) {
  *	 - distLimit - max air distance to the vob
  *	 - verticalLimit - max vertical distance to the vob
  */
-func int zCVobWaypoint_GetByPortalRoom (var int fromPosPtr, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
+func int zCVobWaypoint_GetByPortalRoom (var int fromPosPtr, var string searchWaypointName, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
 	var int i;
 	var int vobPtr;
 
@@ -1523,9 +1705,10 @@ func int zCVobWaypoint_GetByPortalRoom (var int fromPosPtr, var string searchByP
 	//Target position
 	var int toPos[3];
 
-	searchByPortalName = STR_Trim (searchByPortalName, " ");
+	searchByPortalName = STR_TrimChar (searchByPortalName, CHR_SPACE);
 	searchByPortalName = STR_Upper (searchByPortalName);
 
+	var int compareName; compareName = STR_Len (searchWaypointName);
 	var int checkPortalName; checkPortalName = STR_Len (searchByPortalName);
 
 	//Collect all vobs in range
@@ -1536,41 +1719,55 @@ func int zCVobWaypoint_GetByPortalRoom (var int fromPosPtr, var string searchByP
 	repeat (i, vobList.numInArray);
 		vobPtr = MEM_ReadIntArray (vobList.array, i);
 
-		if (Hlp_Is_zCVobWaypoint (vobPtr)) {
-			if (searchFlags & SEARCHVOBLIST_CANSEE) {
-				var int wpPtr; wpPtr = zCVobWaypoint_GetWaypoint (vobPtr);
-				canSee = zCWaypoint_CanSee (wpPtr, canSeeVobPtr);
-			} else {
-				canSee = TRUE;
+		if (!Hlp_Is_zCVobWaypoint (vobPtr)) {
+			continue;
+		};
+
+		var int wpPtr;
+
+		if (searchFlags & SEARCHVOBLIST_CANSEE) {
+			wpPtr = zCVobWaypoint_GetWaypoint (vobPtr);
+
+			if (!zCWaypoint_CanSee (wpPtr, canSeeVobPtr)) {
+				continue;
 			};
+		};
 
-			if (checkPortalName) {
-				var string portalName; portalName = Vob_GetPortalName (vobPtr);
+		if (checkPortalName) {
+			var string portalName; portalName = Vob_GetPortalName (vobPtr);
 
-				if (!Hlp_StrCmp (portalName, searchByPortalName)) {
-					canSee = FALSE;
-				};
+			if (!Hlp_StrCmp (portalName, searchByPortalName)) {
+				continue;
 			};
+		};
 
-			if (canSee) {
-				if (zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
-					var int verticalDist; verticalDist = RoundF (SubF (toPos[1], fromPos[1]));
+		if (compareName) {
+			wpPtr = zCVobWaypoint_GetWaypoint (vobPtr);
+			var string waypointName; waypointName = zCWaypoint_GetName (wpPtr);
 
-					if ((abs (verticalDist) < verticalLimit) || (verticalLimit == -1)) {
-						var int dir[3];
-						SubVectors (_@ (dir), _@ (fromPos), _@ (toPos));
-						dist = zVEC3_LengthApprox (_@ (dir));
-						dist = RoundF (dist);
+			if (!STR_WildMatch (waypointName, searchWaypointName)) {
+				continue;
+			};
+		};
 
-						if ((dist <= distLimit) || (distLimit == -1)) {
-							if (!firstPtr) { firstPtr = vobPtr; };
+		if (!zCVob_GetPositionWorldToPos (vobPtr, _@ (toPos))) {
+			continue;
+		};
 
-							if (dist < maxDist) {
-								nearestPtr = vobPtr;
-								maxDist = dist;
-							};
-						};
-					};
+		var int verticalDist; verticalDist = RoundF (SubF (toPos[1], fromPos[1]));
+
+		if ((abs (verticalDist) < verticalLimit) || (verticalLimit == -1)) {
+			var int dir[3];
+			SubVectors (_@ (dir), _@ (fromPos), _@ (toPos));
+			dist = zVEC3_LengthApprox (_@ (dir));
+			dist = RoundF (dist);
+
+			if ((dist <= distLimit) || (distLimit == -1)) {
+				if (!firstPtr) { firstPtr = vobPtr; };
+
+				if (dist < maxDist) {
+					nearestPtr = vobPtr;
+					maxDist = dist;
 				};
 			};
 		};
@@ -1583,8 +1780,8 @@ func int zCVobWaypoint_GetByPortalRoom (var int fromPosPtr, var string searchByP
 	return firstPtr;
 };
 
-func int zCWaypoint_GetByPosAndPortalRoom (var int fromPosPtr, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
-	var int vobPtr; vobPtr = zCVobWaypoint_GetByPortalRoom (fromPosPtr, searchByPortalName, searchFlags, canSeeVobPtr, range, distLimit, verticalLimit);
+func int zCWaypoint_GetByPosAndPortalRoom (var int fromPosPtr, var string searchWaypointName, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
+	var int vobPtr; vobPtr = zCVobWaypoint_GetByPortalRoom (fromPosPtr, searchWaypointName, searchByPortalName, searchFlags, canSeeVobPtr, range, distLimit, verticalLimit);
 	return + zCVobWaypoint_GetWaypoint (vobPtr);
 };
 
@@ -1592,23 +1789,33 @@ func int zCWaypoint_GetByPosAndPortalRoom (var int fromPosPtr, var string search
  *	WP_GetByPortalRoom
  *	 - wrapper function to get nearest waypoint from certain position + possibility to filter by portal room
  */
-func string WP_GetByPosAndPortalRoom (var int fromPosPtr, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
-	var int wpPtr; wpPtr = zCWaypoint_GetByPosAndPortalRoom (fromPosPtr, searchByPortalName, searchFlags, canSeeVobPtr, range, distLimit, verticalLimit);
+func string WP_GetByPosAndPortalRoom (var int fromPosPtr, var string searchWaypointName, var string searchByPortalName, var int searchFlags, var int canSeeVobPtr, var int range, var int distLimit, var int verticalLimit) {
+	var int wpPtr; wpPtr = zCWaypoint_GetByPosAndPortalRoom (fromPosPtr, searchWaypointName, searchByPortalName, searchFlags, canSeeVobPtr, range, distLimit, verticalLimit);
 	return zCWaypoint_GetName (wpPtr);
+};
+
+/*
+ *	WP_ToPos
+ */
+func void WP_ToPos(var string wpName, var int posPtr) {
+	var int wpPtr; wpPtr = SearchWaypointByName(wpName);
+	if (!wpPtr) { return; };
+	var zCWaypoint wp; wp = _^ (wpPtr);
+	MEM_CopyBytes(_@ (wp.pos[0]), posPtr, 12);
 };
 
 /*
  *	Npc_GetNearestWP_ByPortalRoom
  *	 - wrapper function to get nearest waypoint from Npc in a portal room
  */
-func string Npc_GetNearestWP_ByPortalRoom (var int slfInstance, var string searchByPortalName, var int searchFlags, var int range, var int distLimit, var int verticalLimit) {
+func string Npc_GetNearestWP_ByPortalRoom (var int slfInstance, var string searchWaypointName, var string searchByPortalName, var int searchFlags, var int range, var int distLimit, var int verticalLimit) {
 	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
-	if (!Hlp_IsValidNPC (slf)) { return ""; };
+	if (!Hlp_IsValidNPC (slf)) { return STR_EMPTY; };
 
 	var int pos[3];
-	if (!zCVob_GetPositionWorldToPos (_@ (slf), _@ (pos))) { return ""; };
+	if (!zCVob_GetPositionWorldToPos (_@ (slf), _@ (pos))) { return STR_EMPTY; };
 
-	return WP_GetByPosAndPortalRoom (_@ (pos), searchByPortalName, searchFlags, _@ (slf), range, distLimit, verticalLimit);
+	return WP_GetByPosAndPortalRoom (_@ (pos), searchWaypointName, searchByPortalName, searchFlags, _@ (slf), range, distLimit, verticalLimit);
 };
 
 /*

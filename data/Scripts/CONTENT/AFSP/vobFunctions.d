@@ -46,7 +46,7 @@ func string zCModel_GetVisualName (var int modelPtr) {
 	//0x0057DF60 public: virtual class zSTRING __thiscall zCModel::GetVisualName(void)
 	const int zCModel__GetVisualName_G2 = 5758816;
 
-	if (!modelPtr) { return ""; };
+	if (!modelPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (modelPtr, MEMINT_SwitchG1G2 (zCModel__GetVisualName_G1, zCModel__GetVisualName_G2));
@@ -60,7 +60,7 @@ func string zCDecal_GetVisualName (var int vobPtr) {
 	//0x00556B80 public: virtual class zSTRING __thiscall zCDecal::GetVisualName(void)
 	const int zCDecal__GetVisualName_G2 = 5598080;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCDecal__GetVisualName_G1, zCDecal__GetVisualName_G2));
@@ -74,7 +74,7 @@ func string zCProgMeshProto_GetVisualName (var int vobPtr) {
 	//0x005C7130 public: virtual class zSTRING __thiscall zCProgMeshProto::GetVisualName(void)
 	const int zCProgMeshProto__GetVisualName_G2 = 6058288;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCProgMeshProto__GetVisualName_G1, zCProgMeshProto__GetVisualName_G2));
@@ -88,7 +88,7 @@ func string zCParticleFX_GetVisualName (var int vobPtr) {
 	//0x005ADD30 public: virtual class zSTRING __thiscall zCParticleFX::GetVisualName(void)
 	const int zCParticleFX__GetVisualName_G2 = 5954864;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCParticleFX__GetVisualName_G1, zCParticleFX__GetVisualName_G2));
@@ -102,7 +102,7 @@ func string zCMorphMesh_GetVisualName (var int vobPtr) {
 	//0x005A6290 public: virtual class zSTRING __thiscall zCMorphMesh::GetVisualName(void)
 	const int zCMorphMesh__GetVisualName_G2 = 5923472;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCMorphMesh__GetVisualName_G1, zCMorphMesh__GetVisualName_G2));
@@ -116,7 +116,7 @@ func string zCPolyStrip_GetVisualName (var int vobPtr) {
 	//0x004CA110 public: virtual class zSTRING __thiscall zCPolyStrip::GetVisualName(void)
 	const int zCPolyStrip__GetVisualName_G2 = 5021968;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCPolyStrip__GetVisualName_G1, zCPolyStrip__GetVisualName_G2));
@@ -130,7 +130,7 @@ func string zCFlash_GetVisualName (var int vobPtr) {
 	//0x004CA1E0 public: virtual class zSTRING __thiscall zCFlash::GetVisualName(void)
 	const int zCFlash__GetVisualName_G2 = 5022176;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCFlash__GetVisualName_G1, zCFlash__GetVisualName_G2));
@@ -144,7 +144,7 @@ func string zCMesh_GetVisualName (var int vobPtr) {
 	//0x00567020 public: virtual class zSTRING __thiscall zCMesh::GetVisualName(void)
 	const int zCMesh__GetVisualName_G2 = 5664800;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCMesh__GetVisualName_G1, zCMesh__GetVisualName_G2));
@@ -158,7 +158,7 @@ func string zCQuadMark_GetVisualName (var int vobPtr) {
 	//0x005D0AB0 public: virtual class zSTRING __thiscall zCQuadMark::GetVisualName(void)
 	const int zCQuadMark__GetVisualName_G2 = 6097584;
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCQuadMark__GetVisualName_G1, zCQuadMark__GetVisualName_G2));
@@ -174,13 +174,16 @@ func int zCVob_GetVisual (var int vobPtr) {
 
 	if (!vobPtr) { return 0; };
 
+	var int retVal;
+
 	const int call = 0;
 	if (CALL_Begin(call)) {
+		CALL_PutRetValTo (_@ (retVal));
 		CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__GetVisual_G1, zCVob__GetVisual_G2));
 		call = CALL_End();
 	};
 
-	return CALL_RetValAsPtr ();
+	return + retVal;
 };
 
 /*
@@ -190,11 +193,11 @@ func int zCVob_GetVisual (var int vobPtr) {
  */
 func string Visual_GetVisualName (var int visualPtr) {
 /*
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	var zCVob vob; vob = _^ (vobPtr);
 
-	if (!vob.visual) { return ""; };
+	if (!vob.visual) { return STR_EMPTY; };
 
 	var zCObject visualObj;
 	visualObj = _^ (vob.visual);
@@ -202,7 +205,7 @@ func string Visual_GetVisualName (var int visualPtr) {
 	return visualObj.objectName;
 */
 
-	if (!visualPtr) { return ""; };
+	if (!visualPtr) { return STR_EMPTY; };
 	var zCVisual visual; visual = _^ (visualPtr);
 
 	//visual zCDecal
@@ -322,7 +325,7 @@ func string Visual_GetVisualName (var int visualPtr) {
 };
 
 func string Vob_GetVisualName (var int vobPtr){
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 
 	//in case of oCMob we need to get visual from object model
 	//if (Hlp_Is_oCMob (vobPtr)){
@@ -332,7 +335,7 @@ func string Vob_GetVisualName (var int vobPtr){
 
 	//B_Msg_Add (zCDecal_GetVisualName (vobPtr));
 
-	if (!vobPtr) { return ""; };
+	if (!vobPtr) { return STR_EMPTY; };
 	var int visualPtr; visualPtr = zCVob_GetVisual (vobPtr);
 
 	return Visual_GetVisualName (visualPtr);
@@ -343,7 +346,7 @@ func string Vob_GetVisualName (var int vobPtr){
  *	 - returns vob name
  */
 func string zCVob_GetName (var int vobPtr) {
-	if (!Hlp_Is_zCVob (vobPtr)) { return ""; };
+	if (!Hlp_Is_zCVob (vobPtr)) { return STR_EMPTY; };
 	var zCVob vob; vob = _^ (vobPtr);
 	return vob._zCObject_objectName;
 };
@@ -510,7 +513,10 @@ func void zCVob_SetPhysicsEnabled (var int vobPtr, var int enabled) {
 };
 
 /*
- *
+ *	zCVob_SetSleeping
+ *	zVOB_SLEEPING = 0
+ *	zVOB_AWAKE = 1
+ *	zVOB_AWAKE_DOAI_ONLY = 2
  */
 func void zCVob_SetSleeping (var int vobPtr, var int sleepingMode) {
 	//0x005D7250 public: void __thiscall zCVob::SetSleeping(int)
@@ -638,15 +644,26 @@ func int Vob_IsMoving (var int vobPtr) {
 
 	const int call = 0;
 	if (CALL_Begin(call)) {
+		CALL_PutRetValTo (_@ (vecPtr));
 		CALL__thiscall (_@ (vecPtr), MEMINT_SwitchG1G2 (zVEC3__NormalizeSafe_G1, zVEC3__NormalizeSafe_G2));
 		call = CALL_End();
 	};
 
-	MEM_CopyBytes (CALL_RetValAsPtr(), _@ (vec), 12);
-
+	MEM_CopyBytes (vecPtr, _@ (vec), 12);
 	MEM_Free (vecPtr);
 
 	return + (magVector (_@ (vec)));
+};
+
+func int Vob_GetNoOfVobsByName (var string vobName) {
+	var int arr; arr = MEM_SearchAllVobsByName (vobName);
+	var zCArray zarr; zarr = _^ (arr);
+
+	var int count; count = zarr.numInArray;
+
+	MEM_ArrayFree (arr);
+
+	return + count;
 };
 
 /*
@@ -751,7 +768,7 @@ func void Vob_MoveToVob (var string moveVobName, var string toVobName) {
 func void Vob_PlayEffect (var string vobName, var string effectName)
 {
 	var int arr; arr = MEM_SearchAllVobsByName (vobName);
-	var zCArray zarr; zarr = MEM_PtrToInst(arr);
+	var zCArray zarr; zarr = _^ (arr);
 
 	var int vobPtr;
 	var zCVob vob;
@@ -771,9 +788,6 @@ func void Vob_PlayEffect (var string vobName, var string effectName)
 //0x005EF150 public: void __thiscall zCVob::SetHeadingWorld(class zVEC3 const &)
 
 //0x005EF640 public: void __thiscall zCVob::SetHeadingAtWorld(class zVEC3 const &)
-
-
-//0x005EE760 public: void __thiscall zCVob::SetTrafoObjToWorld(class zMAT4 const &)
 
 func int zCVob_GetPositionWorld (var int vobPtr) {
 	//0x0051B3C0 public: class zVEC3 __thiscall zCVob::GetPositionWorld(void)const
@@ -815,6 +829,20 @@ func int zCVob_GetAtVectorWorld (var int vobPtr) {
 	CALL_RetValIsStruct (12);
 	CALL__thiscall (vobPtr, MEMINT_SwitchG1G2 (zCVob__GetAtVectorWorld_G1, zCVob__GetAtVectorWorld_G2));
 	return CALL_RetValAsPtr ();
+};
+
+//Wrapper function that frees allocated memory
+//return TRUE if everything went ok
+func int zCVob_GetAtVectorWorldToPos (var int vobPtr, var int posPtr) {
+	if (!posPtr) { return FALSE; };
+
+	var int vobPosPtr; vobPosPtr = zCVob_GetAtVectorWorld (vobPtr);
+	if (!vobPosPtr) { return FALSE; };
+
+	MEM_CopyBytes (vobPosPtr, posPtr, 12);
+	MEM_Free (vobPosPtr);
+
+	return TRUE;
 };
 
 func int zCVob_GetUpVectorWorld (var int vobPtr) {
@@ -983,11 +1011,11 @@ func string zMAT4_GetDescriptionRot (var int trafoPtr) {
 	//0x00515CA0 public: class zSTRING __thiscall zMAT4::GetDescriptionRot(void)const
 	const int zMAT4__GetDescriptionRot_G2 = 5332128;
 
-	if (!trafoPtr) { return ""; };
+	if (!trafoPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (_@ (trafoPtr), MEMINT_SwitchG1G2 (zMAT4__GetDescriptionRot_G1, zMAT4__GetDescriptionRot_G2));
-	return STR_Trim (CALL_RetValAszstring (), " ");
+	return STR_TrimChar(CALL_RetValAszstring (), CHR_SPACE);
 };
 
 /*
@@ -1000,11 +1028,11 @@ func string zMAT4_GetDescriptionPos (var int trafoPtr) {
 	//0x00515EE0 public: class zSTRING __thiscall zMAT4::GetDescriptionPos(void)const
 	const int zMAT4__GetDescriptionPos_G2 = 5332704;
 
-	if (!trafoPtr) { return ""; };
+	if (!trafoPtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString();
 	CALL__thiscall (_@ (trafoPtr), MEMINT_SwitchG1G2 (zMAT4__GetDescriptionPos_G1, zMAT4__GetDescriptionPos_G2));
-	return STR_Trim (CALL_RetValAszstring (), " ");
+	return STR_TrimChar(CALL_RetValAszstring (), CHR_SPACE);
 };
 
 /*
@@ -1069,24 +1097,6 @@ func void zCVob_SetTrafo (var int vobPtr, var int trafoPtr) {
 		CALL_PtrParam (_@ (trafoPtr));
 		CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__SetTrafo_G1, zCVob__SetTrafo_G2));
 		call = CALL_End();
-	};
-};
-
-/*
- *	Created by Showdown & Lehona
- *	Original post: https://forum.worldofplayers.de/forum/threads/1299679-Skriptpaket-Ikarus-4/page11?p=24735929&viewfull=1#post24735929
- *	I just added G1 address
- */
-func void SetRainThroughVobs (var int bool) {
-	const int Raincheck_G1 = 6000805;
-	const int Raincheck_G2 = 6169210;
-
-	MemoryProtectionOverride (MEMINT_SwitchG1G2(Raincheck_G1, Raincheck_G2), 4);
-
-	if (!bool) {
-		MEM_WriteByte (MEMINT_SwitchG1G2 (Raincheck_G1, Raincheck_G2), 224);
-	} else {
-		MEM_WriteByte (MEMINT_SwitchG1G2 (Raincheck_G1, Raincheck_G2), 226);
 	};
 };
 
@@ -1571,7 +1581,6 @@ func void zCVob_SetAI (var int vobPtr, var int ai) {
 	//0x005FE8F0 public: void __thiscall zCVob::SetAI(class zCAIBase *)
 	const int zCVob__SetAI_G2 = 6285552;
 
-	if (!ai) { return; };
 	if (!vobPtr) { return; };
 
 	const int call = 0;
@@ -1651,11 +1660,111 @@ func int zCVob_GetHomeWorld (var int vobPtr) {
 
 	if (!vobPtr) { return 0; };
 
+	var int retVal;
+
 	const int call = 0;
 	if (CALL_Begin(call)) {
+		CALL_PutRetValTo (_@ (retVal));
 		CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__GetHomeWorld_G1, zCVob__GetHomeWorld_G2));
 		call = CALL_End();
 	};
 
-	return Call_RetValAsPtr ();
+	return + retVal;
+};
+
+/*
+ *	Author: Sektenspinner
+ */
+func void zCVob_PositionUpdated (var int vobPtr) {
+	var int pos[3];
+
+	if (zCVob_GetPositionWorldToPos (vobPtr, _@ (pos))) {
+		zCVob_SetPositionWorld (vobPtr, _@ (pos));
+	};
+};
+
+/*
+ *	zCVob_SetTrafoObjToWorld
+ */
+func void zCVob_SetTrafoObjToWorld (var int vobPtr, var int trafoPtr) {
+	//0x005EE760 public: void __thiscall zCVob::SetTrafoObjToWorld(class zMAT4 const &)
+	const int zCVob__SetTrafoObjToWorld_G1 = 6219616;
+
+	//0x0061BC80 public: void __thiscall zCVob::SetTrafoObjToWorld(class zMAT4 const &)
+	const int zCVob__SetTrafoObjToWorld_G2 = 6405248;
+
+	if (!trafoPtr) { return; };
+	if (!vobPtr) { return; };
+
+	var int retVal;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PtrParam (_@ (trafoPtr));
+		CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__SetTrafoObjToWorld_G1, zCVob__SetTrafoObjToWorld_G2));
+		call = CALL_End();
+	};
+};
+
+func int zCVob_GetDistanceToVob2 (var int vobPtr, var int vobPtr2) {
+	//0x005EE530 public: float __thiscall zCVob::GetDistanceToVob2(class zCVob &)
+	const int zCVob__GetDistanceToVob2_G1 = 6219056;
+
+	//0x0061BA40 public: float __thiscall zCVob::GetDistanceToVob2(class zCVob &)
+	const int zCVob__GetDistanceToVob2_G2 = 6404672;
+
+	if (!vobPtr) { return FLOATNULL; };
+	if (!vobPtr2) { return FLOATNULL; };
+
+	var int retVal;
+
+	const int call = 0;
+
+	if (CALL_Begin(call)) {
+		CALL_RetValIsFloat ();
+		CALL_PutRetValTo (_@ (retVal));
+		CALL_PtrParam (_@ (vobPtr2));
+		CALL__thiscall(_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__GetDistanceToVob2_G1, zCVob__GetDistanceToVob2_G2));
+		call = CALL_End();
+	};
+
+	return + retVal;
+};
+
+/*
+ *	bHintTrafoChanged G2 only
+ */
+func void zCVob_EndMovement (var int vobPtr, var int bHintTrafoChanged) {
+	//0x005F0B60 public: virtual void __thiscall zCVob::EndMovement(void)
+	const int zCVob__EndMovement_G1 = 6228832;
+
+	//0x0061E0D0 public: virtual void __thiscall zCVob::EndMovement(int)
+	const int zCVob__EndMovement_G2 = 6414544;
+
+	if (!vobPtr) { return; };
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		if (MEMINT_SwitchG1G2(0,1)) {
+			CALL_IntParam(_@(bHintTrafoChanged));
+		};
+		CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__EndMovement_G1, zCVob__EndMovement_G2));
+		call = CALL_End();
+	};
+};
+
+func void zCVob_BeginMovement (var int vobPtr) {
+	//0x005F0510 public: void __thiscall zCVob::BeginMovement(void)
+	const int zCVob__BeginMovement_G1 = 6227216;
+
+	//0x0061DA80 public: void __thiscall zCVob::BeginMovement(void)
+	const int zCVob__BeginMovement_G2 = 6412928;
+
+	if (!vobPtr) { return; };
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL__thiscall(_@ (vobPtr), MEMINT_SwitchG1G2 (zCVob__BeginMovement_G1, zCVob__BeginMovement_G2));
+		call = CALL_End();
+	};
 };

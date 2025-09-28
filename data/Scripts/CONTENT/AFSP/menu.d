@@ -13,6 +13,7 @@
 func int Log_GetTopic (var string topicName) {
 	var zCList l;
 	var int list; list = oCLogManager_Ptr;
+	topicName = STR_Upper(topicName);
 
 	while (list);
 		l = _^ (list);
@@ -91,11 +92,11 @@ func int Log_GetNoOfEntries (var string topicName) {
  */
 func string Log_GetEntryByIndex (var string topicName, var int index) {
 	var int ptr; ptr = Log_GetTopic (topicName);
-	if (!ptr) { return ""; };
+	if (!ptr) { return STR_EMPTY; };
 
 	var oCLogTopic logTopic; logTopic = _^ (ptr);
 
-	if (!logTopic.m_lstEntries_next) { return ""; };
+	if (!logTopic.m_lstEntries_next) { return STR_EMPTY; };
 
 	var zCList l;
 	var int list; list = logTopic.m_lstEntries_next;
@@ -116,7 +117,7 @@ func string Log_GetEntryByIndex (var string topicName, var int index) {
 		list = l.next;
 	end;
 
-	return "";
+	return STR_EMPTY;
 };
 
 /*
@@ -124,28 +125,28 @@ func string Log_GetEntryByIndex (var string topicName, var int index) {
  *	 - returns no of topics in specific section with specified status
  */
 func int Log_GetNoOfTopics(var int logSection, var int logStatus) {
-    var zCList l;
-    var int list; list = oCLogManager_Ptr;
+	var zCList l;
+	var int list; list = oCLogManager_Ptr;
 
 	var int count; count = 0;
 
-    while (list);
-        l = _^ (list);
+	while (list);
+		l = _^ (list);
 
-        if (l.data) {
-            var oCLogTopic logTopic; logTopic = _^ (l.data);
+		if (l.data) {
+			var oCLogTopic logTopic; logTopic = _^ (l.data);
 
-            if ((logTopic.m_enuSection == logSection) || (logSection == -1)) {
+			if ((logTopic.m_enuSection == logSection) || (logSection == -1)) {
 				if ((logTopic.m_enuStatus == logStatus) || (logStatus == -1)) {
 					count += 1;
 				};
-            };
-        };
+			};
+		};
 
-        list = l.next;
-    end;
+		list = l.next;
+	end;
 
-    return count;
+	return count;
 };
 
 /*

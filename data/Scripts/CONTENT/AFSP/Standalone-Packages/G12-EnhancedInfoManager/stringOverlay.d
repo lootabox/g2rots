@@ -149,13 +149,16 @@ var int    StringOverlay_ColorPreset; // color template (sets colors)
 var string StringOverlay_Color; // color for dialogue text not selected
 var string StringOverlay_ColorSelected; // color for selected dialogue text
 
-const int StringOverlay_ColorPreset_Count    = 6; // count of available colors
+const int StringOverlay_ColorPreset_Count    = 8; // count of available colors
+
 const int StringOverlay_ColorPreset_Default  = 0; // default preset
 const int StringOverlay_ColorPreset_Red      = 1;
 const int StringOverlay_ColorPreset_Green    = 2;
 const int StringOverlay_ColorPreset_Yellow   = 3;
 const int StringOverlay_ColorPreset_Blue     = 4;
 const int StringOverlay_ColorPreset_Orange   = 5;
+const int StringOverlay_ColorPreset_Pink     = 6;
+const int StringOverlay_ColorPreset_Purple   = 7;
 
 // colors for dialogue text not selected
 const string StringOverlay_ColorPresets[StringOverlay_ColorPreset_Count] = {
@@ -164,7 +167,9 @@ const string StringOverlay_ColorPresets[StringOverlay_ColorPreset_Count] = {
     "00CC66", // green
     "FFF700", // yellow
     "6699FF", // blue
-    "FF8000"  // orange
+    "FF8000", // orange
+	"FF00A0", // pink
+	"BF00FF"  // purple
 };
 // colors for selected dialogue text
 const string StringOverlay_ColorSelectedPresets[StringOverlay_ColorPreset_Count] = {
@@ -173,7 +178,9 @@ const string StringOverlay_ColorSelectedPresets[StringOverlay_ColorPreset_Count]
     "66FFB2", // light green
     "FFFB80", // light yellow
     "99CCFF", // light blue
-    "FFB266"  // light orange
+    "FFB266", // light orange
+	"FF66C7", // light pink
+	"ECB3FF"  // light purple
 };
 
 // text align ------------------------------------------------------
@@ -273,7 +280,7 @@ func void StringOverlay_Reset() {
 // -----------------------------------------------------------------
 func string StringOverlay_Generate(var string str) {
     if (STR_Len(str) <= 0) {
-        return "";
+        return STR_EMPTY;
     };
 
     // start overlay
@@ -281,14 +288,14 @@ func string StringOverlay_Generate(var string str) {
 
     // text align
     if (StringOverlay_Settings & StringOverlay_Settings_TextAlignEnabled) {
-        var string textAlignModifier; textAlignModifier = "";
+        var string textAlignModifier; textAlignModifier = STR_EMPTY;
 
         if (StringOverlay_TextAlign == StringOverlay_TextAlign_Left  ) {textAlignModifier = "al@"; };
         if (StringOverlay_TextAlign == StringOverlay_TextAlign_Center) {textAlignModifier = "ac@"; };
         if (StringOverlay_TextAlign == StringOverlay_TextAlign_Right ) {textAlignModifier = "ar@"; };
 
         overlayStr = ConcatStrings(overlayStr, textAlignModifier);
-        overlayStr = ConcatStrings(overlayStr, " ");
+        overlayStr = ConcatStrings(overlayStr, STR_SPACE);
     };
 
     // text color

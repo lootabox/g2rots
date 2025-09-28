@@ -4,32 +4,35 @@
  *	   lock pickLockStr - keyInstance
  */
 func string CC_Lock (var string param) {
-	param = STR_Trim (param, " ");
+	param = STR_TrimChar (param, CHR_SPACE);
 
 	var string msg;
 	var oCNpc her; her = Hlp_GetNPC (hero);
 
 	if (her.focus_vob) {
 		if (Hlp_Is_oCMobLockable (her.focus_vob)) {
-			var string pickLockStr; pickLockStr = "";
-			var string keyInstance; keyInstance = "";
+			var string pickLockStr; pickLockStr = STR_EMPTY;
+			var string keyInstance; keyInstance = STR_EMPTY;
 
-			var int count; count = STR_SplitCount (param, " ");
+			var int count; count = STR_SplitCount (param, STR_SPACE);
 			if (count > 0) {
-				pickLockStr = STR_Split (param, " ", 0);
+				pickLockStr = STR_Split (param, STR_SPACE, 0);
 			};
 
 			if (count > 1) {
-				keyInstance = STR_Split (param, " ", 1);
+				keyInstance = STR_Split (param, STR_SPACE, 1);
 			};
 
 			if (Hlp_StrCmp (pickLockStr, "-")) {
-				pickLockStr = "";
+				pickLockStr = STR_EMPTY;
 			};
 
 			//Lock
 			var oCMobLockable mob; mob = _^ (her.focus_vob);
 			mob.bitfield = (mob.bitfield | oCMobLockable_bitfield_locked);
+
+			//Reset picklockNr
+			mob.bitfield = mob.bitfield & 3;
 
 			//Get name
 			msg = ConcatStrings ("Mob: '", mob._zCObject_objectName);

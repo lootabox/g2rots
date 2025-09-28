@@ -5,7 +5,7 @@ var int puppetMasterEnabled;
 var string puppetNode;
 var int puppetNodeIndex;
 
-var int puppetNodeVobPtr;
+const int puppetNodeVobPtr = 0;
 
 const int HUMAN_NODENAMES_MAX = 25;
 
@@ -42,8 +42,8 @@ const string HUMAN_NODENAMES [HUMAN_NODENAMES_MAX] = {
 };
 
 func string GetNodeName__PuppetMaster (var int index) {
-	if (index < 0) { return ""; };
-	if (index >= HUMAN_NODENAMES_MAX) { return ""; };
+	if (index < 0) { return STR_EMPTY; };
+	if (index >= HUMAN_NODENAMES_MAX) { return STR_EMPTY; };
 
 	return MEM_ReadStatStringArr (HUMAN_NODENAMES, index);
 };
@@ -68,7 +68,7 @@ func void DrawBBox__PuppetMaster () {
 	//Create 'helper' vob
 	if (!puppetNodeVobPtr) {
 		//Insert empty vob
-		puppetNodeVobPtr = InsertObject ("zCVob", "", "", _@ (trafo), 0);
+		puppetNodeVobPtr = InsertObject ("zCVob", STR_EMPTY, STR_EMPTY, _@ (trafo), 0);
 
 		//Remove collisions
 		var int vobRemoveCollisions; vobRemoveCollisions = Vob_GetCollBits (puppetNodeVobPtr);
@@ -98,17 +98,19 @@ instance DIA_PuppetMaster_Main (C_Info) {
 };
 
 //---
-func void DIA_PuppetMaster_UpdateNodePos_Hanlder (var string spinnerID) {
+func void DIA_PuppetMaster_UpdateNodePos_Handler (var string spinnerID) {
 	var string oldDescription;
 	var string oldDescription1;
 	var string oldDescription2;
 	var string oldDescription3;
 
-	if (!InfoManager_IsInChoiceMode ()) {
-		oldDescription = "";
-		oldDescription1 = "";
-		oldDescription2 = "";
-		oldDescription3 = "";
+	var int isChoiceModeActive; isChoiceModeActive = InfoManager_IsChoiceModeActive ();
+
+	if (!isChoiceModeActive) {
+		oldDescription = STR_EMPTY;
+		oldDescription1 = STR_EMPTY;
+		oldDescription2 = STR_EMPTY;
+		oldDescription3 = STR_EMPTY;
 		return;
 	};
 
@@ -151,12 +153,12 @@ func void DIA_PuppetMaster_UpdateNodePos_Hanlder (var string spinnerID) {
 
 	lastSpinnerID = InfoManagerSpinnerID;
 
-	var string newDescription; newDescription = "";
+	var string newDescription; newDescription = STR_EMPTY;
 
 	//newDescription = ConcatStrings (newDescription, "h@");
 	newDescription = ConcatStrings (newDescription, "s@");
 	newDescription = ConcatStrings (newDescription, spinnerID);
-	newDescription = ConcatStrings (newDescription, " ");
+	newDescription = ConcatStrings (newDescription, STR_SPACE);
 
 	if (value) {
 		var int vobPtr; vobPtr = _@ (Puppet);
@@ -233,11 +235,13 @@ func void DIA_PuppetMaster_RotateNode_Handler (var string spinnerID) {
 	var string oldDescription2;
 	var string oldDescription3;
 
-	if (!InfoManager_IsInChoiceMode ()) {
-		oldDescription = "";
-		oldDescription1 = "";
-		oldDescription2 = "";
-		oldDescription3 = "";
+	var int isChoiceModeActive; isChoiceModeActive = InfoManager_IsChoiceModeActive ();
+
+	if (!isChoiceModeActive) {
+		oldDescription = STR_EMPTY;
+		oldDescription1 = STR_EMPTY;
+		oldDescription2 = STR_EMPTY;
+		oldDescription3 = STR_EMPTY;
 		return;
 	};
 
@@ -280,12 +284,12 @@ func void DIA_PuppetMaster_RotateNode_Handler (var string spinnerID) {
 
 	lastSpinnerID = InfoManagerSpinnerID;
 
-	var string newDescription; newDescription = "";
+	var string newDescription; newDescription = STR_EMPTY;
 
 	//newDescription = ConcatStrings (newDescription, "h@");
 	newDescription = ConcatStrings (newDescription, "s@");
 	newDescription = ConcatStrings (newDescription, spinnerID);
-	newDescription = ConcatStrings (newDescription, " ");
+	newDescription = ConcatStrings (newDescription, STR_SPACE);
 
 	if (value) {
 		var int vobPtr; vobPtr = _@ (Puppet);
@@ -352,9 +356,9 @@ func int DIA_PuppetMaster_Main_Condition () {
 	if (!puppetMasterEnabled) { return FALSE; };
 
 	//Execute here - to reset oldDescription, oldDescription2, oldDescription3 if we are not in choice mode!
-	DIA_PuppetMaster_UpdateNodePos_Hanlder ("UpdatePosX");
-	DIA_PuppetMaster_UpdateNodePos_Hanlder ("UpdatePosY");
-	DIA_PuppetMaster_UpdateNodePos_Hanlder ("UpdatePosZ");
+	DIA_PuppetMaster_UpdateNodePos_Handler ("UpdatePosX");
+	DIA_PuppetMaster_UpdateNodePos_Handler ("UpdatePosY");
+	DIA_PuppetMaster_UpdateNodePos_Handler ("UpdatePosZ");
 
 	DIA_PuppetMaster_RotateNode_Handler ("RotateNodeX");
 	DIA_PuppetMaster_RotateNode_Handler ("RotateNodeY");
@@ -363,8 +367,10 @@ func int DIA_PuppetMaster_Main_Condition () {
 	var string oldDescription1;
 
 	//Do not execute code below, if choices are not yet displayed :)
-	if (!InfoManager_IsInChoiceMode ()) {
-		oldDescription1 = "";
+	var int isChoiceModeActive; isChoiceModeActive = InfoManager_IsChoiceModeActive ();
+
+	if (!isChoiceModeActive) {
+		oldDescription1 = STR_EMPTY;
 		return TRUE;
 	};
 
@@ -433,7 +439,7 @@ func int DIA_PuppetMaster_Main_Condition () {
 	};
 
 	//Spinner ID
-	newDescription1 = "";
+	newDescription1 = STR_EMPTY;
 	newDescription1 = ConcatStrings (newDescription1, "s@SelectNode Select node: ");
 
 	//Manually typed in number:
@@ -494,11 +500,8 @@ func int DIA_PuppetMaster_Main_Condition () {
 			};
 
 			//Page Up/Down quantity
-			InfoManagerSpinnerPageSize = 5;
-
 			//Min/max value (Home/End keys)
-			InfoManagerSpinnerValueMin = min;
-			InfoManagerSpinnerValueMax = max;
+			EIM_ActiveSpinnerSetBoundaries(min, max, 5);
 
 			//Update
 			value2 = InfoManagerSpinnerValue;
@@ -509,7 +512,7 @@ func int DIA_PuppetMaster_Main_Condition () {
 		var string oldDescription2;
 
 		oldDescription2 = newDescription2;
-		newDescription2 = "";
+		newDescription2 = STR_EMPTY;
 
 		if (max == 0) {
 			//newDescription2 = "d@ "; //disabled

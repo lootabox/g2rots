@@ -1,17 +1,3 @@
-/*
- *	Torch HotKey
- *		- enables hotkey 'keyTorchToggleKey' equipping torches
- *		- 'keyTorchToggleKey' can be defined either in Gothic.ini file section [KEYS] or mod.ini file section [KEYS] (master is Gothic.ini)
- *		- if 'keyTorchToggleKey' is not defined then by default KEY_T will be used for toggling
- *		- fixes issue of disappearing torches in G2A (by removing DontWriteIntoArchive flag from ItLsTorchBurning)
- *			- number of torches in players inventory will be stored prior game saving
- *			- when game is loaded script will compare number of torches in players inventory, if there is torch missing it will add it back
- *			- if player was carrying torch, script will put it back to hand
- *		- compatible with sprint mode (reapplies overlay HUMANS_SPRINT.MDS when torch is removed/equipped)
- *		- will re-lit all mobs, that were previously lit by player (list can be maintained in file 'torchHotKey_API.d' in array TORCH_ASC_MODELS [];
- *		- Ctrl + 'keyTorchToggleKey' will put torch to right hand (with Union you can throw torch away in G1)
- */
-
 var int PC_CarriesTorch;
 var int PC_NumberOfTorches;
 
@@ -52,8 +38,8 @@ func void FixBurningTorches__TorchHotKey () {
 
 	//Search by class oCItem
 	if (!SearchVobsByClass ("oCItem", vobListPtr)) {
-		MEM_ArrayFree (vobListPtr);
 		MEM_Info ("No oCItem objects found.");
+		MEM_ArrayFree (vobListPtr);
 		return;
 	};
 
@@ -101,8 +87,8 @@ func void TorchesReSendTrigger__TorchHotKey () {
 
 	//Search by zCVisual or zCParticleFX does not work
 	if (!SearchVobsByClass ("oCMobFire", vobListPtr)) {
-		MEM_ArrayFree (vobListPtr);
 		MEM_Info ("No oCMobFire objects found.");
+		MEM_ArrayFree (vobListPtr);
 		return;
 	};
 
@@ -121,7 +107,7 @@ func void TorchesReSendTrigger__TorchHotKey () {
 		vobPtr = MEM_ArrayRead (vobListPtr, i);
 
 		if (MobIsTorch__TorchHotKey (vobPtr)) {
-			if (oCMobInter_GetHitPoints (vobPtr) == 11) {
+			if (oCMobInter_GetHitPoints (vobPtr) > 10) {
 				//Trigger vob - will lit fireplace
 				MEM_TriggerVob (vobPtr);
 			};
@@ -149,27 +135,30 @@ func void _eventMobStartStateChange__TorchHotKey (var int dummyVariable) {
 
 	//Is this torch ? is state changing from 0 to 1 ?
 	if (MobIsTorch__TorchHotKey (ECX)) && (fromState == 0) && (toState == 1) {
-		//Default value 10
+		//Default value is 10 ... increase every time we lit torch
 		var int hitp; hitp = oCMobInter_GetHitPoints (ECX);
-		if (hitp == 10) {
-			hitp += 1;
-			oCMobInter_SetHitPoints (ECX, hitp);
+		hitp += 1;
 
-			//I case of G2A I didn't test if this works at all
-			//Will leave here couple of additional details - that can be helpful in case of issues
-			if (zERROR_GetFilterLevel () > 0) {
-				var string msg;
-				var oCMob mob; mob = _^ (ECX);
+		if (hitp > oCMob_bitfield_hitp) {
+			hitp = oCMob_bitfield_hitp;
+		};
 
-				MEM_Info ("_eventMobStartStateChange__TorchHotKey");
+		oCMobInter_SetHitPoints (ECX, hitp);
 
-				msg = ConcatStrings ("name: ", mob.name);
-				MEM_Info (msg);
+		//I case of G2A I didn't test if this works at all
+		//Will leave here couple of additional details - that can be helpful in case of issues
+		if (zERROR_GetFilterLevel () > 0) {
+			var string msg;
+			var oCMob mob; mob = _^ (ECX);
 
-				msg = IntToString (mob.bitfield & oCMob_bitfield_hitp);
-				msg = ConcatStrings ("mob.bitfield & oCMob_bitfield_hitp: ", msg);
-				MEM_Info (msg);
-			};
+			MEM_Info ("_eventMobStartStateChange__TorchHotKey");
+
+			msg = ConcatStrings ("name: ", mob.name);
+			MEM_Info (msg);
+
+			msg = IntToString (mob.bitfield & oCMob_bitfield_hitp);
+			msg = ConcatStrings ("mob.bitfield & oCMob_bitfield_hitp: ", msg);
+			MEM_Info (msg);
 		};
 	};
 };
@@ -206,7 +195,7 @@ func void _eventGameHandleEvent__TorchHotKey (var int dummyVariable) {
 	if (!Hlp_IsValidNPC (hero)) { return; };
 	if (Npc_IsDead (hero)) { return; };
 
-	if ((key == MEM_GetKey ("keyTorchToggleKey")) || (key == MEM_GetSecondaryKey ("keyTorchToggleKey"))) {
+	if ((key == MEM_GetKey ("afsp.keyTorchToggleKey")) || (key == MEM_GetSecondaryKey ("afsp.keyTorchToggleKey"))) {
 		//Get Ctrl key status
 		var int ctrlKey; ctrlKey = MEM_GetKey ("keyAction");
 		var int ctrlSecondaryKey; ctrlSecondaryKey = MEM_GetSecondaryKey ("keyAction");
@@ -232,9 +221,7 @@ func void _eventGameHandleEvent__TorchHotKey (var int dummyVariable) {
 	};
 
 	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+		zCInputCallback_SetKey(0);
 	};
 };
 
@@ -323,6 +310,8 @@ func void G12_TorchHotKey_Init () {
 	//Add listener for saving/world change/loaded game
 	if (_LeGo_Flags & LeGo_Gamestate) {
 		Gamestate_AddListener (_eventGameState__TorchHotKey);
+	} else {
+		zSpy_Info("G12_TorchHotKey_Init: warning this feature required LeGo_Gamestate flag to be enabled!");
 	};
 
 	//-- Load API values / init default values
@@ -342,7 +331,7 @@ func void G12_TorchHotKey_Init () {
 	if (_TorchHotkey_RelitMobs_ascModels_Count > 0) {
 		repeat (i, _TorchHotkey_RelitMobs_ascModels_Count);
 			symbName = ConcatStrings ("TORCHHOTKEY_RELITMOBS_ASCMODELS", IntToString (i));
-			ascModel = API_GetSymbolStringValue (symbName, "");
+			ascModel = API_GetSymbolStringValue (symbName, STR_EMPTY);
 			MEM_WriteStringArray (_@s (_TorchHotkey_RelitMobs_ascModels), i, ascModel);
 		end;
 	};
@@ -360,7 +349,7 @@ func void G12_TorchHotKey_Init () {
 	} else {
 		repeat (i, _TorchHotkey_ReapplyOverlays_Count);
 			symbName = ConcatStrings ("TORCHHOTKEY_REAPPLYOVERLAYS", IntToString (i));
-			ascModel = API_GetSymbolStringValue (symbName, "");
+			ascModel = API_GetSymbolStringValue (symbName, STR_EMPTY);
 			MEM_WriteStringArray (_@s (_TorchHotkey_ReapplyOverlays), i, ascModel);
 		end;
 	};
@@ -369,15 +358,15 @@ func void G12_TorchHotKey_Init () {
 	//Load controls from .ini files Gothic.ini is master, mod.ini is secondary
 
 	//Custom key from Gothic.ini
-	if (!MEM_GothOptExists ("KEYS", "keyTorchToggleKey")) {
+	if (!MEM_GothOptExists ("KEYS", "afsp.keyTorchToggleKey")) {
 		//Custom key from mod .ini file
-		if (!MEM_ModOptExists ("KEYS", "keyTorchToggleKey")) {
+		if (!MEM_ModOptExists ("KEYS", "afsp.keyTorchToggleKey")) {
 			//KEY_T if not specified
-			MEM_SetKey ("keyTorchToggleKey", KEY_T);
+			MEM_SetKey ("afsp.keyTorchToggleKey", KEY_T);
 		} else {
 			//Update from mod .ini file
-			var string keyString; keyString = MEM_GetModOpt ("KEYS", "keyTorchToggleKey");
-			MEM_SetKey ("keyTorchToggleKey", MEMINT_KeyStringToKey (keyString));
+			var string keyString; keyString = MEM_GetModOpt ("KEYS", "afsp.keyTorchToggleKey");
+			MEM_SetKey ("afsp.keyTorchToggleKey", MEMINT_KeyStringToKey (keyString));
 		};
 	};
 };

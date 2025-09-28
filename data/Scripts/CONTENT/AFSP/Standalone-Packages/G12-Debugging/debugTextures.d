@@ -30,7 +30,7 @@ func void DisplayTextureName__DebugTextures (var int posPtr, var string texts, v
 	repeat (i, linesCount); var int i;
 		text = STR_Split (texts, Print_LineSeperator, i);
 
-		var int vw; vw = Print_GetStringWidth (text, DEBUGTEXTURES_FONT);
+		var int vw; vw = Font_GetStringWidth (text, DEBUGTEXTURES_FONT);
 
 		if (vw > viewWidth) {
 			viewWidth = vw;
@@ -52,9 +52,9 @@ func void DisplayTextureName__DebugTextures (var int posPtr, var string texts, v
 
 	//Update view
 
-	View_Open (hView__DebugTextures);
-	View_MoveTo (hView__DebugTextures, X - (viewWidth / 2), Y);
-	View_Resize (hView__DebugTextures, viewWidth, (fontHeight * linesCount) + linesCount);
+	View_Open_Safe (hView__DebugTextures);
+	View_MoveTo_Safe (hView__DebugTextures, X - (viewWidth / 2), Y);
+	View_Resize_Safe (hView__DebugTextures, viewWidth, (fontHeight * linesCount) + linesCount);
 
 	View_SetTextMargin (hView__DebugTextures, texts, 0);
 };
@@ -223,14 +223,14 @@ func void FrameFunction__DebugTextures () {
 func void DebugTextures_Enable () {
 	if (!Hlp_IsValidHandle (hView__DebugTextures)) {
 		hView__DebugTextures = View_Create(0, 0, 0, 0);
-		View_AddText (hView__DebugTextures, 0, 0, "", DEBUGTEXTURES_FONT);
+		View_AddText (hView__DebugTextures, 0, 0, STR_EMPTY, DEBUGTEXTURES_FONT);
 	};
 
 	FF_ApplyOnceExtGT (FrameFunction__DebugTextures, 0, -1);
 };
 
 func void DebugTextures_Disable () {
-	View_Close (hView__DebugTextures);
+	View_Close_Safe (hView__DebugTextures);
 
 	FF_Remove (FrameFunction__DebugTextures);
 };

@@ -18,12 +18,22 @@ func void oCMob_SetOwnerStr (var int mobPtr, var string ownerStr, var string own
 
 	if (!mobPtr) { return; };
 
-	ownerStr = STR_Trim (ownerStr, " ");
-	ownerGuildStr = STR_Trim (ownerGuildStr, " ");
+	ownerStr = STR_TrimChar (ownerStr, CHR_SPACE);
+	ownerStr = STR_Upper (ownerStr);
 
-	CALL_zStringPtrParam (ownerStr);
-	CALL_zStringPtrParam (ownerGuildStr);
-	CALL__thiscall (mobPtr, MEMINT_SwitchG1G2 (oCMOB__SetOwner_G1, oCMOB__SetOwner_G2));
+	ownerGuildStr = STR_TrimChar (ownerGuildStr, CHR_SPACE);
+	ownerGuildStr = STR_Upper (ownerGuildStr);
+
+	var int ownerStrPtr; ownerStrPtr = _@s (ownerStr);
+	var int ownerGuildStrPtr; ownerGuildStrPtr = _@s (ownerGuildStr);
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PtrParam (_@ (ownerGuildStrPtr));
+		CALL_PtrParam (_@ (ownerStrPtr));
+		CALL__thiscall (_@ (mobPtr), MEMINT_SwitchG1G2 (oCMOB__SetOwner_G1, oCMOB__SetOwner_G2));
+		call = CALL_End();
+	};
 };
 
 //0x0067AF90 public: void __thiscall oCMOB::SetOwner(int,int)
@@ -84,6 +94,9 @@ func void oCMobLockable_UpdateLock (var int mobPtr) {
 		//Lock chest
 		mob.bitfield = (mob.bitfield | oCMobLockable_bitfield_locked);
 	};
+
+	//Reset picklockNr
+	mob.bitfield = mob.bitfield & 3;
 };
 
 func void oCMobLockable_SetKeyInstance (var int mobPtr, var string keyInstance) {
@@ -128,7 +141,7 @@ func void oCMobFire_SetFireVobtreeName (var int mobPtr, var string fireVobtreeNa
 /*
  *	Function locks chest with specific key or pick lock string
  *	 - use "-" if you don't want to update keyInstance / pickLockStr
- *	MOB_SetLock ("CHEST", "KEY_GOMEZ", ""); //locks chest with KEY_GOMEZ, pick lock string is removed if present previously
+ *	MOB_SetLock ("CHEST", "KEY_GOMEZ", STR_EMPTY); //locks chest with KEY_GOMEZ, pick lock string is removed if present previously
  *	MOB_SetLock ("CHEST", "KEY_GOMEZ", "-"); //locks chest with KEY_GOMEZ, pick lock string is not touched if present previously
  *	MOB_SetLock ("CHEST", "KEY_GOMEZ", "LRLR"); //locks chest with KEY_GOMEZ, updates pick lock string to LRLR
  */
@@ -142,6 +155,25 @@ func void MOB_SetLock (var string mobName, var string keyInstance, var string pi
 	};
 };
 
+func void MOB_SetOwnerStr (var string mobName, var string ownerStr, var string ownerGuildStr) {
+	var int mobPtr; mobPtr = MEM_SearchVobByName (mobName);
+	oCMob_SetOwnerStr (mobPtr, ownerStr, ownerGuildStr);
+};
+
+func void MOB_SetOnStateFuncName (var string mobName, var string onStateFuncName) {
+	var int mobPtr; mobPtr = MEM_SearchVobByName (mobName);
+	oCMobInter_SetOnStateFuncName (mobPtr, onStateFuncName);
+};
+
+func int MOB_IsLocked (var string mobName) {
+	var int mobPtr; mobPtr = MEM_SearchVobByName (mobName);
+
+	if (!mobPtr) { return FALSE; };
+
+	var oCMobLockable mob; mob = _^(mobPtr);
+	return ((mob.bitfield & oCMobLockable_bitfield_locked) == oCMobLockable_bitfield_locked);
+};
+
 /*
  *	Function returns oCMobInter hitpoints
  */
@@ -150,7 +182,7 @@ func int oCMobInter_GetHitPoints (var int mobPtr) {
 	if (!Hlp_Is_oCMobInter (mobPtr)) { return 0; };
 
 	mob = _^ (mobPtr);
-	return (oCMob_bitfield_hitp & mob._oCMob_bitfield);
+	return (mob._oCMob_bitfield & oCMob_bitfield_hitp);
 };
 
 /*

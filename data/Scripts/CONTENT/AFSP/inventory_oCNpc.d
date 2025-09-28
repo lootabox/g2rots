@@ -7,6 +7,7 @@
  *	 - 2 looting NPC
  *	 - 3 looting chest
  *	 - 4 trading inventory
+ *	 - 5 stealing
  */
 
 /*
@@ -17,6 +18,121 @@ NPC_GAME_STEAL
 };
 */
 
+/*
+ *	Credits: functions Trade_SetBuyMultiplier & Trade_SetSellMultiplier originally created by OrcWarriorPL
+ *	https://forum.worldofplayers.de/forum/threads/879891-Skriptpaket-Ikarus-2/page12?p=14836995&viewfull=1#post14836995
+ *
+ *	They were modified to change multipliers for both inventory containers in case of both buying / selling containers.
+ */
+
+//Float
+func void Trade_SetBuyMultiplier (var int mulF) {
+	var oCViewDialogTrade dialogTrade;
+	var oCViewDialogItemContainer itemCont;
+
+	if (MEM_InformationMan.DlgTrade) {
+		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+
+		if (dialogTrade.dlgInventoryNpc) {
+			itemCont = _^ (dialogTrade.dlgInventoryNpc);
+			itemCont.valueMultiplier = mulF;
+		};
+
+		//G1
+		if (MEMINT_SwitchG1G2(1, 0)) {
+			var int ptr; ptr = _@(dialogTrade.dlgInventoryNpc) + 252; //dlgContainerNpc
+			if (ptr) {
+				itemCont = _^ (ptr);
+				itemCont.valueMultiplier = mulF;
+			};
+		};
+	};
+};
+
+//Float
+func void Trade_SetSellMultiplier (var int mulF) {
+	var oCViewDialogTrade dialogTrade;
+	var oCViewDialogItemContainer itemCont;
+
+	if (MEM_InformationMan.DlgTrade) {
+		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+
+		//G1
+		if (MEMINT_SwitchG1G2(1, 0)) {
+			var int ptr; ptr = _@(dialogTrade.dlgInventoryNpc) + 260; //dlgContainerPlayer
+			if (ptr) {
+				itemCont = _^ (ptr);
+				itemCont.valueMultiplier = mulF;
+			};
+		};
+
+		if (dialogTrade.dlgInventoryPlayer) {
+			itemCont = _^ (dialogTrade.dlgInventoryPlayer);
+			itemCont.valueMultiplier = mulF;
+		};
+	};
+};
+
+//Float
+func int Trade_GetBuyMultiplier () {
+	var oCViewDialogTrade dialogTrade;
+	var oCViewDialogItemContainer itemCont;
+
+	if (MEM_InformationMan.DlgTrade) {
+		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+
+		if (dialogTrade.dlgInventoryNpc) {
+			itemCont = _^ (dialogTrade.dlgInventoryNpc);
+			return itemCont.valueMultiplier;
+		};
+	};
+
+	return FLOATNULL;
+};
+
+//Float
+func int Trade_GetSellMultiplier () {
+	var oCViewDialogTrade dialogTrade;
+	var oCViewDialogItemContainer itemCont;
+
+	if (MEM_InformationMan.DlgTrade) {
+		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+
+		if (dialogTrade.dlgInventoryPlayer) {
+			itemCont = _^ (dialogTrade.dlgInventoryPlayer);
+			return itemCont.valueMultiplier;
+		};
+	};
+
+	return FLOATNULL;
+};
+
+/*
+ *	Function returns game_mode
+ */
+func int oCNpc_Get_Game_Mode () {
+	//0x008DBC24 public: static int oCNpc::game_mode
+	const int oCNpc__game_mode_G1 = 9288740;
+
+	//0x00AB27D0 public: static int oCNpc::game_mode
+	const int oCNpc__game_mode_G2 = 11216848;
+
+	return + MEM_ReadInt (MEMINT_SwitchG1G2 (oCNpc__game_mode_G1, oCNpc__game_mode_G2));
+};
+
+/*
+ *	Function updates game_mode
+ */
+func void oCNpc_Set_Game_Mode (var int newMode) {
+	//0x008DBC24 public: static int oCNpc::game_mode
+	const int oCNpc__game_mode_G1 = 9288740;
+
+	//0x00AB27D0 public: static int oCNpc::game_mode
+	const int oCNpc__game_mode_G2 = 11216848;
+
+	MEM_WriteInt (MEMINT_SwitchG1G2 (oCNpc__game_mode_G1, oCNpc__game_mode_G2), newMode);
+};
+
 //0x008DBC24 public: static int oCNpc::game_mode
 //0x008DBC28 class oCNpc * stealnpc
 //0x008DBC2C float stealcheck_timer
@@ -26,6 +142,7 @@ const int OpenInvType_Player = 1;
 const int OpenInvType_NPC = 2;
 const int OpenInvType_Chest = 3;
 const int OpenInvType_Trading = 4;
+const int OpenInvType_Stealing = 5;
 
 func int Hlp_GetOpenInventoryType () {
 	//0x008DA998 class zCList<class oCItemContainer> s_openContainers
@@ -34,21 +151,52 @@ func int Hlp_GetOpenInventoryType () {
 	//0x00AB0FD4 class zCList<class oCItemContainer> s_openContainers
 	const int s_openContainers_G2 = 11210708;
 
-//-- TODO: add logic for G2A
-
 	//0x007DCDFC const oCItemContainer::`vftable'
 	const int oCItemContainer_vtbl_G1 = 8244732;
+
+	//0x0083C4AC const oCItemContainer::`vftable'
+	const int oCItemContainer_vtbl_G2 = 8635564;
 
 	//0x007DCEA4 const oCStealContainer::`vftable'
 	const int oCStealContainer_vtbl_G1 = 8244900;
 
+	//0x0083C574 const oCStealContainer::`vftable'
+	const int oCStealContainer_vtbl_G2 = 8635764;
+
 	//0x007DCF54 const oCNpcContainer::`vftable'
 	const int oCNpcContainer_vtbl_G1 = 8245076;
+
+	//0x0083C644 const oCNpcContainer::`vftable'
+	const int oCNpcContainer_vtbl_G2 = 8635972;
 
 	//0x007DD004 const oCNpcInventory::`vftable'
 	const int oCNpcInventory_vtbl_G1 = 8245252;
 
-//--
+	//0x0083C714 const oCNpcInventory::`vftable'
+	const int oCNpcInventory_vtbl_G2 = 8636180;
+
+//-- 1. check - game mode
+
+	var int game_mode; game_mode = oCNpc_Get_Game_Mode();
+
+	if (game_mode == NPC_GAME_PLUNDER) {
+		return OpenInvType_NPC;
+	};
+	if (game_mode == NPC_GAME_STEAL) {
+		return OpenInvType_Stealing;
+	};
+
+//-- 2. check - dialog trade
+
+	if (MEM_InformationMan.DlgTrade) {
+		var oCViewDialogTrade dlgTrade; dlgTrade = _^(MEM_InformationMan.DlgTrade);
+		if (dlgTrade.isActivated) {
+			return OpenInvType_Trading;
+		};
+	};
+
+//-- 3. check - determine based on open inventory types
+
 	var oCItemContainer container;
 
 	var int itemContainer; itemContainer = 0;
@@ -56,9 +204,8 @@ func int Hlp_GetOpenInventoryType () {
 	var int npcContainer; npcContainer = 0;
 	var int playerInventory; playerInventory = 0;
 
-	var int ptr; ptr = MEMINT_SwitchG1G2(s_openContainers_G1, s_openContainers_G2);
-
 	var zCList list;
+	var int ptr; ptr = MEMINT_SwitchG1G2(s_openContainers_G1, s_openContainers_G2);
 
 	while (ptr);
 		list = _^ (ptr);
@@ -67,14 +214,17 @@ func int Hlp_GetOpenInventoryType () {
 		if (ptr) {
 			container = _^ (ptr);
 
-			if (container.inventory2_vtbl == oCItemContainer_vtbl_G1) { itemContainer = 1; };
-			if (container.inventory2_vtbl == oCStealContainer_vtbl_G1) { stealContainer = 1; };
-			if (container.inventory2_vtbl == oCNpcContainer_vtbl_G1) { npcContainer = 1; };
-			if (container.inventory2_vtbl == oCNpcInventory_vtbl_G1) { playerInventory = 1; };
+			if (container.inventory2_vtbl == MEMINT_SwitchG1G2(oCItemContainer_vtbl_G1, oCItemContainer_vtbl_G2)) { itemContainer = 1; };
+			if (container.inventory2_vtbl == MEMINT_SwitchG1G2(oCStealContainer_vtbl_G1, oCStealContainer_vtbl_G2)) { stealContainer = 1; };
+			if (container.inventory2_vtbl == MEMINT_SwitchG1G2(oCNpcContainer_vtbl_G1, oCStealContainer_vtbl_G2)) { npcContainer = 1; };
+			if (container.inventory2_vtbl == MEMINT_SwitchG1G2(oCNpcInventory_vtbl_G1, oCNpcInventory_vtbl_G2)) { playerInventory = 1; };
 		};
 
 		ptr = list.next;
 	end;
+
+//-- TODO: check if this works with G2A
+	//With G2A we can probably use inventory2_oCItemContainer_invMode? For now this logic seems to be good enough :)
 
 	//Players inventory
 	if ((playerInventory) && (!itemContainer) && (!stealContainer) && (!npcContainer)) { return OpenInvType_Player; };
@@ -87,6 +237,9 @@ func int Hlp_GetOpenInventoryType () {
 
 	//Trading inventory
 	if ((playerInventory) && (itemContainer) && (stealContainer) && (!npcContainer)) { return OpenInvType_Trading; };
+
+	//Stealing
+	if ((playerInventory) && (!itemContainer) && (stealContainer) && (!npcContainer)) { return OpenInvType_Stealing; };
 
 	return OpenInvType_None;
 };
@@ -102,9 +255,7 @@ func int Hlp_Trade_GetInventoryNpcContainer () {
 		dialogStealContainer = _^ (dialogTrade.dlgInventoryNpc);
 
 		//oCStealContainer
-		if (dialogStealContainer.stealContainer) {
-			return dialogStealContainer.stealContainer;
-		};
+		return + dialogStealContainer.stealContainer;
 	};
 
 	return 0;
@@ -132,9 +283,7 @@ func int Hlp_Trade_GetContainerNpcContainer () {
 		dialogItemContainer = _^ (itemContainerPtr);
 
 		//oCItemContainer
-		if (dialogItemContainer.itemContainer) {
-			return dialogItemContainer.itemContainer;
-		};
+		return + dialogItemContainer.itemContainer;
 	};
 
 	return 0;
@@ -162,9 +311,7 @@ func int Hlp_Trade_GetContainerPlayerContainer () {
 		dialogItemContainer = _^ (itemContainerPtr);
 
 		//oCItemContainer
-		if (dialogItemContainer.itemContainer) {
-			return dialogItemContainer.itemContainer;
-		};
+		return + dialogItemContainer.itemContainer;
 	};
 
 	return 0;
@@ -181,9 +328,7 @@ func int Hlp_Trade_GetInventoryPlayerContainer () {
 		dialogInventory = _^ (dialogTrade.dlgInventoryPlayer);
 
 		//oCNpcInventory
-		if (dialogInventory.inventory) {
-			return dialogInventory.inventory;
-		};
+		return + dialogInventory.inventory;
 	};
 
 	return 0;
@@ -192,30 +337,41 @@ func int Hlp_Trade_GetInventoryPlayerContainer () {
 /*
  *	Returns pointer to active oCItemContainer
  */
-/*
-Not required ... we can get same result using Hlp_GetActiveOpenInvContainer
 func int Hlp_Trade_GetActiveTradeContainer () {
 	if (!MEM_InformationMan.DlgTrade) { return 0; };
-
-	var oCViewDialogTrade dialogTrade;
-	dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+/* 
+	var oCViewDialogTrade dialogTrade; dialogTrade = _^(MEM_InformationMan.DlgTrade);
 
 	if (dialogTrade.sectionTrade == TRADE_SECTION_LEFT_INVENTORY_G1) {
-		return +Hlp_Trade_GetInventoryNpcContainer ();
-	} else
-	if (dialogTrade.sectionTrade == TRADE_SECTION_LEFT_CONTAINER_G1) {
-		return +Hlp_Trade_GetContainerNpcContainer ();
-	} else
-	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_CONTAINER_G1) {
-		return +Hlp_Trade_GetContainerPlayerContainer ();
-	} else
-	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_INVENTORY_G1) {
-		return +Hlp_Trade_GetInventoryPlayerContainer ();
+		//dlgInventoryNpc; //oCViewDialogStealContainer* // sizeof 04h offset F8h
+		var oCViewDialogStealContainer dlgInventoryNpc; dlgInventoryNpc = _^(dialogTrade.dlgInventoryNpc);
+		//stealContainer; //oCStealContainer* // sizeof 04h offset 100h
+		return + dlgInventoryNpc.stealContainer;
 	};
 
+	if (dialogTrade.sectionTrade == TRADE_SECTION_LEFT_CONTAINER_G1) {
+		//dlgContainerNpc; //oCViewDialogItemContainer* // sizeof 04h offset FCh
+		var oCViewDialogItemContainer dlgContainerNpc; dlgContainerNpc = _^(dialogTrade.dlgContainerNpc);
+		//itemContainer; //oCItemContainer* // sizeof 04h offset 100h
+		return + dlgContainerNpc.itemContainer;
+	};
+
+	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_CONTAINER_G1) {
+		//dlgContainerPlayer; //oCViewDialogItemContainer* // sizeof 04h offset 104h
+		var oCViewDialogItemContainer dlgContainerPlayer; dlgContainerPlayer = _^(dialogTrade.dlgContainerPlayer);
+		//itemContainer; //oCItemContainer* // sizeof 04h offset 100h
+		return + dlgContainerPlayer.itemContainer;
+	};
+
+	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_INVENTORY_G1) {
+		//dlgInventoryPlayer; //oCViewDialogInventory* // sizeof 04h offset 108h
+		var oCViewDialogInventory dlgInventoryPlayer; dlgInventoryPlayer = _^(dialogTrade.dlgInventoryPlayer);
+		//inventory; //oCNpcInventory* // sizeof 04h offset 100h
+		return + dlgInventoryPlayer.inventory;
+	};
+ */
 	return 0;
 };
-*/
 
 /*
  *	Returns pointer to active oCItemContainer
@@ -284,48 +440,78 @@ func int Hlp_GetOpenContainer (var int vtbl) {
 	return 0;
 };
 
-//-- TODO: add logic for G2A
-
 func int Hlp_GetOpenContainer_oCItemContainer () {
 	//0x007DCDFC const oCItemContainer::`vftable'
 	const int oCItemContainer_vtbl_G1 = 8244732;
 
-	return +Hlp_GetOpenContainer (oCItemContainer_vtbl_G1);
+	//0x0083C4AC const oCItemContainer::`vftable'
+	const int oCItemContainer_vtbl_G2 = 8635564;
+
+	return +Hlp_GetOpenContainer(MEMINT_SwitchG1G2(oCItemContainer_vtbl_G1, oCItemContainer_vtbl_G2));
 };
 
 func int Hlp_GetOpenContainer_oCStealContainer () {
 	//0x007DCEA4 const oCStealContainer::`vftable'
 	const int oCStealContainer_vtbl_G1 = 8244900;
 
-	return +Hlp_GetOpenContainer (oCStealContainer_vtbl_G1);
+	//0x0083C574 const oCStealContainer::`vftable'
+	const int oCStealContainer_vtbl_G2 = 8635764;
+
+	return +Hlp_GetOpenContainer(MEMINT_SwitchG1G2(oCStealContainer_vtbl_G1, oCStealContainer_vtbl_G2));
 };
 
 func int Hlp_GetOpenContainer_oCNpcContainer () {
 	//0x007DCF54 const oCNpcContainer::`vftable'
 	const int oCNpcContainer_vtbl_G1 = 8245076;
 
-	return +Hlp_GetOpenContainer (oCNpcContainer_vtbl_G1);
+	//0x0083C644 const oCNpcContainer::`vftable'
+	const int oCNpcContainer_vtbl_G2 = 8635972;
+
+	return +Hlp_GetOpenContainer(MEMINT_SwitchG1G2(oCNpcContainer_vtbl_G1, oCNpcContainer_vtbl_G2));
 };
 
 func int Hlp_GetOpenContainer_oCNpcInventory () {
 	//0x007DD004 const oCNpcInventory::`vftable'
 	const int oCNpcInventory_vtbl_G1 = 8245252;
 
-	return +Hlp_GetOpenContainer (oCNpcInventory_vtbl_G1);
+	//0x0083C714 const oCNpcInventory::`vftable'
+	const int oCNpcInventory_vtbl_G2 = 8636180;
+
+	return +Hlp_GetOpenContainer(MEMINT_SwitchG1G2(oCNpcInventory_vtbl_G1, oCNpcInventory_vtbl_G2));
 };
 
 //-- oCItemContainer functions
 
-func int oCItemContainer_Draw (var int ptr) {
+func int oCItemContainer_ActivateNextContainer (var int ptr, var int direction) {
+	//0x00669980 protected: int __thiscall oCItemContainer::ActivateNextContainer(int)
+	const int oCItemContainer__ActivateNextContainer_G1 = 6723968;
+
+	//0x0070A150 protected: int __thiscall oCItemContainer::ActivateNextContainer(int)
+	const int oCItemContainer__ActivateNextContainer_G2 = 7381328;
+
+	if (!ptr) { return 0; };
+
+	var int retVal;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PutRetValTo(_@ (retVal));
+		CALL_IntParam (_@ (direction));
+		CALL__thiscall (_@ (ptr), MEMINT_SwitchG1G2 (oCItemContainer__ActivateNextContainer_G1, oCItemContainer__ActivateNextContainer_G2));
+		call = CALL_End();
+	};
+
+	return + retVal;
+};
+
+func void oCItemContainer_Draw (var int ptr) {
 	//0x00667660 protected: virtual void __thiscall oCItemContainer::Draw(void)
 	const int oCItemContainer__Draw_G1 = 6714976;
 
 	//0x007076B0 protected: virtual void __thiscall oCItemContainer::Draw(void)
 	const int oCItemContainer__Draw_G2 = 7370416;
 
-	if (!ptr) { return 0; };
-
-	var int retVal;
+	if (!ptr) { return; };
 
 	const int call = 0;
 	if (CALL_Begin(call)) {
@@ -351,6 +537,28 @@ func int oCItemContainer_Insert (var int ptr, var int itemPtr) {
 		CALL_PutRetValTo(_@ (retVal));
 		CALL_PtrParam (_@ (itemPtr));
 		CALL__thiscall (_@ (ptr), MEMINT_SwitchG1G2 (oCItemContainer__Insert_G1, oCItemContainer__Insert_G2));
+		call = CALL_End();
+	};
+
+	return +retVal;
+};
+
+func int oCItemContainer_IsEmpty (var int ptr) {
+	//0x00669750 public: virtual int __thiscall oCItemContainer::IsEmpty(void)
+	const int oCItemContainer__IsEmpty_G1 = 6723408;
+
+	//0x00709E10 public: virtual int __thiscall oCItemContainer::IsEmpty(void)
+	const int oCItemContainer__IsEmpty_G2 = 7380496;
+
+	//Hmmm, which one makes more sense in case pointer is invalid, is empty true or false? :)
+	if (!ptr) { return TRUE; };
+
+	var int retVal;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PutRetValTo(_@ (retVal));
+		CALL__thiscall (_@ (ptr), MEMINT_SwitchG1G2 (oCItemContainer__IsEmpty_G1, oCItemContainer__IsEmpty_G2));
 		call = CALL_End();
 	};
 
@@ -522,6 +730,45 @@ func void oCItemContainer_Close (var int ptr) {
 	};
 };
 
+/*
+ *	oCItemContainer_OpenPassive
+ *	 - G1 mode - item list mode
+ *	 - G2A inventory mode - INV_MODE_DEFAULT, INV_MODE_CONTAINER, INV_MODE_PLUNDER, INV_MODE_STEAL, INV_MODE_BUY, INV_MODE_SELL
+ */
+
+/*
+
+//enum oTItemListMode { FULLSCREEN, HALFSCREEN, ONE };
+
+enum {
+	INV_MODE_DEFAULT,
+	INV_MODE_CONTAINER,
+	INV_MODE_PLUNDER,
+	INV_MODE_STEAL,
+	INV_MODE_BUY,
+	INV_MODE_SELL,
+	INV_MODE_MAX
+};
+*/
+func void oCItemContainer_OpenPassive (var int ptr, var int x, var int y, var int mode) {
+	//0x00668050 public: virtual void __thiscall oCItemContainer::OpenPassive(int,int,enum oCItemContainer::oTItemListMode)
+	const int oCItemContainer__OpenPassive_G1 = 6717520;
+
+	//0x007086D0 public: virtual void __thiscall oCItemContainer::OpenPassive(int,int,int)
+	const int oCItemContainer__OpenPassive_G2 = 7374544;
+
+	if (!ptr) { return; };
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PtrParam (_@ (mode));
+		CALL_PtrParam (_@ (y));
+		CALL_PtrParam (_@ (x));
+		CALL__thiscall (_@ (ptr), MEMINT_SwitchG1G2 (oCItemContainer__OpenPassive_G1, oCItemContainer__OpenPassive_G2));
+		call = CALL_End();
+	};
+};
+
 //-- oCNpcContainer functions
 
 func int oCNpcContainer_Insert (var int ptr, var int itemPtr) {
@@ -565,6 +812,30 @@ func void oCNpcContainer_CreateList (var int ptr) {
 
 //-- oCNpcInventory functions
 
+func int oCNpcInventory_GetNumItemsInCategory (var int ptr, var int invCat) {
+	//0x0066C4C0 public: int __thiscall oCNpcInventory::GetNumItemsInCategory(int)
+	const int oCNpcInventory__GetNumItemsInCategory_G1 = 6735040;
+
+	//0x0070C340 public: int __thiscall oCNpcInventory::GetNumItemsInCategory(void)
+	const int oCNpcInventory__GetNumItemsInCategory_G2 = 7390016;
+
+	if (!ptr) { return 0; };
+
+	var int retVal;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PutRetValTo(_@ (retVal));
+		if (MEMINT_SwitchG1G2 (1, 0)) {
+			CALL_IntParam (_@ (invCat));
+		};
+		CALL__thiscall (_@ (ptr), MEMINT_SwitchG1G2 (oCNpcInventory__GetNumItemsInCategory_G1, oCNpcInventory__GetNumItemsInCategory_G2));
+		call = CALL_End();
+	};
+
+	return + retVal;
+};
+
 func int oCNpcInventory_GetCategory (var int ptr, var int itemPtr) {
 	//0x0066C430 public: int __thiscall oCNpcInventory::GetCategory(class oCItem *)
 	const int oCNpcInventory__GetCategory_G1 = 6734896;
@@ -588,6 +859,9 @@ func int oCNpcInventory_GetCategory (var int ptr, var int itemPtr) {
 	return +retVal;
 };
 
+/*
+ *	Does not actually remove item by ptr... bruuuuuuuuuuuuuuh
+ */
 func int oCNpcInventory_RemoveByPtr (var int ptr, var int itemPtr, var int amount) {
 	//0x0066CF10 public: virtual class oCItem * __thiscall oCNpcInventory::RemoveByPtr(class oCItem *,int)
 	const int oCNpcInventory__RemoveByPtr_G1 = 6737680;
@@ -651,8 +925,16 @@ func void oCNpcInventory_Close (var int npcInventoryPtr) {
 	};
 };
 
+func int Npc_GetNpcInventoryPtr (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return 0; };
+
+	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+	return + npcInventoryPtr;
+};
+
 //G1 only
-func int oCNpcInventory_SwitchToCategory (var int npcInventoryPtr, var int invCategory) {
+func int oCNpcInventory_SwitchToCategory (var int npcInventoryPtr, var int invCat) {
 	//0x0066DE60 public: int __thiscall oCNpcInventory::SwitchToCategory(int)
 	const int oCNpcInventory__SwitchToCategory_G1 = 6741600;
 
@@ -669,7 +951,7 @@ func int oCNpcInventory_SwitchToCategory (var int npcInventoryPtr, var int invCa
 	const int call = 0;
 	if (CALL_Begin(call)) {
 		CALL_PutRetValTo(_@ (retVal));
-		CALL_IntParam (_@ (invCategory));
+		CALL_IntParam (_@ (invCat));
 		CALL__thiscall (_@ (npcInventoryPtr), oCNpcInventory__SwitchToCategory_G1);
 		call = CALL_End();
 	};
@@ -681,7 +963,10 @@ func int oCNpcInventory_SwitchToCategory (var int npcInventoryPtr, var int invCa
  *	oCNpcInventory_UnpackCategory
  *	 - in case of G2A inventory category is redundant
  */
-func void oCNpcInventory_UnpackCategory (var int npcInventoryPtr, var int invCategory) {
+func void oCNpcInventory_UnpackCategory (var int npcInventoryPtr, var int invCat) {
+	//0x00670740 public: void __thiscall oCNpcInventory::UnpackItemsInCategory(int)
+	//0x00710A20 public: void __thiscall oCNpcInventory::UnpackItemsInCategory(void)
+
 	//0x0066FAD0 public: void __thiscall oCNpcInventory::UnpackCategory(int)
 	const int oCNpcInventory__UnpackCategory_G1 = 6748880;
 
@@ -693,9 +978,26 @@ func void oCNpcInventory_UnpackCategory (var int npcInventoryPtr, var int invCat
 	const int call = 0;
 	if (CALL_Begin(call)) {
 		if (MEMINT_SwitchG1G2 (1, 0)) {
-			CALL_IntParam (_@ (invCategory));
+			CALL_IntParam (_@ (invCat));
 		};
 		CALL__thiscall (_@ (npcInventoryPtr), MEMINT_SwitchG1G2 (oCNpcInventory__UnpackCategory_G1, oCNpcInventory__UnpackCategory_G2));
+		call = CALL_End();
+	};
+};
+
+func void oCNpc_UnpackInventory (var int slfInstance) {
+	//0x00670400 public: void __thiscall oCNpcInventory::UnpackAllItems(void)
+	const int oCNpcInventory__UnpackAllItems_G1 = 6751232;
+
+	//0x00710030 public: void __thiscall oCNpcInventory::UnpackAllItems(void)
+	const int oCNpcInventory__UnpackAllItems_G2 = 7405616;
+
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+	if (!npcInventoryPtr) { return; };
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL__thiscall (_@ (npcInventoryPtr), MEMINT_SwitchG1G2 (oCNpcInventory__UnpackAllItems_G1, oCNpcInventory__UnpackAllItems_G2));
 		call = CALL_End();
 	};
 };
@@ -832,6 +1134,7 @@ func int oCViewDialogInventory_RemoveSelectedItem (var int ptr) {
 	var int retVal;
 
 	const int null = 0;
+
 	const int call = 0;
 	if (CALL_Begin(call)) {
 		CALL_PutRetValTo(_@ (retVal));
@@ -957,8 +1260,6 @@ func int oCViewDialogTrade_OnTransferRight (var int ptr, var int amount) {
 
 	return +retVal;
 };
-
-//--
 
 /*
  *	Removes from NPC inventory item with specified qty and returns pointer to removed item
@@ -1158,6 +1459,7 @@ func int oCNpc_GetEquippedRangedWeapon (var int slfInstance) {
 	return + retVal;
 };
 
+//Same as oCNpc_GetSlotItem (slfInstance, NPC_NODE_TORSO);
 func int oCNpc_GetEquippedArmor (var int slfInstance) {
 	//0x006947A0 public: class oCItem * __thiscall oCNpc::GetEquippedArmor(void)
 	const int oCNpc__GetEquippedArmor_G1 = 6899616;
@@ -1179,6 +1481,26 @@ func int oCNpc_GetEquippedArmor (var int slfInstance) {
 	};
 
 	return + retVal;
+};
+
+func int Npc_HasItemInAnySlot (var int slfInstance, var int itemInstanceID) {
+	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+
+	if (!Npc_GetInvItem (slf, itemInstanceID)) { return FALSE; };
+
+	repeat (i, slf.invSlot_numInArray); var int i;
+		var int slotPtr; slotPtr = MEM_ReadIntArray (slf.invSlot_array, i);
+
+		if (slotPtr) {
+			var TNpcSlot slot; slot = _^ (slotPtr);
+			if (slot.vob == _@ (item)) {
+				return TRUE;
+			};
+		};
+	end;
+
+	return FALSE;
 };
 
 /*
@@ -1341,7 +1663,7 @@ func int NPC_GetItemPtrByInstance (var int slfInstance, var int invCat, var int 
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return 0; };
 
-	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slf);
 
 	var oCItem itm;
 	var zCListSort list;
@@ -1417,48 +1739,77 @@ func int NPC_HasItemInstanceName (var int slfInstance, var string instanceName) 
 	if (symbID > 0) && (symbID < currSymbolTableLength) {
 		//if (NPC_GetInventoryItem (slf, symbID))
 		if (NPC_GetInvItem (slf, symbID)) {
-			return (NPC_HasItems (slf, Hlp_GetinstanceID (item)));
+			return (NPC_HasItems (slf, Hlp_GetInstanceID (item)));
 		};
 	};
 
 	return 0;
 };
 
-func void NPC_RemoveInventoryCategory (var int slfInstance, var int invCategory, var int flagsKeepItems, var int mainFlagsKeepItems) {
+func int Npc_ItemGetCategory (var int slfInstance, var int itemPtr) {
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+	return + oCNpcInventory_GetCategory (npcInventoryPtr, itemPtr);
+};
+
+func void NPC_RemoveInventoryCategory (var int slfInstance, var int invCat, var int flagsKeepItems, var int mainFlagsKeepItems) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
-	var int amount;
-	var int itmInstance;
+	var int armorItemID; armorItemID = Npc_GetArmor (slf);
 
 	var int itmSlot; itmSlot = 0;
+	var int amount; amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 
-	amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+	var int itemInstanceID;
 
 	while (amount > 0);
-		itmInstance = Hlp_GetinstanceID (item);
 
-		//Chceme tieto itemy odstranit ?
-		//Zbroj - neodstranujeme taku, co je equipnuta
-		if ((item.Flags & flagsKeepItems) || (item.MainFlag & mainFlagsKeepItems) || ((invCategory == INV_ARMOR) && (NPC_GetArmor (slf) == itmInstance)))
-		{
+		//Fix logic for G2 NoTR (credits: Neocromicon & Damianut)
+		//G2 does not have separate inventories for items - NPC_GetInvItemBySlot goes through whole inventory
+		//we have to check invCat one more time here!
+		if (MEMINT_SwitchG1G2(0, 1) && (invCat > 0)) {
+			if (Npc_ItemGetCategory(slfInstance, _@(item)) != invCat) {
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
+		};
+
+		itemInstanceID = Hlp_GetInstanceID (item);
+
+		//Do we want to remove this item?
+		//(do not remove equipped armor)
+		if (item.flags & flagsKeepItems) {
 			itmSlot += 1;
-			amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+			amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 			continue;
 		};
 
-		var int ptr; ptr = _@ (item);
-
-		var oCItem itm; itm = _^ (ptr);
-
-		if (itm.amount == 1) {
-			oCNPC_UnequipItemPtr (slf, ptr);
-			NPC_RemoveInvItem (slf, itmInstance);
-		} else {
-			NPC_RemoveInvItems (slf, itmInstance, itm.amount);
+		if (item.MainFlag & mainFlagsKeepItems) {
+			itmSlot += 1;
+			amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+			continue;
 		};
 
-		amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+		if (invCat == INV_ARMOR) {
+			if ((armorItemID == itemInstanceID) && (item.Flags & ITEM_ACTIVE_LEGO)) {
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
+		};
+
+		oCNPC_UnequipItemPtr (slf, _@ (item));
+
+		var int retVal;
+
+		if (amount == 1) {
+			retVal = NPC_RemoveInvItem (slf, itemInstanceID);
+		} else {
+			retVal = NPC_RemoveInvItems (slf, itemInstanceID, amount);
+		};
+
+		amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 	end;
 };
 
@@ -1479,85 +1830,103 @@ func void NPC_RemoveInventory (var int slfInstance, var int flagsKeepItems, var 
 	};
 };
 
-var int _NpcTransferItemPrint_Event;
-var int _NpcTransferItemPrint_Event_Enabled;
+var int _NpcTransferItem_Event;
+var int _NpcTransferItem_Event_Enabled;
 
-func void NpcTransferItemPrintEvent_Init () {
-	if (!_NpcTransferItemPrint_Event) {
-		_NpcTransferItemPrint_Event = Event_Create ();
+var int _NpcTransferItem_FromNpcPtr;
+var int _NpcTransferItem_ToNpcPtr;
+
+func void NpcTransferItemEvent_Init () {
+	if (!_NpcTransferItem_Event) {
+		_NpcTransferItem_Event = Event_Create ();
 	};
 };
 
-func void NpcTransferItemPrintEvent_AddListener (var func f) {
-	Event_AddOnce (_NpcTransferItemPrint_Event, f);
+func void NpcTransferItemEvent_AddListener (var func f) {
+	if (_NpcTransferItem_Event) {
+		Event_AddOnce(_NpcTransferItem_Event, f);
+	};
 };
 
-func void NpcTransferItemPrintEvent_RemoveListener (var func f) {
-	Event_Remove (_NpcTransferItemPrint_Event, f);
+func void NpcTransferItemEvent_RemoveListener (var func f) {
+	if (_NpcTransferItem_Event) {
+		Event_Remove(_NpcTransferItem_Event, f);
+	};
 };
 
-func void NPC_TransferInventoryCategory (var int slfInstance, var int othInstance, var int invCategory, var int transferEquippedArmor, var int transferEquippedItems, var int transferMissionItems) {
+func void NPC_TransferInventoryCategory (var int slfInstance, var int othInstance, var int invCat, var int transferEquippedArmor, var int transferEquippedItems, var int transferMissionItems) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
 	var C_NPC oth; oth = Hlp_GetNPC (othInstance);
 	if (!Hlp_IsValidNPC (oth)) { return; };
 
-	var int amount;
-	var int itmInstance;
+	_NpcTransferItem_FromNpcPtr = _@ (slf);
+	_NpcTransferItem_ToNpcPtr = _@ (oth);
+
+	var int armorItemID; armorItemID = Npc_GetArmor (slf);
 
 	var int itmSlot; itmSlot = 0;
+	var int amount; amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 
-	amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+	var int itemInstanceID;
 
 	while (amount > 0);
-		itmInstance = Hlp_GetinstanceID (item);
+		//Fix logic for G2 NoTR (credits: Neocromicon & Damianut)
+		//G2 does not have separate inventories for items - NPC_GetInvItemBySlot goes through whole inventory
+		//we have to check invCat one more time here!
+		if (MEMINT_SwitchG1G2(0, 1) && (invCat > 0)) {
+			if (Npc_ItemGetCategory(slfInstance, _@(item)) != invCat) {
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
+		};
+
+		itemInstanceID = Hlp_GetInstanceID (item);
 
 		//Ignore equipped armor
-		if (!transferEquippedArmor)
-		&& (NPC_GetArmor (slf) == itmInstance) //&& (item.Flags & ITEM_ACTIVE_LEGO))
-		{
-			itmSlot += 1;
-			amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
-			continue;
+		if (invCat == INV_ARMOR) {
+			if ((!transferEquippedArmor) && (armorItemID == itemInstanceID) && (item.Flags & ITEM_ACTIVE_LEGO))
+			{
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
 		};
 
 		//Ignore equipped items
-		if (!transferEquippedItems)
-		&& (((NPC_GetMeleeWeapon (slf) == itmInstance) || (NPC_GetRangedWeapon (slf) == itmInstance)) && (item.Flags & ITEM_ACTIVE_LEGO))
+		if ((!transferEquippedItems) && (item.Flags & ITEM_ACTIVE_LEGO))
 		{
 			itmSlot += 1;
-			amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+			amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 			continue;
 		};
 
 		//Ignore mission items
-		if (!transferMissionItems)
-		&& (item.Flags & ITEM_MISSION)
+		if ((!transferMissionItems) && (item.Flags & ITEM_MISSION))
 		{
 			itmSlot += 1;
-			amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+			amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 			continue;
 		};
 
-		//Convert to oCItem to get amount property
-		var int itmPtr; itmPtr = _@ (item);
-		var oCItem itm; itm = _^ (itmPtr);
-
 		//Custom prints for transferred items
-		if ((_NpcTransferItemPrint_Event) && (_NpcTransferItemPrint_Event_Enabled)) {
-			Event_Execute (_NpcTransferItemPrint_Event, itmPtr);
+		if ((_NpcTransferItem_Event) && (_NpcTransferItem_Event_Enabled)) {
+			Event_Execute(_NpcTransferItem_Event, _@ (item));
 		};
 
-		if (itm.amount == 1) {
-			CreateInvItem (oth, itmInstance);
-			NPC_RemoveInvItem (slf, itmInstance);
+		var int retVal;
+
+		if (item.flags & ITEM_MULTI) {
+			CreateInvItems(oth, itemInstanceID, amount);
+			retVal = NPC_RemoveInvItems(slf, itemInstanceID, amount);
 		} else {
-			CreateInvItems (oth, itmInstance, itm.amount);
-			NPC_RemoveInvItems (slf, itmInstance, itm.amount);
+			CreateInvItem(oth, itemInstanceID);
+			retVal = NPC_RemoveInvItem(slf, itemInstanceID);
 		};
 
-		amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+		amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 	end;
 };
 
@@ -1578,23 +1947,33 @@ func void NPC_TransferInventory (var int slfInstance, var int othInstance, var i
 	};
 };
 
-func void NPC_UnEquipInventoryCategory (var int slfinstance, var int invCategory) {
+func void NPC_UnEquipInventoryCategory (var int slfinstance, var int invCat) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
 	var int amount;
 	var int itmSlot; itmSlot = 0;
 
-	amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+	amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 
 	//Loop
 	while (amount > 0);
+		//Fix logic for G2 NoTR (credits: Neocromicon & Damianut)
+		//G2 does not have separate inventories for items - NPC_GetInvItemBySlot goes through whole inventory
+		//we have to check invCat one more time here!
+		if (MEMINT_SwitchG1G2(0, 1) && (invCat > 0)) {
+			if (Npc_ItemGetCategory(slfInstance, _@(item)) != invCat) {
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
+		};
+
 		oCNPC_UnequipItemPtr (slf, _@ (item));
 
 		itmSlot = itmSlot + 1;
-		amount = NPC_GetInvItemBySlot (slf, invCategory, itmSlot);
+		amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
 	end;
-
 };
 
 func void NPC_UnEquipInventory (var int slfinstance) {
@@ -1618,11 +1997,11 @@ func void NPC_UnEquipInventory (var int slfinstance) {
  *	NPC_InventoryIsEmpty
  *	 - function checks whether inventory is empty
  */
-func int NPC_InventoryIsEmpty (var int slfInstance, var int ignoreFlags, var int ignoreMainFlags, var int ignoreArmor) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+func int NPC_InventoryIsEmpty (var int slfInstance, var int ignoreFlags, var int ignoreMainFlags, var int ignoreEquippedArmor) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
 
-	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slf);
 
 	var oCItem itm;
 	var zCListSort list;
@@ -1640,12 +2019,18 @@ func int NPC_InventoryIsEmpty (var int slfInstance, var int ignoreFlags, var int
 		noOfCategories = 1;
 	};
 
-	//NPC_GetArmor requires C_NPC ... ;-/
-	var C_NPC _slf; _slf = Hlp_GetNpc (slf);
-	var int armorID; armorID = NPC_GetArmor (_slf);
+	/*
+	var int armorItemID; armorItemID = -1;
+    if (Npc_HasEquippedArmor(slf)) {
+		var C_ITEM armorItem; armorItem = Npc_GetEquippedArmor(slf);
+		armorItemID = Hlp_GetInstanceID(armorItem);
+	};
+	*/
+	var int armorItemID; armorItemID = Npc_GetArmor(slf);
+
+	oCNpc_UnpackInventory(slf);
 
 	repeat (invCat, noOfCategories); var int invCat;
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, invCat);
 		ptr = MEM_ReadInt (_@ (slf) + offset + (12 * invCat));
 
 		while (ptr);
@@ -1653,9 +2038,21 @@ func int NPC_InventoryIsEmpty (var int slfInstance, var int ignoreFlags, var int
 
 			if (list.data) {
 				itm = _^ (list.data);
-				if ((itm.Flags & ignoreFlags) || (itm.MainFlag & ignoreMainFlags) || ((invCat == INV_ARMOR) && (armorID == Hlp_GetInstanceID (itm)) && (ignoreArmor))) {
+				if (itm.flags & ignoreFlags) {
 					ptr = list.next;
 					continue;
+				};
+
+				if (itm.mainFlag & ignoreMainFlags) {
+					ptr = list.next;
+					continue;
+				};
+
+				if (invCat == INV_ARMOR) {
+					if ((armorItemID == Hlp_GetInstanceID (itm)) && (ignoreEquippedArmor) && (itm.Flags & ITEM_ACTIVE_LEGO)) {
+						ptr = list.next;
+						continue;
+					};
 				};
 
 				return FALSE;
@@ -1677,7 +2074,7 @@ func int NPC_HasMissionItem (var int slfInstance) {
 	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
 
-	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slf);
 
 	var oCItem itm;
 	var zCListSort list;
@@ -1694,10 +2091,6 @@ func int NPC_HasMissionItem (var int slfInstance) {
 		offset = 1816;						// 0x0718 zCListSort<oCItem>*
 		noOfCategories = 1;
 	};
-
-	//NPC_GetArmor requires C_NPC ... ;-/
-	var C_NPC _slf; _slf = Hlp_GetNpc (slf);
-	var int armorID; armorID = NPC_GetArmor (_slf);
 
 	repeat (invCat, noOfCategories); var int invCat;
 		oCNpcInventory_UnpackCategory (npcInventoryPtr, invCat);
@@ -1748,31 +2141,406 @@ func void Npc_UnequipWeapons (var int slfInstance) {
 	Npc_UnequipRangedWeapon (slfInstance);
 };
 
-func void oCNpc_UnpackInventory (var int slfInstance)
-{
-	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+/*
+ *	Npc_GetItemSlot
+ *	 - function loops through inventory and returns index of inventory slot in which item is stored
+ */
+func int Npc_GetItemSlot (var int slfInstance, var int invCat, var int searchItemInstanceID) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return -1; };
+
+	//By default -1
+	var int retSlot; retSlot = -1;
+
+	var int itmSlot; itmSlot = 0;
+	var int amount; amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+
+	var int itemInstanceID;
+
+	while (amount > 0);
+		itemInstanceID = Hlp_GetInstanceID (item);
+
+		if (itemInstanceID == searchItemInstanceID) {
+			//Same for G1 & G2A
+			const int ITM_FLAG_ACTIVE = 1 << 30;
+
+			//Prio - unequipped items
+			if (oCItem_HasFlag(_@(item), ITM_FLAG_ACTIVE)) {
+				//Keep track of the equipped one tho
+				retSlot = itmSlot;
+
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+				continue;
+			};
+
+			return + itmSlot;
+		} else {
+			//Exit if instance does not match
+			if (retSlot > -1) {
+				return retSlot;
+			};
+		};
+
+		itmSlot += 1;
+		amount = NPC_GetInvItemBySlot (slf, invCat, itmSlot);
+	end;
+
+	return retSlot;
+};
+
+/*
+ *	Npc_InvSelectItem
+ *	 - function selects item in inventory
+ */
+func void Npc_InvSelectItem (var int slfInstance, var int itemInstanceID) {
+	var oCNPC slf; slf = Hlp_GetNpc (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
-	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+	if (Npc_GetInvItem (slf, itemInstanceID)) {
+		var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+		var int invCat; invCat = oCNpcInventory_GetCategory (npcInventoryPtr, _@ (item));
+		oCNpcInventory_SwitchToCategory (npcInventoryPtr, invCat);
 
-	if (MEMINT_SwitchG1G2 (1, 0)) {
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_WEAPON);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_ARMOR);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_RUNE);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_MAGIC);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_FOOD);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_POTION);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_DOC);
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, INV_MISC);
-	} else {
-		oCNpcInventory_UnpackCategory (npcInventoryPtr, 0);
+		var int itmSlot; itmSlot = Npc_GetItemSlot (slf, invCat, itemInstanceID);
+
+		slf.inventory2_oCItemContainer_offset = itmSlot;
+		slf.inventory2_oCItemContainer_selectedItem = itmSlot;
 	};
 };
 
-func int Npc_ItemGetCategory (var int slfInstance, var int itemPtr) {
+/*
+ *	Npc_InvOpenPassive
+ *	 - function opens inventory passively
+ */
+func void Npc_InvOpenPassive (var int slfInstance, var int itemInstanceID, var int hasInvFocus) {
 	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
-	if (!Hlp_IsValidNpc (slf)) { return -1; };
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	//Unpack inventory
+	oCNpc_UnpackInventory (slfInstance);
+
+	//Select inventory item
+	Npc_InvSelectItem (slfInstance, itemInstanceID);
+
+	//Get Npc inventory ptr
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+	if (!npcInventoryPtr) { return; };
+
+	//In G1 invMode 2 means only a single item will be rendered on screen
+	//enum oTItemListMode { FULLSCREEN, HALFSCREEN, ONE };
+
+	//In G2A inv mode represents something else
+	//INV_MODE_DEFAULT, INV_MODE_CONTAINER, INV_MODE_PLUNDER, INV_MODE_STEAL, INV_MODE_BUY, INV_MODE_SELL
+	var int invMode; invMode = 0;
+	if (MEMINT_SwitchG1G2 (1, 0)) {
+		invMode = 2;
+	};
+
+	if (Npc_IsPlayer (slf)) {
+		oCItemContainer_OpenPassive (npcInventoryPtr, 8192, 0, invMode);
+		slf.inventory2_oCItemContainer_right = TRUE;
+	} else {
+		oCItemContainer_OpenPassive (npcInventoryPtr, 0, 0, invMode);
+		slf.inventory2_oCItemContainer_right = FALSE;
+	};
+
+	slf.inventory2_oCItemContainer_frame = hasInvFocus;
+};
+
+/*
+ *	Npc_CloseInventory
+ *	 - function closes inventory
+ */
+func void Npc_CloseInventory (var int slfInstance) {
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+	oCNpcInventory_Close (npcInventoryPtr);
+};
+
+/*
+ *	Npc_InvSwitchToCategory
+ *	 - function switches inventory to specified inv category
+ */
+func void Npc_InvSwitchToCategory (var int slfInstance, var int invCat) {
+	var int npcInventoryPtr; npcInventoryPtr = Npc_GetNpcInventoryPtr (slfInstance);
+	oCNpcInventory_SwitchToCategory (npcInventoryPtr, invCat);
+};
+
+func void oCNpc_AddItemEffects (var int slfInstance, var int itemPtr) {
+	//0x0068F640 public: void __thiscall oCNpc::AddItemEffects(class oCItem *)
+	const int oCNpc__AddItemEffects_G1 = 6878784;
+
+	//0x007320F0 public: void __thiscall oCNpc::AddItemEffects(class oCItem *)
+	const int oCNpc__AddItemEffects_G2 = 7545072;
+
+	if (!itemPtr) { return; };
+
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int slfPtr; slfPtr = _@ (slf);
+
+	const int call = 0;
+
+	if (CALL_Begin(call)) {
+		CALL_PtrParam(_@(itemPtr));
+		CALL__thiscall(_@(slfPtr), MEMINT_SwitchG1G2 (oCNpc__AddItemEffects_G1, oCNpc__AddItemEffects_G2));
+		call = CALL_End();
+	};
+};
+
+func void oCNpc_RemoveItemEffects (var int slfInstance, var int itemPtr) {
+	//0x0068F7D0 public: void __thiscall oCNpc::RemoveItemEffects(class oCItem *)
+	const int oCNpc__RemoveItemEffects_G1 = 6879184;
+
+	//0x00732270 public: void __thiscall oCNpc::RemoveItemEffects(class oCItem *)
+	const int oCNpc__RemoveItemEffects_G2 = 7545456;
+
+	if (!itemPtr) { return; };
+
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int slfPtr; slfPtr = _@ (slf);
+
+	const int call = 0;
+
+	if (CALL_Begin(call)) {
+		CALL_PtrParam(_@(itemPtr));
+		CALL__thiscall(_@(slfPtr), MEMINT_SwitchG1G2 (oCNpc__RemoveItemEffects_G1, oCNpc__RemoveItemEffects_G2));
+		call = CALL_End();
+	};
+};
+
+/*
+ *	Npc_SimpleEquip
+ *	 - function adds all effect & calls on_equip function
+ */
+func void Npc_SimpleEquip (var int slfInstance, var int itemPtr) {
+	//Same for G1 & G2A
+	const int ITM_FLAG_ACTIVE = 1 << 30;
+
+	oCNpc_AddItemEffects (slfInstance, itemPtr);
+	oCItem_SetFlag (itemPtr, ITM_FLAG_ACTIVE);
+};
+
+/*
+ *	Npc_SimpleUnequip
+ *	 - function adds all effect & calls on_unequip function
+ */
+func void Npc_SimpleUnequip (var int slfInstance, var int itemPtr) {
+	//Same for G1 & G2A
+	const int ITM_FLAG_ACTIVE = 1 << 30;
+
+	oCNpc_RemoveItemEffects (slfInstance, itemPtr);
+	oCItem_ClearFlag (itemPtr, ITM_FLAG_ACTIVE);
+};
+
+/*
+ *	Npc_GetCountEquippedItemsByFlag
+ *	 - function returns number of equipped items with specific flags
+ */
+func int Npc_GetCountEquippedItemsByFlag (var int slfInstance, var int category, var int searchFlag) {
+	//Same for G1 & G2A
+	const int ITM_FLAG_ACTIVE = 1 << 30;
+
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return 0; };
+
+	if (category == -1) { return 0; };
 
 	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
-    return + oCNpcInventory_GetCategory (npcInventoryPtr, itemPtr);
+
+	var oCItem itm;
+	var zCListSort list;
+
+	var int noOfCategories;
+	var int offset;
+	var int ptr;
+
+	//G1/G2A compatibility --> we cannot use inventory2_inventory1_next / inventory2_inventory_next properties, but instead we have to read from inventory offsets
+	if (GOTHIC_BASE_VERSION == 1) {
+		offset = 1528;						// 0x05F8 zCListSort<oCItem>*
+		noOfCategories = INV_CAT_MAX;
+	} else {
+		offset = 1816;						// 0x0718 zCListSort<oCItem>*
+		noOfCategories = 1;
+	};
+
+	var int count; count = 0;
+
+	//Unpack inventory
+	oCNpcInventory_UnpackCategory (npcInventoryPtr, category);
+
+	//Loop through all items - count how many equipped items we already have
+	ptr = MEM_ReadInt (_@ (slf) + offset + (12 * category));
+
+	while (ptr);
+		list = _^ (ptr);
+
+		if (Hlp_Is_oCItem (list.data)) {
+			if (oCItem_HasFlag (list.data, searchFlag)) {
+				if (oCItem_HasFlag (list.data, ITM_FLAG_ACTIVE)) {
+					count += 1;
+				};
+			};
+		};
+
+		ptr = list.next;
+	end;
+
+	return + count;
+};
+
+/*
+ *	Npc_GetCountEquippedItemsByInstance
+ *	 - function returns number of equipped items for specified instance
+ */
+func int Npc_GetCountEquippedItemsByInstance (var int slfInstance, var int category, var int itemInstanceID) {
+	//Same for G1 & G2A
+	const int ITM_FLAG_ACTIVE = 1 << 30;
+
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return 0; };
+
+	if (category == -1) { return 0; };
+
+	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+
+	var oCItem itm;
+	var zCListSort list;
+
+	var int noOfCategories;
+	var int offset;
+	var int ptr;
+
+	//G1/G2A compatibility --> we cannot use inventory2_inventory1_next / inventory2_inventory_next properties, but instead we have to read from inventory offsets
+	if (GOTHIC_BASE_VERSION == 1) {
+		offset = 1528;						// 0x05F8 zCListSort<oCItem>*
+		noOfCategories = INV_CAT_MAX;
+	} else {
+		offset = 1816;						// 0x0718 zCListSort<oCItem>*
+		noOfCategories = 1;
+	};
+
+	var int count; count = 0;
+
+	//Unpack inventory
+	oCNpcInventory_UnpackCategory (npcInventoryPtr, category);
+
+	//Loop through all items - count how many equipped items we already have
+	ptr = MEM_ReadInt (_@ (slf) + offset + (12 * category));
+
+	while (ptr);
+		list = _^ (ptr);
+
+		if (Hlp_Is_oCItem (list.data)) {
+			itm = _^ (list.data);
+			if (Hlp_GetInstanceID (itm) == itemInstanceID) {
+				if (oCItem_HasFlag (list.data, ITM_FLAG_ACTIVE)) {
+					count += 1;
+				};
+			};
+		};
+
+		ptr = list.next;
+	end;
+
+	return + count;
+};
+
+/*
+ *	Npc_GetEquippedItemPtrByFlag
+ *	 - function returns pointer to equipped item specified by flag
+ */
+func int Npc_GetEquippedItemPtrByFlag (var int slfInstance, var int category, var int searchFlag) {
+	//Same for G1 & G2A
+	const int ITM_FLAG_ACTIVE = 1 << 30;
+
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return 0; };
+
+	if (category == -1) { return 0; };
+
+	var int npcInventoryPtr; npcInventoryPtr = _@ (slf.inventory2_vtbl);
+
+	var oCItem itm;
+	var zCListSort list;
+
+	var int noOfCategories;
+	var int offset;
+	var int ptr;
+
+	//G1/G2A compatibility --> we cannot use inventory2_inventory1_next / inventory2_inventory_next properties, but instead we have to read from inventory offsets
+	if (GOTHIC_BASE_VERSION == 1) {
+		offset = 1528;						// 0x05F8 zCListSort<oCItem>*
+		noOfCategories = INV_CAT_MAX;
+	} else {
+		offset = 1816;						// 0x0718 zCListSort<oCItem>*
+		noOfCategories = 1;
+	};
+
+	var int count; count = 0;
+
+	//Unpack inventory
+	oCNpcInventory_UnpackCategory (npcInventoryPtr, category);
+
+	//Loop through all items - and find equipped item
+	ptr = MEM_ReadInt (_@ (slf) + offset + (12 * category));
+
+	while (ptr);
+		list = _^ (ptr);
+
+		if (Hlp_Is_oCItem (list.data)) {
+			if (oCItem_HasFlag (list.data, searchFlag)) {
+				if (oCItem_HasFlag (list.data, ITM_FLAG_ACTIVE)) {
+					return list.data;
+				};
+			};
+		};
+
+		ptr = list.next;
+	end;
+
+	return 0;
+};
+
+/*
+ *	Npc_HasOwnMeleeWeapon
+ *	 - function returns pointer to item
+ */
+func int Npc_HasOwnMeleeWeapon(var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return 0; };
+
+	//Unpack inventory
+	oCNpc_UnpackInventory(slf);
+
+	var int invCat; invCat = INV_WEAPON;
+	var int itmSlot; itmSlot = 0;
+
+	var int amount; amount = NPC_GetInvItemBySlot(slf, invCat, itmSlot);
+
+	while(amount > 0);
+		var int itemPtr; itemPtr = _@(item);
+
+		//G2 does not have separate inventories for items - NPC_GetInvItemBySlot goes through whole inventory
+		//we have to check invCat one more time here!
+		if (MEMINT_SwitchG1G2(0, 1) && (invCat > 0)) {
+			if (Npc_ItemGetCategory(slfInstance, itemPtr) != invCat) {
+				itmSlot += 1;
+				amount = NPC_GetInvItemBySlot(slf, invCat, itmSlot);
+				continue;
+			};
+		};
+
+		if (oCItem_GetOwnerID(itemPtr) == Hlp_GetInstanceID(slf)) {
+			return + itemPtr;
+		};
+
+		itmSlot += 1;
+		amount = NPC_GetInvItemBySlot(slf, invCat, itmSlot);
+	end;
+
+	return 0;
 };

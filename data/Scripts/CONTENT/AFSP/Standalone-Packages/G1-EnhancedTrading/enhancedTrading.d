@@ -1,51 +1,5 @@
-/*
- *	Credits: functions Trade_SetBuyMultiplier & Trade_SetSellMultiplier originally created by OrcWarriorPL
- *	https://forum.worldofplayers.de/forum/threads/879891-Skriptpaket-Ikarus-2/page12?p=14836995&viewfull=1#post14836995
- *
- *	They were modified to change multipliers for both inventory containers in case of both buying / selling containers.
- *
- */
-
 //-- Internal variables
-var int TradeForceTransferAccept; //Variable indicating that player forced trading
-
-func void Trade_SetBuyMultiplier (var int mulF) {
-	var oCViewDialogTrade dialogTrade;
-	var oCViewDialogItemContainer itemCont;
-
-	if (MEM_InformationMan.DlgTrade) {
-		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-
-		if (dialogTrade.dlgInventoryNpc) {
-			itemCont = _^ (dialogTrade.dlgInventoryNpc);
-			itemCont.valueMultiplier = mulF;
-		};
-
-		if (dialogTrade.dlgContainerNpc) {
-			itemCont = _^ (dialogTrade.dlgContainerNpc);
-			itemCont.valueMultiplier = mulF;
-		};
-	};
-};
-
-func void Trade_SetSellMultiplier (var int mulF) {
-	var oCViewDialogTrade dialogTrade;
-	var oCViewDialogItemContainer itemCont;
-
-	if (MEM_InformationMan.DlgTrade) {
-		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-
-		if (dialogTrade.dlgContainerPlayer) {
-			itemCont = _^ (dialogTrade.dlgContainerPlayer);
-			itemCont.valueMultiplier = mulF;
-		};
-
-		if (dialogTrade.dlgInventoryPlayer) {
-			itemCont = _^ (dialogTrade.dlgInventoryPlayer);
-			itemCont.valueMultiplier = mulF;
-		};
-	};
-};
+var int _TradeForceTransferAccept; //Variable indicating that player forced trading
 
 /*
  *	Function forces item transfer in trading
@@ -134,38 +88,6 @@ func void Trade_SetNpcContainerValue (var int value) {
 	};
 };
 
-func int Trade_GetBuyMultiplier () {
-	var oCViewDialogTrade dialogTrade;
-	var oCViewDialogItemContainer itemCont;
-
-	if (MEM_InformationMan.DlgTrade) {
-		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-
-		if (dialogTrade.dlgContainerNpc) {
-			itemCont = _^ (dialogTrade.dlgContainerNpc);
-			return itemCont.valueMultiplier;
-		};
-	};
-
-	return FLOATNULL;
-};
-
-func int Trade_GetSellMultiplier () {
-	var oCViewDialogTrade dialogTrade;
-	var oCViewDialogItemContainer itemCont;
-
-	if (MEM_InformationMan.DlgTrade) {
-		dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-
-		if (dialogTrade.dlgContainerPlayer) {
-			itemCont = _^ (dialogTrade.dlgContainerPlayer);
-			return itemCont.valueMultiplier;
-		};
-	};
-
-	return FLOATNULL;
-};
-
 /*
  *	Function gets value of global variable zCOption::trade_amount
  */
@@ -177,7 +99,7 @@ func int Trade_GetTradeAmount () {
 
 /*
  *	Function updates global variable zCOption::trade_amount
- *	 - this variable is used by engine to move more items at once)
+ *	 - this variable is used by engine to move more items at once
  *	 - we don't need it if we are not using engine functions ... which we don't use in the end :) (e.g. oCViewDialogTrade::OnTransferRight ... this is terribly slow, as it moves items 1 by 1!)
  */
 func void Trade_SetTradeAmount (var int amount) {
@@ -189,15 +111,84 @@ func void Trade_SetTradeAmount (var int amount) {
 /*
  *	Function updates buy/sell multiplier for specific item pointer
  */
-func void Trade_UpdateBuySellMultiplier (var int itmPtr) {
-	var oCNPC npc;
+func void Trade_UpdateBuySellMultiplier() {
+	var C_NPC npc;
+
+	//Safety checks
+	if (!MEM_InformationMan.DlgTrade) { return; };
+	var oCViewDialogTrade dialogTrade; dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+	if (!dialogTrade.isActivated) { return; };
+
+	//Get trader
+	var int npcInventoryPtr; npcInventoryPtr = Hlp_Trade_GetInventoryNpcContainer ();
+	if (!npcInventoryPtr) { return; };
+	var oCNpcInventory npcInventory; npcInventory = _^ (npcInventoryPtr);
+
+	if (!npcInventory.inventory2_owner) { return; };
+	npc = _^ (npcInventory.inventory2_owner);
+
+	//Get item from active container
+	var int ptr; ptr = Hlp_GetActiveOpenInvContainer();
+	var oCItemContainer container; container = _^(ptr);
+	var int itmPtr; itmPtr = zCListSort_GetData (container.inventory2_oCItemContainer_contents, container.inventory2_oCItemContainer_selectedItem);
+
+	//Update selling and buying multipliers
+
+	var int multiplier;
+
+	//Sell multiplier
+	multiplier = Trade_GetSellMultiplier ();
+
+	const int symbID1 = 0;
+
+	if (!symbID1) {
+		symbID1 = MEM_FindParserSymbol ("C_NPC_GETSELLMULTIPLIERF");
+	};
+
+	if (symbID1 != -1) {
+		MEM_PushInstParam (npc);
+		MEM_PushIntParam (itmPtr);
+
+		MEM_CallByID (symbID1);
+		multiplier = MEM_PopIntResult ();
+	};
+
+	Trade_SetSellMultiplier (multiplier);
+
+	//Player buying items / moving items back to traders inventory
+	multiplier = Trade_GetBuyMultiplier ();
+
+	const int symbID2 = 0;
+
+	if (!symbID2) {
+		symbID2 = MEM_FindParserSymbol ("C_NPC_GETBUYMULTIPLIERF");
+	};
+
+	if (symbID2 != -1) {
+		MEM_PushInstParam (npc);
+		MEM_PushIntParam (itmPtr);
+
+		MEM_CallByID (symbID2);
+		multiplier = MEM_PopIntResult ();
+	};
+
+	Trade_SetBuyMultiplier (multiplier);
+};
+
+/*
+ *	Trade_ValidateTransfer
+ *	 - function validates whether item can be moved to desired section
+ */
+func int Trade_ValidateTransfer(var int itmPtr, var int sectionTrade) {
+	var C_NPC npc;
 	var oCItem itm;
 	var oCNpcInventory npcInventory;
 	var oCViewDialogTrade dialogTrade;
 
 	var int npcInventoryPtr;
 
-	if (!MEM_InformationMan.DlgTrade) { return; };
+	if (!itmPtr) { return FALSE; };
+	if (!MEM_InformationMan.DlgTrade) { return FALSE; };
 
 	dialogTrade = _^ (MEM_InformationMan.DlgTrade);
 	itm = _^ (itmPtr);
@@ -209,7 +200,7 @@ func void Trade_UpdateBuySellMultiplier (var int itmPtr) {
 
 	//--- Figure out if trader wants to buy an item
 
-	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_INVENTORY_G1) //Player selling items
+	if (sectionTrade == TRADE_SECTION_RIGHT_INVENTORY_G1) //Player selling items
 	{
 		const int symbID = 0;
 		var int retVal; retVal = 0;
@@ -219,120 +210,60 @@ func void Trade_UpdateBuySellMultiplier (var int itmPtr) {
 		};
 
 		if (symbID != -1) {
-			MEM_PushInstParam (npc);
-			MEM_PushIntParam (itmPtr);
+			MEM_PushInstParam(npc);
+			MEM_PushIntParam(itmPtr);
 
 			MEM_CallByID (symbID);
 			retVal = MEM_PopIntResult ();
 
-			if (!retVal) {
-				//Trick von mud-freak! :)
-				const int contents = 0;
-				ECX = _@ (contents) - 4;
-				return;
-			};
+			//Result is coming from API function
+			return +retVal;
 		};
 	};
 
-	//--- Adjust selling/buying multiplier value
-
-	var int multiplier;
-
-	if (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_CONTAINER_G1)	//Player moving items back to his inventory
-	|| (dialogTrade.sectionTrade == TRADE_SECTION_RIGHT_INVENTORY_G1)	//Player selling items
-	{
-		multiplier = Trade_GetSellMultiplier ();
-
-		const int symbID1 = 0;
-
-		if (!symbID1) {
-			symbID1 = MEM_FindParserSymbol ("C_Npc_GetSellMultiplierF");
-		};
-
-		if (symbID1 != -1) {
-			MEM_PushInstParam (npc);
-			MEM_PushIntParam (itmPtr);
-
-			MEM_CallByID (symbID1);
-			multiplier = MEM_PopIntResult ();
-		};
-
-		Trade_SetSellMultiplier (multiplier);
-	} else {
-		//Player buying items / moving items back to traders inventory
-		multiplier = Trade_GetBuyMultiplier ();
-
-		const int symbID2 = 0;
-
-		if (!symbID2) {
-			symbID2 = MEM_FindParserSymbol ("C_Npc_GetBuyMultiplierF");
-		};
-
-		if (symbID2 != -1) {
-			MEM_PushInstParam (npc);
-			MEM_PushIntParam (itmPtr);
-
-			MEM_CallByID (symbID2);
-			multiplier = MEM_PopIntResult ();
-		};
-
-		Trade_SetBuyMultiplier (multiplier);
-	};
+	//Valid by default
+	return TRUE;
 };
 
 /*
  *	Function calculates total value of an item
  */
-func int Trade_CalculateTotalValue (var int itemValue, var int amount, var int multiplier) {
-	var int itemValueF;
+func int Trade_CalculateTotalValue (var int itemValue, var int amount, var int multiplierF) {
+	//Allow free item transfer when multiplier is 0
+	if (multiplierF == FLOATNULL) { return 0; };
 
-	if (itemValue > 1) {
-		var int totalValue; totalValue = 0;
+	var int itemValueF; itemValueF = mulf (mkf (itemValue), multiplierF);
+	var int newValue; newValue = RoundF (itemValueF);
 
-		while (amount > 0);
-			itemValueF = mulf (multiplier, mkf (itemValue));
-
-			var int newValue;
-
-			if ((itemValue > 0) && (RoundF (itemValueF) == 0)) {
-				newValue = 1;
-			} else {
-				newValue = RoundF (itemValueF);
-			};
-
-			totalValue += newValue;
-			amount -= 1;
-		end;
-
-		itemValue = totalValue;
-	} else {
-		itemValue *= amount;
+	if ((itemValue > 0) && (newValue == 0)) {
+		newValue = 1;
 	};
 
-	return +itemValue;
+	return + (newValue * amount);
 };
 
 /*
  *	Function moves amount of items (by item pointer) from players container back to players inventory
  */
 func void Trade_MoveToInventoryPlayer (var int itmPtr, var int amount) {
-	var oCNpc npc;
-	var oCNpcInventory npcInventory;
-
-	var int npcInventoryPtr;
-	var int playersContainer;
-
 	//Update buy/sell multipliers
-	Trade_UpdateBuySellMultiplier (itmPtr);
+	if (!Trade_ValidateTransfer(itmPtr, TRADE_SECTION_RIGHT_CONTAINER_G1)) {
+		return;
+	};
 
-	npcInventoryPtr = Hlp_Trade_GetInventoryPlayerContainer ();
-	npcInventory = _^ (npcInventoryPtr);
+	var int playersContainer; playersContainer = Hlp_Trade_GetContainerPlayerContainer (); //oCItemContainer*
+	var int npcInventoryPtr; npcInventoryPtr = Hlp_Trade_GetInventoryPlayerContainer (); //oCNpcInventory*
+	if (!playersContainer || !npcInventoryPtr) { return; };
 
-	playersContainer = Hlp_Trade_GetContainerPlayerContainer (); //oCItemContainer*
+	//Save value
+	var int containerValue; containerValue = Trade_GetPlayerContainerValue ();
+
 	itmPtr = oCItemContainer_RemoveByPtr (playersContainer, itmPtr, amount);
 
-	npc = _^ (npcInventory.inventory2_owner);
-	npcInventoryPtr = _@ (npc.inventory2_vtbl);
+	var oCNpcInventory npcInventory; npcInventory = _^(npcInventoryPtr);
+	var oCNpc npc; npc = _^(npcInventory.inventory2_owner);
+	npcInventoryPtr = _@(npc.inventory2_vtbl);
+
 	itmPtr = oCNpcInventory_Insert (npcInventoryPtr, itmPtr);
 
 	//--> We don't have to update inventory ...
@@ -351,45 +282,40 @@ func void Trade_MoveToInventoryPlayer (var int itmPtr, var int amount) {
 
 	var oCItem itm; itm = _^ (itmPtr);
 	var int itemValue; itemValue = itm.value;
-
 	itemValue = Trade_CalculateTotalValue (itemValue, amount, multiplier);
-	Trade_SetPlayerContainerValue (Trade_GetPlayerContainerValue () - itemValue);
+	Trade_SetPlayerContainerValue (containerValue - itemValue);
 };
 
 /*
  *	Function moves amount of items (by item pointer) from players inventory to players container
  */
 func void Trade_MoveToContainerPlayer (var int itmPtr, var int amount) {
-	var oCNpc npc;
-	var oCNpcInventory npcInventory;
-
-	var int npcInventoryPtr;
-	var int playersContainer;
-
 	//Update buy/sell multipliers
-	Trade_UpdateBuySellMultiplier (itmPtr);
+	if (!Trade_ValidateTransfer(itmPtr, TRADE_SECTION_RIGHT_INVENTORY_G1)) {
+		return;
+	};
 
+	var int npcInventoryPtr; npcInventoryPtr = Hlp_Trade_GetInventoryPlayerContainer (); //oCNpcInventory*
+	var int playersContainer; playersContainer = Hlp_Trade_GetContainerPlayerContainer (); //oCItemContainer*
+	if (!npcInventoryPtr || !playersContainer) { return; };
+	if (!MEM_InformationMan.DlgTrade) { return; };
+
+	//Save value
 	//If item value == 1 then we **have** to calculate this value ourselves!
 	//... oCViewDialogItemContainer_InsertItem updates total value of all items ...
-	var int containerValue;
-	containerValue = Trade_GetPlayerContainerValue ();
+	var int containerValue; containerValue = Trade_GetPlayerContainerValue ();
 
-	npcInventoryPtr = Hlp_Trade_GetInventoryPlayerContainer ();
-	npcInventory = _^ (npcInventoryPtr);
+	var oCNpcInventory npcInventory; npcInventory = _^(npcInventoryPtr);
+	var oCNpc npc; npc = _^(npcInventory.inventory2_owner);
+	npcInventoryPtr = _@(npc.inventory2_vtbl);
 
-	npc = _^ (npcInventory.inventory2_owner);
-
-	npcInventoryPtr = _@ (npc.inventory2_vtbl);
 	itmPtr = oCNpcInventory_RemoveByPtr (npcInventoryPtr, itmPtr, amount);
 
-	//Insert item to container
-	var oCViewDialogTrade dialogTrade;
-	dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-	oCViewDialogItemContainer_InsertItem (dialogTrade.dlgContainerPlayer, itmPtr);
+	var oCViewDialogTrade dialogTrade; dialogTrade = _^(MEM_InformationMan.DlgTrade);
+	oCViewDialogItemContainer_InsertItem(dialogTrade.dlgContainerPlayer, itmPtr);
 
 	//Redraw immediately
-	var int npcContainer; npcContainer = Hlp_Trade_GetContainerPlayerContainer ();
-	oCItemContainer_Draw (npcContainer);
+	oCItemContainer_Draw (playersContainer);
 
 	//--> We don't have to update inventory ...
 	//Updating the owner of npcInventory will also update it's contents
@@ -407,7 +333,6 @@ func void Trade_MoveToContainerPlayer (var int itmPtr, var int amount) {
 
 	var oCItem itm; itm = _^ (itmPtr);
 	var int itemValue; itemValue = itm.value;
-
 	itemValue = Trade_CalculateTotalValue (itemValue, amount, multiplier);
 	Trade_SetPlayerContainerValue (containerValue + itemValue);
 };
@@ -416,41 +341,37 @@ func void Trade_MoveToContainerPlayer (var int itmPtr, var int amount) {
  *	Function moves amount of items (by item pointer) from npcs inventory to npcs container
  */
 func void Trade_MoveToContainerNpc (var int itmPtr, var int amount) {
-	var oCNpc npc;
-	var oCNpcInventory npcInventory;
-
-	var int npcInventoryPtr;
-
 	//Update buy/sell multipliers
-	Trade_UpdateBuySellMultiplier (itmPtr);
+	if (!Trade_ValidateTransfer(itmPtr, TRADE_SECTION_LEFT_INVENTORY_G1)) {
+		return;
+	};
 
+	var int stealContainerPtr; stealContainerPtr = Hlp_Trade_GetInventoryNpcContainer(); //oCStealContainer*
+	var int npcContainer; npcContainer = Hlp_Trade_GetContainerNpcContainer (); //oCItemContainer*
+	if (!stealContainerPtr || !npcContainer) { return; };
+	if (!MEM_InformationMan.DlgTrade) { return; };
+
+	//Save value
 	//If item value == 1 then we **have** to calculate this value ourselves!
 	//... oCViewDialogItemContainer_InsertItem updates total value of all items ...
-	var int containerValue;
-	containerValue = Trade_GetNpcContainerValue ();
+	var int containerValue; containerValue = Trade_GetNpcContainerValue ();
 
-	npcInventoryPtr = Hlp_Trade_GetInventoryNpcContainer ();
-	npcInventory = _^ (npcInventoryPtr);
+	//We need to get inventory oCStealContainer->inventory2_owner->inventory2_vtbl
+	var oCStealContainer stealContainer; stealContainer = _^(stealContainerPtr);
+	var oCNpc npc; npc = _^(stealContainer.inventory2_owner);
+	var int npcInventoryPtr; npcInventoryPtr = _@(npc.inventory2_vtbl); //oCNpcInventory
 
-	npc = _^ (npcInventory.inventory2_owner);
+	itmPtr = oCNpcInventory_RemoveByPtr(npcInventoryPtr, itmPtr, amount);
 
-	npcInventoryPtr = _@ (npc.inventory2_vtbl);
-	itmPtr = oCNpcInventory_RemoveByPtr (npcInventoryPtr, itmPtr, amount);
-
-	//Insert item to container
-	var oCViewDialogTrade dialogTrade;
-	dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-	oCViewDialogItemContainer_InsertItem (dialogTrade.dlgContainerNpc, itmPtr);
+	var oCViewDialogTrade dialogTrade; dialogTrade = _^(MEM_InformationMan.DlgTrade);
+	oCViewDialogItemContainer_InsertItem(dialogTrade.dlgContainerNpc, itmPtr);
 
 	//Redraw immediately
-	var int npcContainer; npcContainer = Hlp_Trade_GetContainerNpcContainer ();
 	oCItemContainer_Draw (npcContainer);
 
 	//--> We **have to** update inventory ...
 	//Updating the owner of stealContainer will also update it's contents
-	var int stealContainerPtr;
-	stealContainerPtr = Hlp_Trade_GetInventoryNpcContainer (); //oCStealContainer*
-	oCStealContainer_SetOwner (stealContainerPtr, _@ (npc));
+	oCStealContainer_SetOwner(stealContainerPtr, stealContainer.inventory2_owner);
 	//<--
 
 	//Update value
@@ -463,7 +384,6 @@ func void Trade_MoveToContainerNpc (var int itmPtr, var int amount) {
 
 	var oCItem itm; itm = _^ (itmPtr);
 	var int itemValue; itemValue = itm.value;
-
 	itemValue = Trade_CalculateTotalValue (itemValue, amount, multiplier);
 	Trade_SetNpcContainerValue (containerValue + itemValue);
 };
@@ -472,25 +392,26 @@ func void Trade_MoveToContainerNpc (var int itmPtr, var int amount) {
  *	Function moves amount of items (by item pointer) from npcs container back to npcs inventory
  */
 func void Trade_MoveToInventoryNpc (var int itmPtr, var int amount) {
-	var oCNpcInventory npcInventory;
-
-	var int npcsContainer;
-
 	//Update buy/sell multipliers
-	Trade_UpdateBuySellMultiplier (itmPtr);
+	if (!Trade_ValidateTransfer(itmPtr, TRADE_SECTION_LEFT_CONTAINER_G1)) {
+		return;
+	};
 
-	npcsContainer = Hlp_Trade_GetContainerNpcContainer (); //oCItemContainer*
-	itmPtr = oCItemContainer_RemoveByPtr (npcsContainer, itmPtr, amount);
+	var int npcContainer; npcContainer = Hlp_Trade_GetContainerNpcContainer (); //oCItemContainer*
+	var int stealContainerPtr; stealContainerPtr = Hlp_Trade_GetInventoryNpcContainer(); //oCStealContainer*
+	if (!npcContainer || !stealContainerPtr) { return; };
+	if (!MEM_InformationMan.DlgTrade) { return; };
 
-	//Insert item to inventory
-	var oCViewDialogTrade dialogTrade;
-	dialogTrade = _^ (MEM_InformationMan.DlgTrade);
-	oCViewDialogStealContainer_InsertItem (dialogTrade.dlgInventoryNpc, itmPtr);
+	//Save value
+	var int containerValue; containerValue = Trade_GetNpcContainerValue ();
+
+	itmPtr = oCItemContainer_RemoveByPtr (npcContainer, itmPtr, amount);
+
+	var oCViewDialogTrade dialogTrade; dialogTrade = _^ (MEM_InformationMan.DlgTrade);
+	oCViewDialogStealContainer_InsertItem(dialogTrade.dlgInventoryNpc, itmPtr);
 
 	//--> We don't have to update inventory ... oCViewDialogStealContainer_InsertItem will do it automatically
-	//var int stealContainerPtr;
-	//stealContainerPtr = Hlp_Trade_GetInventoryNpcContainer (); //oCStealContainer*
-	//oCStealContainer_SetOwner (stealContainerPtr, _@ (Trader));
+	//oCStealContainer_SetOwner(stealContainerPtr, stealContainer.inventory2_owner);
 	//<--
 
 	//Update value
@@ -503,39 +424,22 @@ func void Trade_MoveToInventoryNpc (var int itmPtr, var int amount) {
 
 	var oCItem itm; itm = _^ (itmPtr);
 	var int itemValue; itemValue = itm.value;
-
 	itemValue = Trade_CalculateTotalValue (itemValue, amount, multiplier);
-	Trade_SetNpcContainerValue (Trade_GetNpcContainerValue () - itemValue);
-};
-
-/*
- *	Hook updates buy/sell multipliers for moved items
- */
-func void _hook_OnTransfer__EnhancedTrading () {
-	var oCItemContainer container;
-
-	var int ptr;
-	//ptr = Hlp_Trade_GetActiveTradeContainer ();
-	ptr = Hlp_GetActiveOpenInvContainer ();
-	if (!ptr) { return; };
-	container = _^ (ptr);
-
-	var int itemPtr; itemPtr = List_GetS (container.inventory2_oCItemContainer_contents, container.inventory2_oCItemContainer_selectedItem + 2);
-
-	if (itemPtr) {
-		//Update buy/sell multipliers
-		Trade_UpdateBuySellMultiplier (itemPtr);
-	};
+	Trade_SetNpcContainerValue (containerValue - itemValue);
 };
 
 func void _eventTradeOnExit__EnhancedTrading (var int dummyVariable) {
-	if (_TradeOnExit_Event_Break) { return; };
-
 	//Reset values
 	Trade_SetNpcContainerValue (0);
 	Trade_SetPlayerContainerValue (0);
 
-	TradeForceTransferAccept = 0;
+	_TradeForceTransferAccept = 0;
+};
+
+func void _eventTradeTransferReset__EnhancedTrading (var int dummyVariable) {
+	//Reset values
+	Trade_SetNpcContainerValue (0);
+	Trade_SetPlayerContainerValue (0);
 };
 
 /*
@@ -543,8 +447,6 @@ func void _eventTradeOnExit__EnhancedTrading (var int dummyVariable) {
  *	 - Enter confirms trade
  */
 func void _eventTradeHandleEvent__EnhancedTrading (var int dummyVariable) {
-	if (_TradeHandleEvent_Event_Break) { return; };
-
 	var int key; key = MEM_ReadInt (ESP + 4);
 
 	if (key != KEY_RETURN) { return; };
@@ -556,7 +458,6 @@ func void _eventTradeHandleEvent__EnhancedTrading (var int dummyVariable) {
 	var oCItemContainer container;
 
 	//Get item containers (oCItemContainer)
-
 	var int ptr;
 
 	//Get NPCs inventory
@@ -620,22 +521,22 @@ func void _eventTradeHandleEvent__EnhancedTrading (var int dummyVariable) {
 			delta = 0 - delta;
 
 			if (delta > oreTrader) {
-				TradeForceTransferAccept += 1;
+				_TradeForceTransferAccept += 1;
 
 				//First warning
-				if (TradeForceTransferAccept == 1) {
+				if (_TradeForceTransferAccept == 1) {
 					API_CallByString ("ENHANCEDTRADING_TRADER_NOTENOUGHORE");
 					cancel = FALSE;
 				} else
 				//Second warning --> ignore enter
-				if (TradeForceTransferAccept == 2) {
+				if (_TradeForceTransferAccept == 2) {
 					API_CallByString ("ENHANCEDTRADING_TRADER_NOTENOUGHORE_CONFIRM");
 					cancel = TRUE;
 				} else
 				//If player confirmed trade anyway ... then don't ignore it
-				if (TradeForceTransferAccept == 3) {
+				if (_TradeForceTransferAccept == 3) {
 					cancel = FALSE;
-					TradeForceTransferAccept = 0;
+					_TradeForceTransferAccept = 0;
 				};
 			};
 
@@ -654,22 +555,17 @@ func void _eventTradeHandleEvent__EnhancedTrading (var int dummyVariable) {
 	};
 
 	if (cancel) {
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+		zCInputCallback_SetKey(0);
 	};
 };
 
 func void _eventTradeOnAccept__EnhancedTrading (var int dummyVariable) {
-	if (_TradeOnAccept_Event_Break) { return; };
-
 	var oCViewDialogTrade dialogTrade;
 
 	var oCStealContainer containerNpc;
 	var oCNpcInventory containerPlayer;
 
 //--- Get Item containers (oCItemContainer)
-
-	//Get item containers (oCItemContainer)
 
 	var int ptr;
 
@@ -712,28 +608,36 @@ func void _eventTradeOnAccept__EnhancedTrading (var int dummyVariable) {
 	};
 };
 
+func void _hook_oCItemContainer_Draw__EnhancedTrading() {
+	if (oCItemContainer_IsActive (ECX)) {
+		//Update trade buy/sell multiplier
+		Trade_UpdateBuySellMultiplier();
+	};
+};
+
 func void G1_EnhancedTrading_Init(){
 	const int once = 0;
 
 	G1_TradeEvents_Init ();
 
 	TradeOnExitEvent_AddListener (_eventTradeOnExit__EnhancedTrading);
+	TradeTransferResetEvent_AddListener (_eventTradeTransferReset__EnhancedTrading);
 	TradeOnAcceptEvent_AddListener (_eventTradeOnAccept__EnhancedTrading);
 	TradeHandleEvent_AddListener (_eventTradeHandleEvent__EnhancedTrading);
 
 	if (!once) {
-		//Hooked functions checks whether NPC wants to buy an item or not. Also it cahnges selling/buying multiplier values
-		HookEngine (oCViewDialogTrade__OnTransferLeft, 10, "_hook_OnTransfer__EnhancedTrading");
-		HookEngine (oCViewDialogTrade__OnTransferRight, 10, "_hook_OnTransfer__EnhancedTrading");
+		//0x007076B0 protected: virtual void __thiscall oCItemContainer::Draw(void)
+		//const int oCItemContainer__Draw_G2 = 7370416;
 
-		//Called when exiting trading
-		//HookEngine (oCViewDialogTrade__OnExit, 5, "_hook_oCViewDialogTrade_OnExit__EnhancedTrading");
+		//I decided to change trading multiplier value every time container is drawn (because I want to have it updated immediately) not only on transfer
 
-		//Obsluha obchodovania - automaticke dorovnavanie rudy
-		//HookEngine (oCViewDialogTrade__OnAccept, 6, "_hook_oCViewDialogTrade_OnAccept__EnhancedTrading");
+		//0066768b
+		const int oCItemContainer__Draw_IsOpen_G1 = 6715019;
 
-		//10
-		//HookEngine (oCViewDialogTrade__HandleEvent, 7, "_hook_oCViewDialogTrade_HandleEvent__EnhancedTrading");
+		//007076df
+		const int oCItemContainer__Draw_IsOpen_G2 = 7370463;
+
+		HookEngine (MEMINT_SwitchG1G2 (oCItemContainer__Draw_IsOpen_G1, oCItemContainer__Draw_IsOpen_G2), MEMINT_SwitchG1G2(10, 6), "_hook_oCItemContainer_Draw__EnhancedTrading");
 
 		once = 1;
 	};

@@ -9,7 +9,7 @@ func int zCCamera_Get_activeCam () {
 	//0x008D7F94 public: static class zCCamera * zCCamera::activeCam
 	const int activeCam_addr_G2 = 9273236;
 
-	return + MEMINT_SwitchG1G2 (activeCam_addr_G1, activeCam_addr_G2);
+	return + MEM_ReadInt(MEMINT_SwitchG1G2 (activeCam_addr_G1, activeCam_addr_G2));
 };
 
 /*
@@ -27,7 +27,7 @@ func void zCCamera_Activate (var int camera) {
 
 	const int call = 0;
 	if (CALL_Begin(call)) {
-		CALL__thiscall (camera, MEMINT_SwitchG1G2 (zCCamera__Activate_G1, zCCamera__Activate_G2));
+		CALL__thiscall (_@(camera), MEMINT_SwitchG1G2 (zCCamera__Activate_G1, zCCamera__Activate_G2));
 		call = CALL_End();
 	};
 };
@@ -50,7 +50,7 @@ func void zCCamera_ProjectF (var int camera, var int posPtr, var int xscrPtrF, v
 		CALL_PtrParam ( _@ (yscrPtrF));
 		CALL_PtrParam ( _@ (xscrPtrF));
 		CALL_PtrParam ( _@ (posPtr));
-		CALL__thiscall (camera, MEMINT_SwitchG1G2 (zCCamera__Project_G1, zCCamera__Project_G2));
+		CALL__thiscall (_@(camera), MEMINT_SwitchG1G2 (zCCamera__Project_G1, zCCamera__Project_G2));
 		call = CALL_End();
 	};
 };
@@ -73,7 +73,7 @@ func void zCCamera_Project (var int camera, var int posPtr, var int xscrPtr, var
 		CALL_PtrParam ( _@ (yscrPtr));
 		CALL_PtrParam ( _@ (xscrPtr));
 		CALL_PtrParam ( _@ (posPtr));
-		CALL__thiscall (camera, MEMINT_SwitchG1G2 (zCCamera__Project_G1, zCCamera__Project_G2));
+		CALL__thiscall (_@(camera), MEMINT_SwitchG1G2 (zCCamera__Project_G1, zCCamera__Project_G2));
 		call = CALL_End();
 	};
 };
@@ -98,7 +98,7 @@ func void zCAIBase_Release (var int ai) {
  *	oCNpc_ActivateDialogCam
  *	 - activates dialogue camera between Npcs (overrides oCNpc.talkOther pointer)
  */
-func void oCNpc_ActivateDialogCam (var int slfInstance, var int othInstance, var int durationF) {
+func int oCNpc_ActivateDialogCam (var int slfInstance, var int othInstance, var int durationF) {
 	//0x006B2430 public: int __thiscall oCNpc::ActivateDialogCam(float)
 	const int oCNpc__ActivateDialogCam_G1 = 7021616;
 
@@ -106,14 +106,13 @@ func void oCNpc_ActivateDialogCam (var int slfInstance, var int othInstance, var
 	const int oCNpc__ActivateDialogCam_G2 = 7700784;
 
 	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
-	if (!Hlp_IsValidNpc (slf)) { return; };
+	if (!Hlp_IsValidNpc (slf)) { return 0; };
 
 	var oCNpc oth; oth = Hlp_GetNPC (othInstance);
-	if (!Hlp_IsValidNpc (oth)) { return; };
+	if (!Hlp_IsValidNpc (oth)) { return 0; };
 
 	var int retVal;
 	var int slfPtr; slfPtr = _@ (slf);
-
 	slf.talkOther = _@ (oth);
 
 	const int call = 0;
@@ -123,6 +122,8 @@ func void oCNpc_ActivateDialogCam (var int slfInstance, var int othInstance, var
 		CALL__thiscall (_@ (slfPtr), MEMINT_SwitchG1G2 (oCNpc__ActivateDialogCam_G1, oCNpc__ActivateDialogCam_G2));
 		call = CALL_End();
 	};
+
+	return + retVal;
 };
 
 /*
@@ -171,7 +172,6 @@ func int oCNpc_DeactivateDialogCam (var int slfInstance) {
 
 	var int retVal;
 	var int gamePtr; gamePtr = _@ (MEM_Game);
-
 	if (!gamePtr) { return 0; };
 
 	const int call = 0;
@@ -200,7 +200,7 @@ func void zCAICamera_SetVob (var int aiPtr, var int vobPtr) {
 
 	const int call = 0;
 	if (CALL_Begin(call)) {
-		CALL_PtrParam (vobPtr);
+		CALL_PtrParam (_@ (vobPtr));
 		CALL__thiscall (_@ (aiPtr), MEMINT_SwitchG1G2 (zCAICamera__SetVob_G1, zCAICamera__SetVob_G2));
 		call = CALL_End();
 	};

@@ -17,10 +17,10 @@
  *	    - move 10 pieces from slot back and fort by pressing space bar KEY_SPACE
  *	    - move all items from single slot back and fort by pressing left alt KEY_LMENU
  *
- *	 - allows moving items to dead NPCs inventories
+ *	 - allows moving items to inventories of dead Npcs
  */
 
-const int invCategory_VobTaken = -1;
+const int invCategory_VobTaken_ItemInstanceID = -1;
 
 /*
  *	Wrapper function for all inventory 'types' (oCItemContainer, oCStealContainer, oCNpcContainer, oCNpcInventory)
@@ -30,22 +30,32 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 
 	var int itmPtr;
 	var oCItem itm;
+
 	var int amount;
 
 	var int openInvType;
 	var int openInvContainerPtr;
 
+	var int containerPtr;
 	var oCItemContainer container;
 
+	var oCNpc npc;
 	var int npcInventoryPtr;
-	var int containerPtr;
 
 	var int npcContainerPtr;
 	var oCNpcContainer npcContainer;
 
-	var oCNpc npc;
-
 	if (!ptr) { return 0; };
+
+	//Override binded keys internally for purposes of this function
+
+	if (zCInput_IsBinded(GAME_ACTION, key)) {
+		key = KEY_LCONTROL;
+	};
+
+	if (zCInput_IsBinded(GAME_SMOVE, key)) {
+		key = KEY_LMENU;
+	};
 
 	//Quick loot
 	if (key == KEY_Q) {
@@ -61,31 +71,18 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 			//Close players inventory
 			oCNPC_CloseInventory (hero);
 
-			//Enable custom prints for transferred items
-			_MobTransferItemPrint_Event_Enabled = TRUE;
-
 			//Transfer all items
 			npc = Hlp_GetNPC (hero);
 			Mob_TransferItemsToNPC (npc.interactMob, hero);
-
-			//Disable custom prints for transferred items
-			_MobTransferItemPrint_Event_Enabled = FALSE;
 
 			//Send mob state change (from state S1 to S0) - hero will stop interaction with mob
 			oCMobInter_SendStateChange (npc.interactMob, 1, 0);
 
 			return TRUE;
-		} else
+		};
+
 		if (openInvType == OpenInvType_NPC) {
 			openInvContainerPtr = Hlp_GetActiveOpenInvContainer ();
-
-			//If player is in pickpocketing mode - then transfer a **single item** and exit (pickpocketing hook will take care of the rest)
-			if (NPC_IsInStateName (hero, "ZS_PICKPOCKETING")) {
-				//oCItemContainer_TransferItem (var int ptr, var int dir, var int amount)
-				//dir: -1 - left, 1 - right
-				retVal = oCItemContainer_TransferItem (openInvContainerPtr, 1, 1);
-				return TRUE;
-			};
 
 			npcContainer = _^ (openInvContainerPtr);
 			npc = _^ (npcContainer.inventory2_owner);
@@ -103,33 +100,29 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 			//We have to reset focus_vob
 			oCNPC_SetFocusVob (hero, 0);
 
-			//Enable custom prints for transferred items
-			_NpcTransferItemPrint_Event_Enabled = TRUE;
-
 			//Transfer all items
 			NPC_TransferInventory (npc, hero, FALSE, TRUE, TRUE);
-
-			//Disable custom prints for transferred items
-			_NpcTransferItemPrint_Event_Enabled = FALSE;
-
 			return TRUE;
 		};
-	} else
+	};
+
+	//Navigation
 	if ((key == KEY_PRIOR) || (key == KEY_NEXT) || (key == KEY_HOME) || (key == KEY_END)) {
 		container = _^ (ptr);
 
-		var int numItemsInCategory; numItemsInCategory = List_LengthS (container.inventory2_oCItemContainer_contents) - 1;
+		var int numItemsInCategory; numItemsInCategory = zCListSort_GetLength(container.inventory2_oCItemContainer_contents);
 
-		if (numItemsInCategory > -1) {
+		if (numItemsInCategory > 0) {
+			var int pageSize; pageSize = container.inventory2_oCItemContainer_drawItemMax;
 
 			//Page Up
 			if (key == KEY_PRIOR) {
 				if (container.inventory2_oCItemContainer_selectedItem > container.inventory2_oCItemContainer_offset) {
 					container.inventory2_oCItemContainer_selectedItem = container.inventory2_oCItemContainer_offset;
 				} else {
-					if (container.inventory2_oCItemContainer_selectedItem > container.inventory2_oCItemContainer_drawItemMax) {
-						container.inventory2_oCItemContainer_offset -= container.inventory2_oCItemContainer_drawItemMax;
-						container.inventory2_oCItemContainer_selectedItem -= container.inventory2_oCItemContainer_drawItemMax;
+					if (container.inventory2_oCItemContainer_selectedItem > pageSize) {
+						container.inventory2_oCItemContainer_offset -= pageSize;
+						container.inventory2_oCItemContainer_selectedItem -= pageSize;
 					} else {
 						container.inventory2_oCItemContainer_selectedItem = 0;
 						container.inventory2_oCItemContainer_offset = 0;
@@ -139,10 +132,8 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 
 			//Page Down
 			if (key == KEY_NEXT) {
-				var int pageSize; pageSize = container.inventory2_oCItemContainer_drawItemMax - 1;
-
-				if (container.inventory2_oCItemContainer_selectedItem < container.inventory2_oCItemContainer_offset + pageSize) {
-					container.inventory2_oCItemContainer_selectedItem = container.inventory2_oCItemContainer_offset + pageSize;
+				if (container.inventory2_oCItemContainer_selectedItem < container.inventory2_oCItemContainer_offset + pageSize - 1) {
+					container.inventory2_oCItemContainer_selectedItem = container.inventory2_oCItemContainer_offset + pageSize - 1;
 				} else {
 					container.inventory2_oCItemContainer_offset += pageSize;
 					container.inventory2_oCItemContainer_selectedItem += pageSize;
@@ -157,28 +148,28 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 
 			//Jump to last item
 			if (key == KEY_END) {
-				container.inventory2_oCItemContainer_selectedItem = numItemsInCategory;
+				container.inventory2_oCItemContainer_selectedItem = numItemsInCategory - 1;
 			};
 
-			if (container.inventory2_oCItemContainer_offset > numItemsInCategory) {
-				container.inventory2_oCItemContainer_offset = numItemsInCategory;
+			//Adjust offsets
+			if (container.inventory2_oCItemContainer_selectedItem >= numItemsInCategory) {
+				container.inventory2_oCItemContainer_selectedItem = numItemsInCategory - 1;
+
+				if (container.inventory2_oCItemContainer_selectedItem > pageSize) {
+					container.inventory2_oCItemContainer_offset = container.inventory2_oCItemContainer_selectedItem - pageSize;
+				};
 			};
 
-			if (container.inventory2_oCItemContainer_selectedItem > numItemsInCategory) {
-				container.inventory2_oCItemContainer_selectedItem = numItemsInCategory;
-			};
-
-			//Adjust offset
-			if (container.inventory2_oCItemContainer_selectedItem > container.inventory2_oCItemContainer_offset + container.inventory2_oCItemContainer_drawItemMax) {
-				container.inventory2_oCItemContainer_offset = container.inventory2_oCItemContainer_selectedItem - container.inventory2_oCItemContainer_drawItemMax;
+			if (container.inventory2_oCItemContainer_selectedItem > container.inventory2_oCItemContainer_offset + pageSize) {
+				container.inventory2_oCItemContainer_offset = container.inventory2_oCItemContainer_selectedItem - pageSize;
 			};
 
 			return TRUE;
 		};
-	} else
+	};
 
 	//Transfer items
-	if ((key == KEY_LMENU) || (key == KEY_LCONTROL) || (key == KEY_SPACE)) {
+	if ((key == KEY_LMENU) || (key == KEY_LCONTROL) || (key == KEY_SPACE) || (key == MOUSE_BUTTON_LEFT)) {
 
 		openInvType = Hlp_GetOpenInventoryType ();
 
@@ -187,7 +178,8 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 
 			if (openInvContainerPtr) {
 				container = _^ (openInvContainerPtr);
-				itmPtr = List_GetS (container.inventory2_oCItemContainer_contents, container.inventory2_oCItemContainer_selectedItem + 2);
+				//itmPtr = List_GetS (container.inventory2_oCItemContainer_contents, container.inventory2_oCItemContainer_selectedItem + 2);
+				itmPtr = zCListSort_GetData (container.inventory2_oCItemContainer_contents, container.inventory2_oCItemContainer_selectedItem);
 
 				if (itmPtr) {
 					//Left Alt move complete slot
@@ -200,7 +192,7 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 					};
 
 					//Left ctrl moves a single piece
-					if (key == KEY_LCONTROL) { amount = 1; };
+					if ((key == KEY_LCONTROL) || (key == MOUSE_BUTTON_LEFT)) { amount = 1; };
 
 					//Spacebar moves 10 pieces
 					if (key == KEY_SPACE) { amount = 10; };
@@ -208,9 +200,8 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 					if (amount > itm.amount) { amount = itm.amount; };
 
 					if (openInvType == OpenInvType_Chest) {
-
 						//Engine function oCItemContainer::TransferItem is sloooow (is it looping through all items?) ... can we create better version?
-						//Cannot be used with NPC - items moved to NPC would not be prperly stored in NPCs inventory ... closing inventory would remove all items
+						//Cannot be used with NPC - items moved to NPC would not be properly stored in NPCs inventory ... closing inventory would remove all items
 
 						//oCItemContainer_TransferItem (var int ptr, var int dir, var int amount)
 						//dir: -1 - left, 1 - right
@@ -227,16 +218,18 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 							itmPtr = oCNpcInventory_RemoveByPtr (npcInventoryPtr, itmPtr, amount);
 
 							containerPtr = Hlp_GetOpenContainer_oCItemContainer ();
-							oCItemContainer_Insert (containerPtr, itmPtr);
+							itmPtr = oCItemContainer_Insert (containerPtr, itmPtr);
 						} else {
 							containerPtr = Hlp_GetOpenContainer_oCItemContainer ();
 							itmPtr = oCItemContainer_RemoveByPtr (containerPtr, itmPtr, amount);
 
 							npc = Hlp_GetNPC (hero);
 							npcInventoryPtr = _@ (npc.inventory2_vtbl);
-							oCNpcInventory_Insert (npcInventoryPtr, itmPtr);
+							itmPtr = oCNpcInventory_Insert (npcInventoryPtr, itmPtr);
 						};
-					} else
+
+						return TRUE;
+					};
 
 					if (openInvType == OpenInvType_NPC) {
 						//From players inventory to the NPC (yes! we will allow it :) )
@@ -260,14 +253,6 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 							//oCNpcContainer_CreateList (npcContainerPtr);
 
 						} else {
-							//If player is in pickpocketing mode - then transfer a **single item** and exit (pickpocketing hook will take care of the rest)
-							if (NPC_IsInStateName (hero, "ZS_PICKPOCKETING")) {
-								//oCItemContainer_TransferItem (var int ptr, var int dir, var int amount)
-								//dir: -1 - left, 1 - right
-								retVal = oCItemContainer_TransferItem (openInvContainerPtr, 1, 1);
-								return TRUE;
-							};
-
 							//Get NPC container
 							npcContainerPtr = Hlp_GetOpenContainer_oCNpcContainer ();
 							npcContainer = _^ (npcContainerPtr);
@@ -280,14 +265,16 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 							//Insert item to players inventory
 							npc = Hlp_GetNPC (hero);
 							npcInventoryPtr = _@ (npc.inventory2_vtbl);
-							oCNpcInventory_Insert (npcInventoryPtr, itmPtr);
+							itmPtr = oCNpcInventory_Insert (npcInventoryPtr, itmPtr);
 
 							//Re-create list - this will add to the item container all items from NPCs inventory
 							//We have to use oCStealContainer_CreateList, because oCNpcContainer_CreateList will not delete list in oCItemContainer (and would cause item duplication)
 							oCStealContainer_CreateList (npcContainerPtr);
 							//oCNpcContainer_CreateList (npcContainerPtr);
 						};
-					} else
+
+						return TRUE;
+					};
 
 					if (openInvType == OpenInvType_Trading) {
 						var oCViewDialogTrade dialogTrade;
@@ -353,6 +340,8 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 
 							//Trade_SetTradeAmount (trade_amount_backup);
 						};
+
+						return TRUE;
 					};
 				} else {
 					//If there are no more items - next Alt key will close inventory
@@ -402,23 +391,16 @@ func int oCItemContainer_HandleKey (var int ptr, var int key) {
 	return FALSE;
 };
 
+//0x007299A0 public: virtual int __thiscall oCViewDialogTrade::HandleEvent(int)
 func void _eventTradeHandleEvent__BetterInvControls (var int dummyVariable) {
 	var int key; key = MEM_ReadInt (ESP + 4);
-	var int cancel; cancel = FALSE;
 
-	var int ptr;
-	//ptr = Hlp_Trade_GetActiveTradeContainer ();
-	ptr = Hlp_GetActiveOpenInvContainer ();
-
+	//Get trading container
+	var int ptr; ptr = Hlp_Trade_GetActiveTradeContainer();
 	if (ptr) {
-		//oCViewDialogTrade
-		cancel = oCItemContainer_HandleKey (ptr, key);
-	};
-
-	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+		if (oCItemContainer_HandleKey(ptr, key)) {
+			zCInputCallback_SetKey(0);
+		};
 	};
 };
 
@@ -426,36 +408,26 @@ func void _eventItemContainerHandleEvent__BetterInvControls (var int dummyVariab
 	var int key; key = MEM_ReadInt (ESP + 4);
 
 	//oCItemContainer
-	var int cancel; cancel = oCItemContainer_HandleKey (ECX, key);
-
-	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+	if (oCItemContainer_HandleKey(ECX, key)) {
+		zCInputCallback_SetKey(0);
 	};
 };
 
 func void _eventStealContainerHandleEvent__BetterInvControls (var int dummyVariable) {
 	var int key; key = MEM_ReadInt (ESP + 4);
-	//oCStealContainer
-	var int cancel; cancel = oCItemContainer_HandleKey (ECX, key);
 
-	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+	//oCStealContainer
+	if (oCItemContainer_HandleKey(ECX, key)) {
+		zCInputCallback_SetKey(0);
 	};
 };
 
 func void _eventNpcContainerHandleEvent__BetterInvControls (var int dummyVariable) {
 	var int key; key = MEM_ReadInt (ESP + 4);
-	//oCNpcContainer
-	var int cancel; cancel = oCItemContainer_HandleKey (ECX, key);
 
-	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+	//oCNpcContainer
+	if (oCItemContainer_HandleKey(ECX, key)) {
+		zCInputCallback_SetKey(0);
 	};
 };
 
@@ -484,11 +456,14 @@ func void oCNpc_RemoveFromHand__BetterInvControls (var int slfInstance) {
 */
 
 func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariable) {
-	if (!Hlp_Is_oCNpcInventory (ECX)) { return; };
-
+	var int cancel; cancel = FALSE;
 	var int key; key = MEM_ReadInt (ESP + 4);
+
 	//oCNpcInventory
-	var int cancel; cancel = oCItemContainer_HandleKey (ECX, key);
+	if (oCItemContainer_HandleKey(ECX, key)) {
+		zCInputCallback_SetKey(0);
+		return;
+	};
 
 	var oCNpcInventory npcInventory;
 
@@ -499,15 +474,18 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 	var oCItem itm;
 	var int amount;
 
+	//Vanilla-like check - don't allow item manipulation if body state is NOT interruptable (e.g. if Npc is controlled)
+	if (!oCNpc_IsBodyStateInterruptable (hero)) { return; };
+
 	var int openInvType; openInvType = Hlp_GetOpenInventoryType ();
 
 //-- Player's inventory - additional controls
 
 	if (openInvType == OpenInvType_Player) {
-		const int action_Nothing	= 0;
-		const int action_PutInHand	= 1;
-		const int action_DropItem	= 2;
-		const int action_DropAllItems	= 3;
+		const int action_Nothing = 0;
+		const int action_PutInHand = 1;
+		const int action_DropItem = 2;
+		const int action_DropAllItems = 3;
 
 		var int action; action = action_Nothing;
 
@@ -528,7 +506,7 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 				if (npcInventory.inventory2_oCItemContainer_contents) {
 					slf = _^ (npcInventory.inventory2_owner);
 					if (NPC_IsPlayer (slf)) {
-						vobPtr = oCNpc_GetSlotItem (slf, "ZS_RIGHTHAND");
+						vobPtr = oCNpc_GetSlotItem (slf, NPC_NODE_RIGHTHAND);
 						//Put item to hand only if hand is empty!
 						if (!vobPtr) {
 							if (npcInventory.inventory2_oCItemContainer_selectedItem > -1) {
@@ -536,7 +514,8 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 								//Here we don't need to get length - all we need to know is whether list is empty :)
 								var zCListSort l; l = _^ (npcInventory.inventory2_oCItemContainer_contents);
 								if (l.next) {
-									vobPtr = List_GetS (npcInventory.inventory2_oCItemContainer_contents, npcInventory.inventory2_oCItemContainer_selectedItem + 2);
+									//vobPtr = List_GetS (npcInventory.inventory2_oCItemContainer_contents, npcInventory.inventory2_oCItemContainer_selectedItem + 2);
+									vobPtr = zCListSort_GetData (npcInventory.inventory2_oCItemContainer_contents, npcInventory.inventory2_oCItemContainer_selectedItem);
 
 									if (vobPtr) {
 										//Put in hand
@@ -544,7 +523,7 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 											//Take 1 piece from inventory, put in hand
 											vobPtr = oCNpc_RemoveFromInvByPtr (slf, vobPtr, 1);
 											oCNpc_SetRightHand (slf, vobPtr);
-											//oCNpc_PutInSlot (slf, "ZS_RIGHTHAND", vobPtr, 0);
+											//oCNpc_PutInSlot (slf, NPC_NODE_RIGHTHAND, vobPtr, 0);
 
 											//If I close inventory - then player will jump - cancel action has no effect (key event is then handled by different function?)
 											//Close inventory
@@ -569,11 +548,11 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 												oCNpc_SetRightHand (slf, vobPtr);
 												//oCNpc_RemoveFromHand__BetterInvControls (slf);
 
-												//var int retVal; retVal = oCNpc_DropFromSlot (slf, "ZS_RIGHTHAND");
+												//var int retVal; retVal = oCNpc_DropFromSlot (slf, NPC_NODE_RIGHTHAND);
 												//We can't play any animations here
 												//Npc_PlayAni (slf, "T_STAND_2_IDROP");
 												//
-												vobPtr = oCNpc_GetSlotItem (slf, "ZS_RIGHTHAND");
+												vobPtr = oCNpc_GetSlotItem (slf, NPC_NODE_RIGHTHAND);
 												AI_DropVobPtr (slf, vobPtr);
 
 												//0x0066DF50 public: int __thiscall oCNpcInventory::FindNextCategory(void)
@@ -589,13 +568,13 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 						} else {
 							//If an item is already in hand - we can drop it directly
 							if ((action == action_DropItem) || (action == action_DropAllItems)) {
-								vobPtr = oCNpc_GetSlotItem (slf, "ZS_RIGHTHAND");
+								vobPtr = oCNpc_GetSlotItem (slf, NPC_NODE_RIGHTHAND);
 								AI_DropVobPtr (slf, vobPtr);
 							} else
 							//If an item is already in hand - and we try to put an item to hand - do the opposite - put it back to inventory
 							if (action == action_PutInHand) {
 								//Remove from hand - do not drop
-								vobPtr = oCNpc_RemoveFromSlot_Fixed (hero, "ZS_RIGHTHAND", FALSE, 0);
+								vobPtr = oCNpc_RemoveFromSlot_Fixed (hero, NPC_NODE_RIGHTHAND, FALSE, 0);
 								//Put in inventory
 								vobPtr = oCNpc_PutInInvPtr (slf, vobPtr);
 							};
@@ -607,26 +586,24 @@ func void _eventNpcInventoryHandleEvent__BetterInvControls (var int dummyVariabl
 	};
 
 	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+		zCInputCallback_SetKey(0);
 	};
 };
 
 /*
  *	If player had in hand item and switched to fight mode - then engine calls oCNpc_DoDropVob - this function drops not only item in hand but also 1 piece from inventory for some reason
  */
+//0x006A10F0 public: virtual int __thiscall oCNpc::DoDropVob(class zCVob *)
 func void _eventDoDropVob__BetterInvControls (var int eventType) {
 	if (!Hlp_Is_oCNpc (ECX)) { return; };
 
 	var oCNPC slf; slf = _^ (ECX);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
-	var int vobPtr; vobPtr = oCNpc_GetSlotItem (slf, "ZS_RIGHTHAND");
+	var int vobPtr; vobPtr = oCNpc_GetSlotItem (slf, NPC_NODE_RIGHTHAND);
 	if (vobPtr) {
 		//This engine function drops item from hand only
-		//oCNpc_RemoveFromHand__BetterInvControls (slf);
-		var int retVal; retVal = oCNpc_DropFromSlot (slf, "ZS_RIGHTHAND");
+		var int retVal; retVal = oCNpc_DropFromSlot (slf, NPC_NODE_RIGHTHAND);
 
 		//Crash ...
 		//const int contents = 0;
@@ -637,7 +614,7 @@ func void _eventDoDropVob__BetterInvControls (var int eventType) {
 	};
 };
 
-func void _eventDoTakeVob_SwitchCategory () {
+func void _eventDoTakeVob__SwitchCategory (var int dummyVariable) {
 	var int itemPtr; itemPtr = MEM_ReadInt (ESP + 4);
 	if ((!Hlp_Is_oCNpc (ECX)) || (!Hlp_Is_oCItem (itemPtr))) { return; };
 
@@ -646,19 +623,24 @@ func void _eventDoTakeVob_SwitchCategory () {
 
 	if (Hlp_IsValidItem (itm)) {
 		if (NPC_IsPlayer (slf)) {
-			invCategory_VobTaken = Npc_ItemGetCategory (slf, itemPtr);
+			invCategory_VobTaken_ItemInstanceID = Hlp_GetInstanceID (itm);
 		};
 	};
 };
 
-func void _eventOpenInventory_SwitchToCategory () {
-	if (invCategory_VobTaken != -1) {
-		oCNpcInventory_SwitchToCategory (ECX, invCategory_VobTaken);
-		invCategory_VobTaken = -1;
+func void _eventOpenInventory__SwitchToCategory (var int dummyVariable) {
+	//Only if not in dialogue - otherwise this collides with EIM item preview feature
+	if (!InfoManager_HasFinished()) {
+		return;
+	};
+
+	if (invCategory_VobTaken_ItemInstanceID > -1) {
+		Npc_InvSelectItem (hero, invCategory_VobTaken_ItemInstanceID);
+		invCategory_VobTaken_ItemInstanceID = -1;
 	};
 };
 
-func void G1_BetterInventoryControls_Init(){
+func void G1_BetterInventoryControls_Init() {
 	G1_TradeEvents_Init ();
 
 	G1_InventoryEvents_Init ();
@@ -677,8 +659,8 @@ func void G1_BetterInventoryControls_Init(){
 	DoDropVobEvent_AddListener (_eventDoDropVob__BetterInvControls);
 
 	G12_DoTakeVobEvent_Init ();
-	DoTakeVobEvent_AddListener (_eventDoTakeVob_SwitchCategory);
+	DoTakeVobEvent_AddListener (_eventDoTakeVob__SwitchCategory);
 
 	G12_OpenInventoryEvent_Init ();
-	OpenInventoryEvent_AddListener (_eventOpenInventory_SwitchToCategory);
+	OpenInventoryEvent_AddListener (_eventOpenInventory__SwitchToCategory);
 };

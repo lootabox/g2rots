@@ -23,9 +23,7 @@ func int NPC_GetWalkMode (var int slfInstance) {
 	const int oCAniCtrl_Human__GetWalkModeString_G2 = 6991424;
 
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-
 	if (!Hlp_IsValidNPC (slf)) { return -1; };
-
 	if (!slf.AniCtrl) { return -1; };
 
 	CALL_RetValIszString();
@@ -34,10 +32,10 @@ func int NPC_GetWalkMode (var int slfInstance) {
 	var string result;
 	result = CALL_RetValAszstring ();
 
-	if (Hlp_StrCmp (result, "RUN"))		{ 	return NPC_RUN; 	} else
-	if (Hlp_StrCmp (result, "WALK"))	{ 	return NPC_WALK;	} else
-	if (Hlp_StrCmp (result, "SNEAK"))	{	return NPC_SNEAK;	} else
-	if (Hlp_StrCmp (result, ""))		{	return NPC_INWATER;	};
+	if (Hlp_StrCmp (result, "RUN")) { return NPC_RUN; };
+	if (Hlp_StrCmp (result, "WALK")) { return NPC_WALK; };
+	if (Hlp_StrCmp (result, "SNEAK")) { return NPC_SNEAK; };
+	if (Hlp_StrCmp (result, STR_EMPTY)) { return NPC_INWATER; };
 
 	return -1;
 };
@@ -54,14 +52,21 @@ func int NPC_IsStanding (var int slfInstance) {
 	const int oCAniCtrl_Human__IsStanding_G2 = 7003872;
 
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-
 	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+	if (!slf.aniCtrl) { return FALSE; };
 
-	if (!slf.AniCtrl) { return FALSE; };
+	var int aniCtrlPtr; aniCtrlPtr = slf.aniCtrl;
 
-	CALL__thiscall(slf.AniCtrl, MEMINT_SwitchG1G2 (oCAniCtrl_Human__IsStanding_G1, oCAniCtrl_Human__IsStanding_G2));
+	var int retVal;
 
-	return CALL_RetValAsInt ();
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PutRetValTo(_@ (retVal));
+		CALL__thiscall(_@(aniCtrlPtr), MEMINT_SwitchG1G2 (oCAniCtrl_Human__IsStanding_G1, oCAniCtrl_Human__IsStanding_G2));
+		call = CALL_End();
+	};
+
+	return + retVal;
 };
 
 func int NPC_IsWalking (var int slfInstance) {
@@ -142,7 +147,7 @@ func int NPC_GetNPCState (var int slfInstance) {
 
 func string NPC_GetRoutineName (var int slfInstance) {
 //	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-//	if (!Hlp_IsValidNPC (slf)) { return ""; };
+//	if (!Hlp_IsValidNPC (slf)) { return STR_EMPTY; };
 //
 //	var int ptr; ptr = _@ (slf);
 //
@@ -158,7 +163,7 @@ func string NPC_GetRoutineName (var int slfInstance) {
 //		return symb.name;
 //	};
 //
-//	return "";
+//	return STR_EMPTY;
 
 	//0x006C6C10 public: class zSTRING __thiscall oCNpc_States::GetRoutineName(void)
 	const int oCNpc_States__GetRoutineName_G1 = 7105552;
@@ -167,52 +172,49 @@ func string NPC_GetRoutineName (var int slfInstance) {
 	const int oCNpc_States__GetRoutineName_G2 = 7790976;
 
 	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
-	if (!statePtr) { return ""; };
+	if (!statePtr) { return STR_EMPTY; };
 
 	CALL_RetValIszString ();
 	CALL__thiscall (statePtr, MEMINT_SwitchG1G2 (oCNpc_States__GetRoutineName_G1, oCNpc_States__GetRoutineName_G2));
 	return CALL_RetValAszstring ();
 };
 
-func int NPC_IsInRoutineName (var int slfInstance, var string rtnName) {
-	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+/*
+ *  Get routine name without prefix and suffix
+ */
+func string Npc_GetRoutineBaseName (var int slfInstance)
+{
+	var string rtnName; rtnName = NPC_GetRoutineName (slfInstance);
 
+	//Double-check just in case
+	if (STR_StartsWith (rtnName, "RTN_")) {
+		//Remove prefix
+		rtnName = STR_Right (rtnName, STR_Len (rtnName) - 4);
+	};
+
+	//Double-check just in case
+    var C_NPC slf; slf = Hlp_GetNpc(slfInstance);
+	var string suffix; suffix = ConcatStrings ("_", IntToString (slf.ID));
+	if (STR_EndsWith (rtnName, suffix)) {
+		//Remove suffix
+		rtnName = STR_Left (rtnName, STR_Len (rtnName) - STR_Len (suffix));
+	};
+    
+    return rtnName;
+};
+
+func int NPC_IsInRoutineName (var int slfInstance, var string rtnName) {
 	rtnName = STR_Upper (rtnName);
 
 	//RTN_ rtnName _ID
-	var string curRtnName; curRtnName = NPC_GetRoutineName (slf);
-
-	//Double-check just in case
-	if (STR_StartsWith (curRtnName, "RTN_")) {
-		//Remove prefix
-		curRtnName = STR_Right (curRtnName, STR_Len (curRtnName) - 4);
-	};
-
-	//Double-check just in case
-	var string suffix; suffix = ConcatStrings ("_", IntToString (slf.ID));
-	if (STR_EndsWith (curRtnName, suffix)) {
-		//Remove suffix
-		curRtnName = STR_Left (curRtnName, STR_Len (curRtnName) - STR_Len (suffix));
-	};
-
-	//We will allow single wild-card '*'
-	var int indexWildcard;
-	indexWildcard = STR_IndexOf (rtnName, "*");
-
-	if (indexWildcard > -1) {
-		var string s1; s1 = mySTR_SubStr (rtnName, 0, indexWildcard - 1);
-		var string s2; s2 = mySTR_SubStr (rtnName, indexWildcard + 1, STR_Len (rtnName));
-
-		return + (STR_StartsWith (curRtnName, s1) && STR_EndsWith (curRtnName, s2));
-	};
-
-	return + (Hlp_StrCmp (rtnName, curRtnName));
+	var string curRtnName; curRtnName = Npc_GetRoutineBaseName(slfInstance);
+	return + (STR_WildMatch(rtnName, curRtnName));
 };
 
-func string NPC_GetAIStateName (var int slfInstance) {
+func string NPC_GetStartAIStateName (var int slfInstance) {
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
 
-	if (!Hlp_IsValidNPC (slf)) { return ""; };
+	if (!Hlp_IsValidNPC (slf)) { return STR_EMPTY; };
 
 	var int ptr; ptr = _@ (slf);
 
@@ -220,7 +222,6 @@ func string NPC_GetAIStateName (var int slfInstance) {
 	//var func startAIState;	//G2	0x0264 int
 
 	var int offset; offset = MEMINT_SwitchG1G2 (540, 612);
-
 	var int symbID; symbID = MEM_ReadInt (ptr + offset);
 
 	if (symbID > 0) && (symbID < currSymbolTableLength) {
@@ -228,7 +229,14 @@ func string NPC_GetAIStateName (var int slfInstance) {
 		return symb.name;
 	};
 
-	return "";
+	return STR_EMPTY;
+};
+
+func string NPC_GetCurrentAIStateName (var int slfInstance) {
+	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return STR_EMPTY; };
+
+	return slf.state_curState_name;
 };
 
 func int NPC_IsInActiveVobList (var int slfInstance) {
@@ -449,7 +457,7 @@ func void NPC_RemoveDuplicatedTimedOverlays (var int slfInstance, var string tes
 							timedOverlay.timer = f;
 						} else {
 							//Remove overlay name - this way overlay wont be removed from NPC
-							timedOverlay.mdsOverlayName = "";
+							timedOverlay.mdsOverlayName = STR_EMPTY;
 							timedOverlay.timer = FLOATNULL;
 						};
 
@@ -494,7 +502,7 @@ func void NPC_RemoveTimedOverlay (var int slfInstance, var string testOverlay) {
 
 			if (Hlp_StrCmp (timedOverlay.mdsOverlayName, testOverlay)) {
 				//Remove overlay name - this way overlay wont be removed from NPC
-				timedOverlay.mdsOverlayName = "";
+				timedOverlay.mdsOverlayName = STR_EMPTY;
 				timedOverlay.timer = FLOATNULL;
 			};
 		};
@@ -613,134 +621,58 @@ func void NPC_SetBitfield (var int slfInstance, var int bitfield, var int value)
 };
 
 /*
- *	Switches torches on - off
- *		return -1 if NPC does not have torch
- *		return 0 if torch was removed
- *		return 1 if torch was used
+ *	Npc_HasVisualBody
+ *	 - checks if visual body name starts with specified string
  */
-func int NPC_TorchSwitchOnOff (var int slfinstance) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfinstance);
-	if (!Hlp_IsValidNPC (slf)) { return -1; };
+func int Npc_HasVisualBody(var int slfInstance, var string visualBodyPrefix) {
+	var string visualBody; visualBody = oCNpc_GetVisualBody(slfInstance);
 
-	//Get pointer to ZS_LEFTHAND
-	var int ptr; ptr = oCNpc_GetSlotItem (slf, "ZS_LEFTHAND");
+	visualBody = STR_Upper(visualBody);
+	visualBodyPrefix = STR_Upper(visualBodyPrefix);
 
-	//Is there anything in hand? - put it away
-	if (ptr) {
-		var oCItem itm; itm = _^ (ptr);
-
-		//Is it ItLsTorchBurning ?
-		if ((Hlp_GetinstanceID (itm) == ItLsTorchBurning) || (Hlp_GetinstanceID (itm) == ItLsTorchBurned)) {
-			//Use item - will put ItLsTorch back to inventory
-			oCNpc_Equip_Safe (slf, ptr);
-
-			if (NPC_HasOverlay (slf, "HUMANS_TORCH.MDS")) {
-				Mdl_RemoveOverlayMds (slf, "HUMANS_TORCH.MDS");
-				return 0;
-			};
-		};
-	} else {
-		//Search for ItLsTorchBurned
-		ptr = NPC_GetInvItem (slf, ItLsTorchBurned);
-
-		//Search for ItLsTorch
-		if (!ptr) {
-			ptr = NPC_GetInvItem (slf, ItLsTorch);
-		};
-
-		//Fill item with pointer to some ItLsTorch in inventory
-		if (ptr) {
-			//get torch pointer
-			ptr = _@ (item);
-
-			//Equip it - puts ItLsTorchBurning in hand
-			oCNpc_Equip_Safe (slf, ptr);
-			return 1;
-		};
+	if (STR_StartsWith(visualBody, visualBodyPrefix)) {
+		return TRUE;
 	};
 
-	return -1;
+	return FALSE;
 };
 
-func void NPC_TorchSwitchOff (var int slfinstance) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfinstance);
-	if (!Hlp_IsValidNPC (slf)) { return; };
+/*
+ *	Npc_CarriesTorch
+ *	 - returns true if Npc is carrying torch (checks both hands)
+ *	 - updates global variable item with torch in hand
+ */
+func int Npc_CarriesTorch (var int slfinstance){
+	var oCNpc slf; slf = Hlp_GetNpc(slfinstance);
+	if (!Hlp_IsValidNPC(slf)) { return FALSE; };
+
+	var int ptr;
+	var oCItem itm;
 
 	//Get pointer to ZS_LEFTHAND
-	var int ptr; ptr = oCNpc_GetSlotItem (slf, "ZS_LEFTHAND");
+	ptr = oCNpc_GetSlotItem(slf, NPC_NODE_LEFTHAND);
 
 	//Is there anything in hand?
 	if (ptr) {
-		var oCItem itm; itm = _^ (ptr);
-
-		//Is it ItLsTorchBurning ?
-		if ((Hlp_GetinstanceID (itm) == ItLsTorchBurning) || (Hlp_GetinstanceID (itm) == ItLsTorchBurned)) {
-			//Use item - will put ItLsTorch back to inventory
-			oCNpc_Equip_Safe (slf, ptr);
-
-			if (NPC_HasOverlay (slf, "HUMANS_TORCH.MDS")) {
-				Mdl_RemoveOverlayMds (slf, "HUMANS_TORCH.MDS");
-			};
-		};
-	};
-};
-
-func void NPC_TorchSwitchOn (var int slfinstance) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfinstance);
-	if (!Hlp_IsValidNPC (slf)) { return; };
-
-	//Get pointer to ZS_LEFTHAND
-	var int ptr; ptr = oCNpc_GetSlotItem (slf, "ZS_LEFTHAND");
-
-	//Is there anything in hand?
-	if (ptr) {
-		var oCItem itm; itm = _^ (ptr);
-
-		//Is it ItLsTorchBurned? if yes - remove - script below will put ItLsTorchBurning in hand
-		if (Hlp_GetinstanceID (itm) == ItLsTorchBurned) {
-			oCNpc_Equip_Safe (slf, ptr);
-			ptr = 0;
-		};
-	};
-
-	//Is hand empty?
-	if (!ptr) {
-		//Search for ItLsTorchBurned - use if possible
-		ptr = NPC_GetInvItem (slf, ItLsTorchBurned);
-
-		//Search for ItLsTorch
-		if (!ptr) {
-			ptr = NPC_GetInvItem (slf, ItLsTorch);
-		};
-
-		if (ptr) {
-			//get torch pointer
-			ptr = _@ (item);
-
-			//Use it - puts ItLsTorchBurning in hand
-			oCNpc_Equip_Safe (slf, ptr);
-
-			//Apply overlay
-			if (!NPC_HasOverlay (slf, "HUMANS_TORCH.MDS")) {
-				Mdl_ApplyOverlayMds (slf, "HUMANS_TORCH.MDS");
-			};
-		};
-	};
-};
-
-func int NPC_CarriesTorch (var int slfinstance) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfinstance);
-	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
-
-	//Get pointer to ZS_LEFTHAND
-	var int ptr; ptr = oCNpc_GetSlotItem (slf, "ZS_LEFTHAND");
-
-	//Is there anything in hand?
-	if (ptr) {
-		var oCItem itm; itm = _^ (ptr);
+		itm = _^ (ptr);
 
 		//Is it ItLsTorchBurning / ItLsTorchBurned ?
-		if ((Hlp_GetinstanceID (itm) == ItLsTorchBurning) || (Hlp_GetinstanceID (itm) == ItLsTorchBurned)) {
+		if ((Hlp_GetinstanceID(itm) == ItLsTorchBurning) || (Hlp_GetinstanceID(itm) == ItLsTorchBurned)) {
+			item = _^(ptr);
+			return TRUE;
+		};
+	};
+
+	//Get pointer to ZS_RIGHTHAND
+	ptr = oCNpc_GetSlotItem(slf, NPC_NODE_RIGHTHAND);
+
+	//Is there anything in hand?
+	if (ptr) {
+		itm = _^ (ptr);
+
+		//Is it ItLsTorchBurning / ItLsTorchBurned ?
+		if ((Hlp_GetinstanceID(itm) == ItLsTorchBurning) || (Hlp_GetinstanceID(itm) == ItLsTorchBurned)) {
+			item = _^(ptr);
 			return TRUE;
 		};
 	};
@@ -751,19 +683,145 @@ func int NPC_CarriesTorch (var int slfinstance) {
 /*
  *	Function calls torch exchange & removes overlay when torch is not in ZS_LEFTHAND
  */
-func int NPC_DoExchangeTorch (var int slfInstance) {
-	if (oCNpc_DoExchangeTorch (slfInstance)) {
-		if (!NPC_CarriesTorch (slfInstance)) {
-			if (NPC_HasOverlay (slfInstance, "HUMANS_TORCH.MDS")) {
-				//No need to validate slf - all functions above do the validation
-				var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
-				Mdl_RemoveOverlayMds (slf, "HUMANS_TORCH.MDS");
+func int Npc_DoExchangeTorch (var int slfInstance) {
+	var C_NPC slf; slf = Hlp_GetNpc(slfInstance);
+	if (!Hlp_IsValidNpc(slf)) { return FALSE; };
+
+	if (!Npc_IsInFightMode(slf, FMODE_NONE)) {
+		return FALSE;
+	};
+
+	if (oCNpc_DoExchangeTorch(slfInstance)) {
+		if (!Npc_CarriesTorch(slfInstance)) {
+			if (Npc_HasVisualBody(slf, VISBODY_PREFIX_HUM)) {
+				if (Npc_HasOverlay(slfInstance, MDS_HUMANS_TORCH)) {
+					Mdl_RemoveOverlayMds(slf, MDS_HUMANS_TORCH);
+				};
+			} else
+			if (Npc_HasVisualBody(slf, VISBODY_PREFIX_ORC)) {
+				if (Npc_HasOverlay(slfInstance, MDS_ORC_TORCH)) {
+					Mdl_RemoveOverlayMds(slf, MDS_ORC_TORCH);
+				};
 			};
 		};
 
 		return TRUE;
 	};
 	return FALSE;
+};
+
+/*
+ *	Npc_TorchSwitchOff
+ */
+func void Npc_TorchSwitchOff (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC(slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	//Is there anything in hand?
+	if (Npc_CarriesTorch(slf)) {
+		//if in right hand then perform DoExchangeTorch to get it back to left hand
+		var int ptr; ptr = oCNpc_GetSlotItem(slf, NPC_NODE_RIGHTHAND);
+		if (ptr == _@(item)) {
+			var int retVal; retVal = oCNpc_DoExchangeTorch(slf);
+		};
+
+		//Use item - will put ItLsTorch back to inventory
+		oCNpc_EquipPtr(slf, _@(item));
+
+		if (Npc_HasVisualBody(slf, VISBODY_PREFIX_HUM)) {
+			if (Npc_HasOverlay(slfInstance, MDS_HUMANS_TORCH)) {
+				Mdl_RemoveOverlayMds(slf, MDS_HUMANS_TORCH);
+			};
+		} else
+		if (Npc_HasVisualBody(slf, VISBODY_PREFIX_ORC)) {
+			if (Npc_HasOverlay(slfInstance, MDS_ORC_TORCH)) {
+				Mdl_RemoveOverlayMds(slf, MDS_ORC_TORCH);
+			};
+		};
+	};
+};
+
+/*
+ *	NPC_TorchSwitchOn
+ */
+func void NPC_TorchSwitchOn (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC(slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int ptr;
+
+	//Check fight mode!
+	if (!Npc_IsInFightMode(slf, FMODE_NONE)) {
+		//Exception for FMODE_MELEE - check talent
+		if (!Npc_IsInFightMode(slf, FMODE_MELEE)) {
+			return;
+		};
+
+		//Get weapon pointer - we will allow torch in case of 1H lvl > 0
+		ptr = oCNpc_GetSlotItem(slf, NPC_NODE_RIGHTHAND);
+		var int is1H; is1H = oCItem_IsOneHanded(ptr);
+
+		if (!is1H) {
+			return;
+ 		};
+
+		//Don't allow torches on lvl 0
+		if (is1H && Npc_GetTalentSkill(slf, NPC_TALENT_1H) == 0) {
+			return;
+		};
+	};
+
+	//Get pointer to ZS_LEFTHAND
+	ptr = oCNpc_GetSlotItem(slf, NPC_NODE_LEFTHAND);
+
+	//Is hand empty?
+	if (!ptr) {
+		//Search for torches ItLsTorchBurning, ItLsTorchBurned, ItLsTorch
+		if (!NPC_GetInvItem(slf, ItLsTorchBurning)) {
+			if (!NPC_GetInvItem(slf, ItLsTorchBurned)) {
+				if (!NPC_GetInvItem(slf, ItLsTorch)) {
+					return;
+				};
+			};
+		};
+
+		oCNpc_EquipPtr(slf, _@(item));
+
+		//Apply overlay
+		if (Npc_HasVisualBody(slf, VISBODY_PREFIX_HUM)) {
+			if (!Npc_HasOverlay(slfInstance, MDS_HUMANS_TORCH)) {
+				Mdl_ApplyOverlayMds(slf, MDS_HUMANS_TORCH);
+			};
+		} else
+		if (Npc_HasVisualBody(slf, VISBODY_PREFIX_ORC)) {
+			if (!Npc_HasOverlay(slfInstance, MDS_ORC_TORCH)) {
+				Mdl_ApplyOverlayMds(slf, MDS_ORC_TORCH);
+			};
+		};
+	};
+};
+
+/*
+ *	Switches torches on - off
+ *		return -1 if NPC does not have torch
+ *		return 0 if torch was removed
+ *		return 1 if torch was put in hand
+ */
+func int NPC_TorchSwitchOnOff(var int slfinstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfinstance);
+	if (!Hlp_IsValidNPC (slf)) { return -1; };
+
+	if (Npc_CarriesTorch(slf)) {
+		Npc_TorchSwitchOff(slf);
+		return 0;
+	} else {
+		Npc_TorchSwitchOn(slf);
+		if (Npc_CarriesTorch(slf)) {
+			return 1;
+		};
+	};
+
+	return -1;
 };
 
 func int NPC_GetNode (var int slfInstance, var string nodeName) {
@@ -779,9 +837,12 @@ func int NPC_GetNode (var int slfInstance, var string nodeName) {
 	var int modelPtr; modelPtr = oCNPC_GetModel (slfInstance);
 	if (!modelPtr) { return 0; };
 
+	var int retVal;
+
+	CALL_PutRetValTo(_@(retVal));
 	CALL_zStringPtrParam (nodeName);
 	CALL__thiscall (modelPtr, MEMINT_SwitchG1G2 (zCModel__SearchNode_G1, zCModel__SearchNode_G2));
-	return CALL_RetValAsPtr ();
+	return + retVal;
 };
 
 func int NPC_GetNodePositionWorld (var int slfInstance, var string nodeName) {
@@ -803,6 +864,18 @@ func int NPC_GetNodePositionWorld (var int slfInstance, var string nodeName) {
 	return CALL_RetValAsPtr ();
 };
 
+func int Npc_GetNodePositionWorldToPos (var int slfInstance, var string nodeName, var int posPtr) {
+	var int nodePosPtr; nodePosPtr = NPC_GetNodePositionWorld (slfInstance, nodeName);
+
+	if (nodePosPtr) {
+		MEM_CopyBytes(nodePosPtr, posPtr, 12);
+		MEM_Free(nodePosPtr);
+		return TRUE;
+	};
+
+	return FALSE;
+};
+
 /*
  *	NPC_GetDistToPos // int
  */
@@ -812,21 +885,15 @@ func int NPC_GetDistToPos (var int slfInstance, var int posPtr) {
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return -1; };
 
-	//Backup soundPosition
 	var int pos[3];
-	MEM_CopyBytes (_@ (slf.soundPosition), _@ (pos[0]), 12);
+	pos[0] = slf._zCVob_trafoObjToWorld [03];
+	pos[1] = slf._zCVob_trafoObjToWorld [07];
+	pos[2] = slf._zCVob_trafoObjToWorld [11];
 
-	slf.soundPosition[0] = MEM_ReadIntArray (posPtr, 0);
-	slf.soundPosition[1] = MEM_ReadIntArray (posPtr, 1);
-	slf.soundPosition[2] = MEM_ReadIntArray (posPtr, 2);
+	var int dir[3];
+	SubVectors (_@ (dir), _@ (pos), posPtr);
 
-	//We will exploit this engine function to calculate
-	var int dist; dist = Snd_GetDistToSource (slf);
-
-	//Restore soundPosition
-	MEM_CopyBytes (_@ (pos[0]), _@ (slf.soundPosition), 12);
-
-	return dist;
+	return roundf (zVEC3_LengthApprox (_@ (dir)));
 };
 
 /*
@@ -835,18 +902,14 @@ func int NPC_GetDistToPos (var int slfInstance, var int posPtr) {
 func int NPC_GetDistToVobPtr (var int slfInstance, var int vobPtr) {
 	if (!vobPtr) { return -1; };
 
-	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-	if (!Hlp_IsValidNPC (slf)) { return -1; };
-
 	var zCVob vob; vob = _^ (vobPtr);
 
 	var int pos[3];
-	//TrfToPos (_@(vob.trafoObjToWorld), _@ (pos));
-	MEM_WriteIntArray(_@ (pos), 0, MEM_ReadIntArray(_@(vob.trafoObjToWorld),  3));
-	MEM_WriteIntArray(_@ (pos), 1, MEM_ReadIntArray(_@(vob.trafoObjToWorld),  7));
-	MEM_WriteIntArray(_@ (pos), 2, MEM_ReadIntArray(_@(vob.trafoObjToWorld), 11));
+	pos[0] = vob.trafoObjToWorld [03];
+	pos[1] = vob.trafoObjToWorld [07];
+	pos[2] = vob.trafoObjToWorld [11];
 
-	return + NPC_GetDistToPos (slf, _@ (pos));
+	return + NPC_GetDistToPos (slfInstance, _@ (pos));
 };
 
 func int NPC_GetShowAI (var int slfInstance) {
@@ -857,12 +920,21 @@ func int NPC_GetShowAI (var int slfInstance) {
 	const int oCAIHuman__GetShowAI_G2 = 6936704;
 
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-
 	if (!Hlp_IsValidNPC (slf)) { return 0; };
+	if (!slf.human_ai) { return 0; };
 
-	CALL__thiscall (slf.human_ai, MEMINT_SwitchG1G2 (oCAIHuman__GetShowAI_G1, oCAIHuman__GetShowAI_G2));
+	var int human_aiPtr; human_aiPtr = slf.human_ai;
 
-	return CALL_RetValAsInt ();
+	var int retVal;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_PutRetValTo(_@ (retVal));
+		CALL__thiscall(_@(human_aiPtr), MEMINT_SwitchG1G2 (oCAIHuman__GetShowAI_G1, oCAIHuman__GetShowAI_G2));
+		call = CALL_End();
+	};
+
+	return + retVal;
 };
 
 func void NPC_SetShowAI (var int slfInstance, var int enable) {
@@ -873,11 +945,17 @@ func void NPC_SetShowAI (var int slfInstance, var int enable) {
 	const int oCAIHuman__SetShowAI_G2 = 6936672;
 
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-
 	if (!Hlp_IsValidNPC (slf)) { return; };
+	if (!slf.human_ai) { return; };
 
-	CALL_IntParam (enable);
-	CALL__thiscall (slf.human_ai, MEMINT_SwitchG1G2 (oCAIHuman__SetShowAI_G1, oCAIHuman__SetShowAI_G2));
+	var int human_aiPtr; human_aiPtr = slf.human_ai;
+
+	const int call = 0;
+	if (CALL_Begin(call)) {
+		CALL_IntParam(_@ (enable));
+		CALL__thiscall(_@(human_aiPtr), MEMINT_SwitchG1G2 (oCAIHuman__SetShowAI_G1, oCAIHuman__SetShowAI_G2));
+		call = CALL_End();
+	};
 };
 
 func void NPC_MobSetIdealPosition (var int slfInstance) {
@@ -944,20 +1022,10 @@ func int NPC_IsInStateName (var int slfInstance, var string stateName) {
 	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return 0; };
 
+	if (!STR_Len (stateName)) { return TRUE; };
+
 	stateName = STR_Upper (stateName);
-
-	//We will allow single wild-card '*'
-	var int indexWildcard;
-	indexWildcard = STR_IndexOf (stateName, "*");
-
-	if (indexWildcard > -1) {
-		var string s1; s1 = mySTR_SubStr (stateName, 0, indexWildcard - 1);
-		var string s2; s2 = mySTR_SubStr (stateName, indexWildcard + 1, STR_Len (stateName));
-
-		return + (STR_StartsWith (slf.state_curState_name, s1) && STR_EndsWith (slf.state_curState_name, s2) && (slf.state_curState_valid));
-	};
-
-	return + (Hlp_StrCmp (slf.state_curState_name, stateName) && (slf.state_curState_valid));
+	return + (STR_WildMatch(slf.state_curState_name, stateName) && (slf.state_curState_valid));
 };
 
 func int NPC_WasInStateName (var int slfInstance, var string stateName) {
@@ -970,19 +1038,7 @@ func int NPC_WasInStateName (var int slfInstance, var string stateName) {
 
 	var string lastStateName;
 	lastStateName = GetSymbolName (slf.state_lastAIState);
-
-	//We will allow single wild-card '*'
-	var int indexWildcard;
-	indexWildcard = STR_IndexOf (stateName, "*");
-
-	if (indexWildcard > -1) {
-		var string s1; s1 = mySTR_SubStr (stateName, 0, indexWildcard - 1);
-		var string s2; s2 = mySTR_SubStr (stateName, indexWildcard + 1, STR_Len (stateName));
-
-		return + (STR_StartsWith (lastStateName, s1) && STR_EndsWith (lastStateName, s2) && (slf.state_curState_valid));
-	};
-
-	return + (Hlp_StrCmp (lastStateName, stateName));
+	return + (STR_WildMatch(lastStateName, stateName));
 };
 
 func int NPC_GetDailyRoutineFuncID (var int slfInstance) {
@@ -1013,7 +1069,7 @@ func void NPC_ChangeRoutine (var int slfInstance, var int funcID) {
 	//0x0076DF60 public: void __thiscall oCNpc_States::ChangeRoutine(int)
 	const int oCNpc_States__ChangeRoutine_G2 = 7790432;
 
-	if (!funcID) { return; };
+	if (funcID < 1) { return; };
 
 	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
 
@@ -1124,7 +1180,7 @@ func int NPC_GetNearestMobOptPosition (var int slfInstance, var int mobPtr) {
 func string NPC_GetNearestMobNodeName (var int slfInstance, var int mobPtr) {
 	var int ptr; ptr = NPC_GetNearestMobOptPosition (slfInstance, mobPtr);
 
-	if (!ptr) { return ""; };
+	if (!ptr) { return STR_EMPTY; };
 
 	var TMobOptPos mobOptPos; mobOptPos = _^ (ptr);
 	return mobOptPos.nodeName;
@@ -1158,6 +1214,8 @@ func void NPC_SetWalkMode (var int slfInstance, var int walkMode) {
 func int NPC_CanChangeOverlay (var int slfInstance) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 
+	if (Npc_GetBitfield(slf, oCNpc_bitfield0_movlock)) { return FALSE; };
+
 	//[C_BodyStateContains (hero, BS_JUMP)]
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_JUMP & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_FALL & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
@@ -1166,6 +1224,7 @@ func int NPC_CanChangeOverlay (var int slfInstance) {
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_SWIM & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_DIVE & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_LIE & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
+	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_SIT & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_INVENTORY & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_MOBINTERACT & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
 	if ((NPC_GetBodyState (slf) & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS)) == (BS_MOBINTERACT_INTERRUPT & (BS_MAX | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS))) { return FALSE; };
@@ -1219,6 +1278,10 @@ func void Npc_EndCurrentState (var int slfInstance) {
 	};
 };
 
+/*
+ *	Npc_InitAIStateDriven
+ *	 - updates oCNpc.state_aiStatePosition to specified position and oCNpc.wp to nearest waypoint
+ */
 func void Npc_InitAIStateDriven (var int slfInstance, var int posPtr) {
 	//0x006C7350 public: void __thiscall oCNpc_States::InitAIStateDriven(class zVEC3 const &)
 	const int oCNpc_States__InitAIStateDriven_G1 = 7107408;
@@ -1238,6 +1301,30 @@ func void Npc_InitAIStateDriven (var int slfInstance, var int posPtr) {
 };
 
 /*
+ *	Npc_StartAIState
+ *	!updates global variable self!
+ */
+func int Npc_StartAIState(var int slfInstance, var string stateName, var int endOldState, var int timeBehaviour, var int timedF, var int isRtnState) {
+	//0x006C5350 public: int __thiscall oCNpc_States::StartAIState(class zSTRING const &,int,int,float,int)
+	const int oCNpc_States__StartAIState_G1 = 7099216;
+
+	//0x0076C700 public: int __thiscall oCNpc_States::StartAIState(class zSTRING const &,int,int,float,int)
+	const int oCNpc_States__StartAIState_G2 = 7784192;
+
+	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
+	if (!statePtr) { return FALSE; };
+
+	CALL_IntParam (isRtnState);
+	CALL_FloatParam (timedF);
+	CALL_IntParam (timeBehaviour);
+	CALL_IntParam (endOldState);
+	CALL_zStringPtrParam (stateName);
+	CALL__thiscall (statePtr, MEMINT_SwitchG1G2 (oCNpc_States__StartAIState_G1, oCNpc_States__StartAIState_G2));
+
+	return CALL_RetValAsInt ();
+};
+
+/*
  *
  */
 func void NPC_SetSoundVobPtr (var int slfInstance, var int vobPtr) {
@@ -1250,4 +1337,324 @@ func int NPC_GetSoundVobPtr (var int slfInstance) {
 	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return 0; };
 	return slf.soundVob;
+};
+
+/*
+ *	Npc_BeamToKeepQueue
+ *	 - updates 'physical' position of Npc
+ */
+func void Npc_BeamToKeepQueue (var int slfInstance, var string vobName) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int pos[3];
+
+	//Is this vob?
+	var int vobPtr; vobPtr = MEM_SearchVobByName (vobName);
+	if (vobPtr) {
+		if (zCVob_GetPositionWorldToPos (vobPtr, _@ (pos))) {
+		};
+	} else {
+		//Is this waypooint?
+		var int wpPtr; wpPtr = SearchWaypointByName (vobName);
+		if (wpPtr) {
+			var zCWaypoint wp; wp = _^ (wpPtr);
+			MEM_CopyBytes (_@ (wp.pos), _@ (pos), 12);
+		} else {
+			//What do we do here?
+		};
+	};
+
+	//Update Npc's position
+	slf._zCVob_trafoObjToWorld[3] = pos[0];
+	slf._zCVob_trafoObjToWorld[7] = pos[1];
+	slf._zCVob_trafoObjToWorld[11] = pos[2];
+
+	zCVob_PositionUpdated (_@ (slf));
+};
+
+/*
+ *	Npc_HasAni
+ *	 - function loops through EM and checks if aniName is in AI queue
+ *	 - function returns number of EM messages with specified aniName
+ */
+func int Npc_HasAni (var int slfInstance, var string aniName) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+
+	aniName = STR_Upper (aniName);
+
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+	if (!Hlp_Is_zCEventManager (eMgr)) { return FALSE; };
+
+	var int eventTotal; eventTotal = zCEventManager_GetNumMessages (eMgr);
+	var int count; count = 0;
+
+	//Loop through Event Messages
+	repeat (i, eventTotal); var int i;
+		var int eMsg; eMsg = zCEventManager_GetEventMessage (eMgr, i);
+
+		if (Hlp_Is_oCMsgConversation (eMsg)) {
+			if (zCEventMessage_GetSubType (eMsg) == EV_PLAYANI_NOOVERLAY) {
+				var oCMsgConversation msg; msg = _^ (eMsg);
+
+				if (Hlp_StrCmp (msg.name, aniName)) {
+					count += 1;
+				};
+			};
+		};
+	end;
+
+	if (Npc_IsAniActive_ByAniName(slf, aniName)) {
+		count += 1;
+	};
+
+	return count;
+};
+
+/*
+ *	Npc_TurnToVob
+ *	 - turns to vob
+ */
+func void oCAniCtrl_Human_TurnDegrees (var int aniCtrlPtr, var int degreesF, var int startTurnAnis) {
+	//0x00625FB0 public: void __thiscall oCAniCtrl_Human::TurnDegrees(float,int)
+	const int oCAniCtrl_Human__TurnDegrees_G1 = 6447024;
+
+	//0x006AEB10 public: void __thiscall oCAniCtrl_Human::TurnDegrees(float,int)
+	const int oCAniCtrl_Human__TurnDegrees_G2 = 7006992;
+
+	//Safety check
+	if (!aniCtrlPtr) { return; };
+
+	const int call = 0;
+	if (CALL_Begin (call)) {
+		CALL_IntParam (_@ (startTurnAnis));
+		CALL_FloatParam (_@ (degreesF));
+		CALL__thiscall (_@ (aniCtrlPtr), MEMINT_SwitchG1G2 (oCAniCtrl_Human__TurnDegrees_G1, oCAniCtrl_Human__TurnDegrees_G2));
+		call = CALL_End ();
+	};
+};
+
+func void Npc_TurnToVob (var int slfInstance, var int vobPtr, var int startTurnAnis) {
+	var int fAzimuth; fAzimuth = FLOATNULL;
+	var int fElevation; fElevation = FLOATNULL;
+
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return; };
+
+	oCNpc_GetAnglesVob (slfInstance, vobPtr, _@ (fAzimuth), _@ (fElevation));
+
+	oCAniCtrl_Human_TurnDegrees (slf.aniCtrl, fAzimuth, startTurnAnis);
+};
+
+func void Npc_TurnDegrees (var int slfInstance, var int degreesF, var int startTurnAnis) {
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return; };
+	oCAniCtrl_Human_TurnDegrees (slf.aniCtrl, degreesF, startTurnAnis);
+};
+
+func int Npc_GetAIState(var int slfInstance) {
+	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
+	if (!statePtr) { return -1; };
+
+	var oCNPC_States state; state = _^ (statePtr);
+
+	if (state.curState_prgIndex < -1) {
+		return state.curState_prgIndex;
+	};
+
+	return state.curState_index;
+};
+
+func void Npc_SetAIState_ByIndex (var int slfInstance, var int index) {
+	var int statePtr; statePtr = NPC_GetNPCState (slfInstance);
+	if (!statePtr) { return; };
+
+	var oCNPC_States state; state = _^ (statePtr);
+
+	state.curState_valid = TRUE;
+	state.curState_index = index;
+
+	state.curState_name = GetSymbolName(index);
+
+	//Special logic for by engine recognized ZS states
+	if (index < -1) {
+		state.curState_prgIndex = index;
+
+		var string stateName; stateName = STR_EMPTY;
+
+		if (index == -2) { stateName = "ZS_ANSWER"; };
+		if (index == -3) { stateName = "ZS_DEAD"; };
+		if (index == -4) { stateName = "ZS_UNCONSCIOUS"; };
+		if (index == -5) { stateName = "ZS_FADEAWAY"; };
+		if (index == -6) { stateName = "ZS_FOLLOW"; };
+
+		state.curState_name = stateName;
+		state.curState_loop = MEM_FindParserSymbol(ConcatStrings (stateName, "_LOOP"));
+		state.curState_end = MEM_FindParserSymbol(ConcatStrings (stateName, "_END"));
+	};
+};
+
+/*
+ *	Npc_SetAIState
+ *	 - function overrides curState.index (#hacker)
+ */
+func void Npc_SetAIState (var int slfInstance, var string stateName) {
+	var int index; index = MEM_FindParserSymbol (stateName);
+
+	//Special logic for by engine recognized ZS states
+	if (Hlp_StrCmp(stateName, "ZS_ANSWER")) { index = -2; } else
+	if (Hlp_StrCmp(stateName, "ZS_DEAD")) { index = -3; } else
+	if (Hlp_StrCmp(stateName, "ZS_UNCONSCIOUS")) { index = -4; } else
+	if (Hlp_StrCmp(stateName, "ZS_FADEAWAY")) { index = -5; } else
+	if (Hlp_StrCmp(stateName, "ZS_FOLLOW")) { index = -6; };
+
+	Npc_SetAIState_ByIndex(slfInstance, index);
+};
+
+func string Npc_GetInteractMobName (var int slfInstance) {
+	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return STR_EMPTY; };
+
+	if (!Hlp_Is_oCMobInter (slf.interactMob)) { return STR_EMPTY; };
+
+	var oCMobInter mobInter; mobInter = _^ (slf.interactMob);
+	return mobInter._zCObject_objectName;
+};
+
+func int Npc_IsFlying (var int slfInstance) {
+	var int modelPtr; modelPtr = oCNpc_GetModel (slfInstance);
+	if (!modelPtr) { return FALSE; };
+	var zCModel model; model = _^ (modelPtr);
+
+	const int zCModel_bitfield_isFlying = 2;
+	return + (model.zCModel_bitfield & zCModel_bitfield_isFlying);
+};
+
+func void Npc_StopLookAt (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNpc (slfInstance);
+	if (!Hlp_IsValidNpc (slf)) { return; };
+
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+
+	var int count; count = NPC_EM_GetEventCount (slf);
+
+	//Delete all EV_LOOKAT messages from EM
+	repeat (i, count); var int i;
+		var int eventMessage; eventMessage = zCEventManager_GetEventMessage (eMgr, i);
+
+		if (Hlp_Is_oCMsgConversation (eventMessage)) {
+			//TODO: can EV_WAITTILLEND wait for EV_LOOKAT message? (if it can - will it freeze AI?)
+			if (zCEventMessage_GetSubType (eventMessage) == EV_LOOKAT) {
+				//zCEventMessage_Delete (eventMessage);
+				zCEventManager_Delete (eMgr, eventMessage);
+				i -= 1;
+			};
+		};
+	end;
+
+	//We **have to remove** pointer - as message was certainly deleted by above loop
+	slf.lastLookMsg = 0;
+
+	//Stop look at animations
+	oCAniCtrl_Human_StopLookAtTarget (slf.aniCtrl);
+
+	//TODO: do we want to remove targetVob?
+	//oCAniCtrl_Human_SetLookAtTarget (slf.aniCtrl, 0);
+};
+
+func int Npc_IsControlled (var int slfInstance) {
+	return + oCNpc_HasBodyStateModifier (slfInstance, BS_MOD_CONTROLLED);
+};
+
+func int NPC_IsTransformed (var int slfInstance) {
+	return + oCNPC_HasBodyStateModifier (slfInstance, BS_MOD_TRANSFORMED);
+};
+
+/*
+ *	Npc_HasAnyOU
+ *	 - function loops through EM and checks if there are any EV_OUTPUT event messages in AI queue
+ */
+func int Npc_HasAnyOU (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+	if (!Hlp_Is_zCEventManager (eMgr)) { return FALSE; };
+
+	var int eventTotal; eventTotal = zCEventManager_GetNumMessages (eMgr);
+	var int count; count = 0;
+
+	//Loop through Event Messages
+	repeat (i, eventTotal); var int i;
+		var int eMsg; eMsg = zCEventManager_GetEventMessage (eMgr, i);
+
+		if (Hlp_Is_oCMsgConversation (eMsg)) {
+			var int subType; subType = zCEventMessage_GetSubType (eMsg);
+			if (subType == EV_OUTPUT)
+			|| (subType == EV_OUTPUTSVM)
+			|| (subType == EV_OUTPUTSVM_OVERLAY)
+			{
+				count += 1;
+			};
+		};
+	end;
+
+	return count;
+};
+
+/*
+ *	Npc_HasOU
+ *	 - function loops through EM and checks if there are any EV_OUTPUT event messages in AI queue
+ */
+func int Npc_HasOU (var int slfInstance, var int ou) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+	if (!Hlp_Is_zCEventManager (eMgr)) { return FALSE; };
+
+	var int eventTotal; eventTotal = zCEventManager_GetNumMessages (eMgr);
+	var int count; count = 0;
+
+	//Loop through Event Messages
+	repeat (i, eventTotal); var int i;
+		var int eMsg; eMsg = zCEventManager_GetEventMessage (eMgr, i);
+
+		if (Hlp_Is_oCMsgConversation (eMsg)) {
+			var int subType; subType = zCEventMessage_GetSubType (eMsg);
+			if (subType == EV_OUTPUT)
+			|| (subType == EV_OUTPUTSVM)
+			|| (subType == EV_OUTPUTSVM_OVERLAY)
+			{
+				var oCMsgConversation msg; msg = _^ (eMsg);
+
+				var string name; name = msg.name;
+
+				var int index; index = STR_IndexOf (name, ".");
+				if (index > -1) {
+					name = mySTR_SubStr (name, 0, index);
+				};
+
+				zSpy_Info (slf.Name);
+				zSpy_Info (name);
+
+				if (zCCSManager_LibValidateOU_ByName (name) == ou) {
+					return TRUE;
+				};
+			};
+		};
+	end;
+
+	return FALSE;
+};
+
+/*
+ *
+ */
+func int Npc_BarrierIsWarning(var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return FALSE; };
+
+	return (slf.magFrontier_bitfield & oCMagFrontier_bitfield_isWarning);
 };

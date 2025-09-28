@@ -21,14 +21,14 @@ func void FF_CheckActionKey () {
 	if (PC_ActionKeyPressed != PC_ActionKeyPressedLast) {
 		if (!PC_ActionKeyPressed) {
 			if (_PlayerActionKeyReleased_Event) {
-				Event_Execute (_PlayerActionKeyReleased_Event, 0);
+				Event_Execute(_PlayerActionKeyReleased_Event, 0);
 			};
 		};
 	} else {
 		if (PC_ActionKeyPressed) {
 			PC_ActionKeyHeld = TRUE;
 			if (_PlayerActionKeyHeld_Event) {
-				Event_Execute (_PlayerActionKeyHeld_Event, 0);
+				Event_Execute(_PlayerActionKeyHeld_Event, 0);
 			};
 		};
 	};
@@ -56,19 +56,27 @@ func void _hook_oCAIHuman_PC_ActionMove () {
 };
 
 func void PlayerActionKeyHeldEvent_AddListener (var func f) {
-	Event_AddOnce (_PlayerActionKeyHeld_Event, f);
+	if (_PlayerActionKeyHeld_Event) {
+		Event_AddOnce(_PlayerActionKeyHeld_Event, f);
+	};
 };
 
 func void PlayerActionKeyHeldEvent_RemoveListener (var func f) {
-	Event_Remove (_PlayerActionKeyHeld_Event, f);
+	if (_PlayerActionKeyHeld_Event) {
+		Event_Remove(_PlayerActionKeyHeld_Event, f);
+	};
 };
 
 func void PlayerActionKeyReleasedEvent_AddListener (var func f) {
-	Event_AddOnce (_PlayerActionKeyReleased_Event, f);
+	if (_PlayerActionKeyReleased_Event) {
+		Event_AddOnce(_PlayerActionKeyReleased_Event, f);
+	};
 };
 
 func void PlayerActionKeyReleasedEvent_RemoveListener (var func f) {
-	Event_Remove (_PlayerActionKeyReleased_Event, f);
+	if (_PlayerActionKeyReleased_Event) {
+		Event_Remove(_PlayerActionKeyReleased_Event, f);
+	};
 };
 
 func void G12_GetActionKey_Init () {
@@ -86,7 +94,7 @@ func void G12_GetActionKey_Init () {
 	const int once = 0;
 	if (!once) {
 		//G1 hook len 13, G2A hook len = 9
-		HookEngine (oCAIHuman__PC_ActionMove, MEMINT_SwitchG1G2 (13, 9), "_hook_oCAIHuman_PC_ActionMove");
+		HookEngine (oCAIHuman__PC_ActionMove, MEMINT_SwitchG1G2 (7, 9), "_hook_oCAIHuman_PC_ActionMove");
 		once = 1;
 	};
 };
@@ -113,6 +121,7 @@ func void _hook_oCNpc_OnMessage () {
 
 	var oCNPC npc; npc = _^ (ECX);
 
+	var oCMobInter mob;
 	var oCMsgManipulate msgManipulate;
 
 /*
@@ -197,7 +206,7 @@ func void _hook_oCNpc_OnMessage () {
 					var oCMsgConversation msgConversation; msgConversation = _^ (eMsg);
 					//&& (Hlp_StrCmp (msgConversation.name, "T_DONTKNOW")) {
 					PC_IgnoreAnimations -= 1;
-					msgConversation.name = "";
+					msgConversation.name = STR_EMPTY;
 				};
 			};
 		};
@@ -238,7 +247,7 @@ func void _hook_oCNpc_OnMessage () {
 					if (eventUseItemToState == 0) {
 						eventUseItemToState = 1;
 						if (_PlayerUseItemToStateStart_Event) {
-							Event_Execute (_PlayerUseItemToStateStart_Event, 0);
+							Event_Execute(_PlayerUseItemToStateStart_Event, 0);
 						};
 					};
 				} else
@@ -246,7 +255,7 @@ func void _hook_oCNpc_OnMessage () {
 					if (eventUseItemToState == 1) {
 						eventUseItemToState = 0;
 						if (_PlayerUseItemToStateUse_Event) {
-							Event_Execute (_PlayerUseItemToStateUse_Event, 0);
+							Event_Execute(_PlayerUseItemToStateUse_Event, 0);
 						};
 					};
 				};
@@ -258,7 +267,7 @@ func void _hook_oCNpc_OnMessage () {
 
 				msgManipulate = _^ (eMsg);
 				if (Hlp_Is_oCMobInter (msgManipulate.targetVob)) {
-					var oCMobInter mob; mob = _^ (msgManipulate.targetVob);
+					mob = _^ (msgManipulate.targetVob);
 
 					if ((msgManipulate.targetState == -1) && (mob.state == 1)) {
 						oCMobInter_SetInteractWith (msgManipulate.targetVob, 0);
@@ -300,19 +309,27 @@ func void _hook_oCNpc_OnMessage () {
 };
 
 func void PlayerUseItemToStateStartEvent_AddListener (var func f) {
-	Event_AddOnce (_PlayerUseItemToStateStart_Event, f);
+	if (_PlayerUseItemToStateStart_Event) {
+		Event_AddOnce(_PlayerUseItemToStateStart_Event, f);
+	};
 };
 
 func void PlayerUseItemToStateStartEvent_RemoveListener (var func f) {
-	Event_Remove (_PlayerUseItemToStateStart_Event, f);
+	if (_PlayerUseItemToStateStart_Event) {
+		Event_Remove(_PlayerUseItemToStateStart_Event, f);
+	};
 };
 
 func void PlayerUseItemToStateUseEvent_AddListener (var func f) {
-	Event_AddOnce (_PlayerUseItemToStateUse_Event, f);
+	if (_PlayerUseItemToStateUse_Event) {
+		Event_AddOnce(_PlayerUseItemToStateUse_Event, f);
+	};
 };
 
 func void PlayerUseItemToStateUseEvent_RemoveListener (var func f) {
-	Event_Remove (_PlayerUseItemToStateUse_Event, f);
+	if (_PlayerUseItemToStateUse_Event) {
+		Event_Remove(_PlayerUseItemToStateUse_Event, f);
+	};
 };
 
 func void G12_InterceptNpcEventMessages_Init () {
@@ -342,16 +359,20 @@ func void G12_InterceptNpcEventMessages_Init () {
 var int _MouseUpdate_Event;
 
 func void MouseUpdateEvent_AddListener (var func f) {
-	Event_AddOnce (_MouseUpdate_Event, f);
+	if (_MouseUpdate_Event) {
+		Event_AddOnce(_MouseUpdate_Event, f);
+	};
 };
 
 func void MouseUpdateEvent_RemoveListener (var func f) {
-	Event_Remove (_MouseUpdate_Event, f);
+	if (_MouseUpdate_Event) {
+		Event_Remove(_MouseUpdate_Event, f);
+	};
 };
 
 func void _hook_mouseUpdate_Event () {
 	if (_MouseUpdate_Event) {
-		Event_Execute (_MouseUpdate_Event, 0);
+		Event_Execute(_MouseUpdate_Event, 0);
 	};
 };
 

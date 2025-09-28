@@ -1203,9 +1203,7 @@ func void _eventGameHandleEvent__VobTransport (var int dummyVariable) {
 	};
 
 	if (cancel) {
-		//EDI has to be also nulled
-		MEM_WriteInt (ESP + 4, 0);
-		EDI = 0;
+		zCInputCallback_SetKey(0);
 	};
 };
 
@@ -1252,7 +1250,7 @@ func void FrameFunction__VobTransport () {
 		vobTransportVobPtr = 0;
 
 		//Is there anything in the hand?
-		vobPtr = oCNpc_GetSlotItem (hero, "ZS_RIGHTHAND");
+		vobPtr = oCNpc_GetSlotItem (hero, NPC_NODE_RIGHTHAND);
 		if (vobPtr) {
 			//Move around following objects
 			if (FocusVobCanBeSelected__VobTransport (vobPtr)) {
@@ -1459,11 +1457,11 @@ func void FrameFunction__VobTransport () {
 	if ((vobTransportMode == vobTransportMode_SelectConfirm) || (vobTransportMode == vobTransportMode_BuyVobSelect)) {
 		if (VobCanBeMovedAround__VobTransport (vobTransportVobPtr)) {
 			//Is this item in hand? If yes - drop from slot (insert into the world) and move around
-			vobPtr = oCNpc_GetSlotItem (hero, "ZS_RIGHTHAND");
+			vobPtr = oCNpc_GetSlotItem (hero, NPC_NODE_RIGHTHAND);
 			if ((vobPtr) && (vobPtr == vobTransportVobPtr)) {
 				//Remove from hand
-				//vobTransportVobPtr = oCNpc_RemoveFromSlot_Fixed (hero, "ZS_RIGHTHAND", 1, 0);
-				vobTransportVobPtr = oCNpc_DropFromSlot (hero, "ZS_RIGHTHAND");
+				//vobTransportVobPtr = oCNpc_RemoveFromSlot_Fixed (hero, NPC_NODE_RIGHTHAND, 1, 0);
+				vobTransportVobPtr = oCNpc_DropFromSlot (hero, NPC_NODE_RIGHTHAND);
 
 				//Stop item from moving
 				zCVob_SetPhysicsEnabled (vobTransportVobPtr, 0);

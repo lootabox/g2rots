@@ -1,12 +1,3 @@
-/*
- *	Let's be honest LeGo 'focus names' feature ... it can be so much more!!!
- *	 - this feature changes font color of focus:
- *	   - to orange if chest/mob is locked by special key, cannot be picklocked and player does not have key
- *	   - to yellow if chest/mob is locked by special key and player does not have key, or can be picklocked
- *	   - to yellow if chest/mob can be picklocked
- *	 - renames chest from MOBNAME_CHEST to MOBNAME_CHEST_EMPTY and crates from MOBNAME_CRATE to MOBNAME_CRATE_EMPTY when they are empty and vice versa
- */
-
 const int PC_CHANGEFOCUS_LOCKABLE = 1;
 const int PC_CHANGEFOCUS_NPCATTITUDE = 2;
 const int PC_CHANGEFOCUS_RENAMEEMPTYCHESTS = 4;
@@ -18,6 +9,8 @@ var int _PC_ChangeFocus_Color_LockedKey;
 var int _PC_ChangeFocus_Color_LockedPickLocks;
 var int _PC_ChangeFocus_Color_LockedKeyPickLocks;
 var int _PC_ChangeFocus_Color_LockedHasKey;
+var int _PC_ChangeFocus_Color_ContainerUnLocked;
+var int _PC_ChangeFocus_Color_ContainerUnLockedEmpty;
 
 var int _PC_ChangeFocus_Color_Friendly;
 var int _PC_ChangeFocus_Color_Neutral;
@@ -96,7 +89,6 @@ func int Mob_LockableGetLockStatus__Focus (var int vobPtr) {
 //This one is being called whenever there is anything in focus - constantly
 func void _hook_oCGame_UpdateStatus__Focus () {
 	if (!Hlp_IsValidNPC (hero)) { return; };
-
 	var oCNpc her; her = Hlp_GetNPC (hero);
 
 	var oCMob mob;
@@ -122,14 +114,24 @@ func void _hook_oCGame_UpdateStatus__Focus () {
 		} else
 		if ((PC_FocusVobStatus == PC_FocusVob_DoorHasRequiredKey) || (PC_FocusVobStatus == PC_FocusVob_ChestHasRequiredKey)) {
 			focusColor = _PC_ChangeFocus_Color_LockedHasKey;
+		} else
+		if (PC_FocusVobStatus == PC_FocusVob_ChestOpened) {
+			if (Mob_IsEmpty (her.focus_vob)) {
+				focusColor = _PC_ChangeFocus_Color_ContainerUnLockedEmpty;
+			} else {
+				focusColor = _PC_ChangeFocus_Color_ContainerUnLocked;
+			};
 		};
 	};
 
 	if (_PC_ChangeFocus_Flags & PC_CHANGEFOCUS_NPCATTITUDE) {
 		//NPC attitude (we could use LeGo color functions, but wanted to have all color functions in 1 file :))
 		if (Hlp_Is_oCNpc (her.focus_vob)) {
-			var c_npc oth; oth = MEM_PtrToInst(her.focus_vob);
+			var C_NPC oth; oth = _^ (her.focus_vob);
+
+			//Default - use Perm attitude
 			var int att; att = Npc_GetPermAttitude(hero, oth);
+
 			if (att == ATT_FRIENDLY) {
 				focusColor = _PC_ChangeFocus_Color_Friendly;
 			} else
@@ -141,6 +143,19 @@ func void _hook_oCGame_UpdateStatus__Focus () {
 			} else
 			if(att == ATT_HOSTILE) {
 				focusColor = _PC_ChangeFocus_Color_Hostile;
+			};
+
+			//API function that determines focus color
+			const int symbID = 0;
+			if (!symbID) {
+				symbID = MEM_GetSymbolIndex ("C_NPC_GETFOCUSCOLOR");
+			};
+
+			if (symbID != -1) {
+				MEM_PushInstParam (oth);
+				MEM_CallByID (symbID);
+
+				focusColor = MEM_PopIntResult ();
 			};
 		};
 	};
@@ -217,6 +232,9 @@ func void G12_Focus_Init () {
 	_PC_ChangeFocus_Color_LockedKeyPickLocks = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_LOCKEDKEYPICKLOCKS", "FFFF00");
 	_PC_ChangeFocus_Color_LockedHasKey = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_LOCKEDHASKEY", "FFFF00");
 
+	_PC_ChangeFocus_Color_ContainerUnLocked = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_CONTAINERUNLOCKED", "66FFB2");
+	_PC_ChangeFocus_Color_ContainerUnLockedEmpty = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_CONTAINERUNLOCKEDEMPTY", "FFFFFF");
+
 	_PC_ChangeFocus_Color_Friendly = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_FRIENDLY", "66FFB2");
 	_PC_ChangeFocus_Color_Neutral = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_NEUTRAL", "FFFFFF");
 	_PC_ChangeFocus_Color_Angry = API_GetSymbolHEX2RGBAValue ("PC_CHANGEFOCUS_COLOR_ANGRY", "FF8000");
@@ -226,7 +244,11 @@ func void G12_Focus_Init () {
 
 	const int once = 0;
 	if (!once) {
-		HookEngine(oCGame__UpdateStatus, 8, "_hook_oCGame_UpdateStatus__Focus");
+		const int oCGame__GetFocusVob_G1 = 6525544;
+
+		const int oCGame__GetFocusVob_G2 = 7091621;
+
+		HookEngine(MEMINT_SwitchG1G2 (oCGame__GetFocusVob_G1, oCGame__GetFocusVob_G2), MEMINT_SwitchG1G2 (5, 8), "_hook_oCGame_UpdateStatus__Focus");
 		once = 1;
 	};
 };

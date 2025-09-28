@@ -13,28 +13,7 @@ func void oCGame_TriggerChangeLevel (var string levelName, var string vobName) {
 
 	if (Hlp_StrCmp (thisLevelName, levelName)) {
 		if (STR_Len (vobName)) {
-
-			//oCNpc_BeamTo (hero, vobName);
-			var int pos[3];
-
-			var int wpPtr; wpPtr = SearchWaypointByName (vobName);
-			if (wpPtr) {
-				var zCWaypoint wp; wp = _^ (wpPtr);
-				MEM_CopyBytes (_@ (wp.pos), _@ (pos), 12);
-			} else {
-				//Is this vob?
-				var int vobPtr; vobPtr = MEM_SearchVobByName (vobName);
-
-				if (vobPtr) {
-					if (zCVob_GetPositionWorldToPos (vobPtr, _@ (pos))) {
-					};
-				};
-			};
-			//Update hero's position
-			var zCVob vob; vob = Hlp_GetNPC (hero);
-			vob.trafoObjToWorld[3] = pos[0];
-			vob.trafoObjToWorld[7] = pos[1];
-			vob.trafoObjToWorld[11] = pos[2];
+			Npc_BeamToKeepQueue (hero, vobName);
 		};
 	} else {
 		CALL_zStringPtrParam (vobName);
@@ -92,27 +71,15 @@ func void oCGame_InitNpcAttitudes () {
 };
 
 /*
- *	Function returns game_mode
+ *	Function returns TRUE if chapter is yet to be introduced
  */
-func int oCNpc_Get_Game_Mode () {
-	//0x008DBC24 public: static int oCNpc::game_mode
-	const int oCNpc__game_mode_G1 = 9288740;
+func int CGameManager_GetChapterIntroduce()
+{
+	//0085e9e0
+	const int s_chapter_introduce_addr_G1 = 8776160;
 
-	//0x00AB27D0 public: static int oCNpc::game_mode
-	const int oCNpc__game_mode_G2 = 11216848;
+	//008c2954
+	const int s_chapter_introduce_addr_G2 = 9185620;
 
-	return + MEM_ReadInt (MEMINT_SwitchG1G2 (oCNpc__game_mode_G1, oCNpc__game_mode_G2));
-};
-
-/*
- *	Function updates game_mode
- */
-func void oCNpc_Set_Game_Mode (var int newMode) {
-	//0x008DBC24 public: static int oCNpc::game_mode
-	const int oCNpc__game_mode_G1 = 9288740;
-
-	//0x00AB27D0 public: static int oCNpc::game_mode
-	const int oCNpc__game_mode_G2 = 11216848;
-
-	MEM_WriteInt (MEMINT_SwitchG1G2 (oCNpc__game_mode_G1, oCNpc__game_mode_G2), newMode);
+	return + MEM_ReadByte(MEMINT_SwitchG1G2(s_chapter_introduce_addr_G1, s_chapter_introduce_addr_G2));
 };

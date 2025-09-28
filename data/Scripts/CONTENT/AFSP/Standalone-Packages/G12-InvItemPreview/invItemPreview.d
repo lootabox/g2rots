@@ -9,9 +9,14 @@ var int PC_ItemPreviewHealth;
 var int PC_ItemPreviewActive;
 var int PC_ItemPreviewCanUpdate;
 
+var int PC_ItemPreviewItemPtr;
+
 func void _eventOpenInventory__InvItemPreview (var int dummyVariable) {
 	PC_ItemPreviewActive = TRUE;
 	PC_ItemPreviewCanUpdate = TRUE;
+
+	//Reset pointer
+	PC_ItemPreviewItemPtr = 0;
 };
 
 func void _eventCloseInventory__InvItemPreview (var int dummyVariable) {
@@ -21,6 +26,9 @@ func void _eventCloseInventory__InvItemPreview (var int dummyVariable) {
 
 	PC_ItemPreviewActive = FALSE;
 	PC_ItemPreviewCanUpdate = TRUE;
+
+	//Reset pointer
+	PC_ItemPreviewItemPtr = 0;
 };
 
 func void _eventUseItemToStateStart__InvItemPreview (var int dummyVariable) {
@@ -40,6 +48,7 @@ func void GetItemPreviewData__InvItemPreview (var int npcInventoryPtr) {
 	if (!itemContainer.inventory2_oCItemContainer_passive) {
 		PC_ItemPreviewHealth = 0;
 		PC_ItemPreviewMana = 0;
+		PC_ItemPreviewItemPtr = 0;
 
 		if (itemContainer.inventory2_oCItemContainer_contents) {
 			if (itemContainer.inventory2_oCItemContainer_selectedItem > -1) {
@@ -52,7 +61,8 @@ func void GetItemPreviewData__InvItemPreview (var int npcInventoryPtr) {
 					const int lastHealth = 0;
 					const int lastMana = 0;
 
-					var int vobPtr; vobPtr = List_GetS (itemContainer.inventory2_oCItemContainer_contents, itemContainer.inventory2_oCItemContainer_selectedItem + 2);
+					//var int vobPtr; vobPtr = List_GetS (itemContainer.inventory2_oCItemContainer_contents, itemContainer.inventory2_oCItemContainer_selectedItem + 2);
+					var int vobPtr; vobPtr = zCListSort_GetData (itemContainer.inventory2_oCItemContainer_contents, itemContainer.inventory2_oCItemContainer_selectedItem);
 
 					if ((vobPtr) && (vobPtr != lastVobPtr)) {
 						PC_ItemPreviewHealth = GetItemCountValue (vobPtr, NAME_Bonus_HP);
@@ -65,6 +75,8 @@ func void GetItemPreviewData__InvItemPreview (var int npcInventoryPtr) {
 						PC_ItemPreviewHealth = lastHealth;
 						PC_ItemPreviewMana = lastMana;
 					};
+
+					PC_ItemPreviewItemPtr = vobPtr;
 				};
 			};
 		};
@@ -107,11 +119,18 @@ func void G12_InvItemPreview_Init () {
 		//HookEngine (MEMINT_SwitchG1G2 (oCItemContainer__CheckSelectedItem_G1, oCItemContainer__CheckSelectedItem_G2), 5, "_hook_oCItemContainer_CheckSelectedItem");
 
 		//0x00667660 protected: virtual void __thiscall oCItemContainer::Draw(void)
-		const int oCItemContainer__Draw_G1 = 6714976;
-		//0x007076B0 protected: virtual void __thiscall oCItemContainer::Draw(void)
-		const int oCItemContainer__Draw_G2 = 7370416;
+		//const int oCItemContainer__Draw_G1 = 6714976;
 
-		HookEngine (MEMINT_SwitchG1G2 (oCItemContainer__Draw_G1, oCItemContainer__Draw_G2), 6, "_hook_oCItemContainer_Draw");
+		//0066768b
+		const int oCItemContainer__Draw_IsOpen_G1 = 6715019;
+
+		//0x007076B0 protected: virtual void __thiscall oCItemContainer::Draw(void)
+		//const int oCItemContainer__Draw_G2 = 7370416;
+
+		//007076df
+		const int oCItemContainer__Draw_IsOpen_G2 = 7370463;
+
+		HookEngine (MEMINT_SwitchG1G2 (oCItemContainer__Draw_IsOpen_G1, oCItemContainer__Draw_IsOpen_G2), MEMINT_SwitchG1G2(10, 6), "_hook_oCItemContainer_Draw");
 
 		once = 1;
 	};

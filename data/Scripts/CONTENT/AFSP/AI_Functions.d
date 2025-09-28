@@ -41,7 +41,7 @@ func void AI_TurnToPos (var int slfInstance, var int posPtr) {
 	if (!posPtr) { return; };
 
 	//Create new message
-	var int eMsg; eMsg = oCMsgMovement_Create (EV_TURNTOPOS, "", 0, posPtr, mkf (0), 0);
+	var int eMsg; eMsg = oCMsgMovement_Create (EV_TURNTOPOS, STR_EMPTY, 0, posPtr, mkf (0), 0);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -76,21 +76,6 @@ func void AI_TurnAwayPos (var int slfInstance, var int posPtr) {
 	SubVectors (_@ (pos), _@ (posSelf), _@ (dir));
 
 	AI_TurnToPos (slf, _@ (pos));
-};
-
-/*
- *	AI_TurnToWP
- *	 - same as AI_TurnToNPC, but allows us to use vob waypoint
- */
-func void AI_TurnToWP (var int slfInstance, var string waypoint) {
-	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
-	if (!Hlp_IsValidNPC (slf)) { return; };
-
-	var int wpPtr; wpPtr = SearchWaypointByName (waypoint);
-	if (!wpPtr) { return; };
-
-	var zCWaypoint wp; wp = _^ (wpPtr);
-	AI_TurnToPos (slf, _@ (wp.pos));
 };
 
 /*
@@ -176,7 +161,46 @@ func void AI_GotoPos (var int slfInstance, var int posPtr) {
 	if (!posPtr) { return; };
 
 	//Create new message
-	var int eMsg; eMsg = oCMsgMovement_Create (EV_GOTOPOS, "", 0, posPtr, mkf (0), 0);
+	var int eMsg; eMsg = oCMsgMovement_Create (EV_GOTOPOS, STR_EMPTY, 0, posPtr, mkf (0), 0);
+
+	//Get Event Manager
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+
+	//Add new msg to Event Manager
+	zCEventManager_OnMessage (eMgr, eMsg, _@ (slf));
+};
+
+/*
+ *	AI_GotoPos_Ext
+ *	 - same as AI_GotoPos, but allows us to define maxTargetDist
+ */
+func void AI_GotoPos_Ext (var int slfInstance, var int posPtr, var int maxTargetDist) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	if (!posPtr) { return; };
+
+	//Create new message
+	var int eMsg; eMsg = oCMsgMovement_Create (EV_GOTOPOS, STR_EMPTY, 0, posPtr, mkf (0), 0);
+
+	//Init robust trace
+	oCNpc_RbtInit (slfInstance, posPtr, 0);
+
+	//Setup additional parameters for robust trace
+
+	//Define locally (G1 class def has different naming convention than the one in G2A ... values are same though)
+	const int oTRobustTrace_bitfield_exactPosition        = ((1 << 1) - 1) << 2;
+	const int oTRobustTrace_bitfield_standIfTargetReached = ((1 << 1) - 1) << 4;
+
+	//const int oCNpc_oTRobustTrace_bitfield_exactPosition        = ((1 << 1) - 1) << 2;
+	//const int oCNpc_oTRobustTrace_bitfield_standIfTargetReached = ((1 << 1) - 1) << 4;
+
+	slf.rbt_bitfield = slf.rbt_bitfield | oTRobustTrace_bitfield_standIfTargetReached;
+	slf.rbt_bitfield = slf.rbt_bitfield & ~ oTRobustTrace_bitfield_exactPosition;
+	slf.rbt_maxTargetDist = mkf(maxTargetDist * maxTargetDist);
+
+	//Set inUse
+	oCNpcMessage_SetInUse (eMsg, 1);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -198,24 +222,65 @@ func void AI_GotoPos (var int slfInstance, var int posPtr) {
  */
 
 func void AI_GotoVobPtr_EvalWaynetUse (var int slfInstance, var int vobPtr) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
-
-	//zSpy_Info ("--> AI_GotoVobPtr_EvalWaynetUse");
-
+	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+	var int slfPtr; slfPtr = _@ (slf);
 
 	var int posNpc[3];
 	var int posVob[3];
 
+	//Get Npc position
 	if (!zCVob_GetPositionWorldToPos (_@ (slf), _@ (posNpc)))
+	//Get Vob position
 	|| (!zCVob_GetPositionWorldToPos (vobPtr, _@ (posVob)))
 	{
 		return;
 	};
 
+	//Update vob position with ideal position in case of oCMobInter objects
+	if (Hlp_Is_oCMobInter(vobPtr)) {
+		//func void oCMobInter_ScanIdealPositions (var int mobPtr) {
+			//0x0067C9C0 protected: void __thiscall oCMobInter::ScanIdealPositions(void)
+			const int oCMobInter__ScanIdealPositions_G1 = 6801856;
+
+			//0x0071DC30 public: void __thiscall oCMobInter::ScanIdealPositions(void)
+			const int oCMobInter__ScanIdealPositions_G2 = 7461936;
+
+			const int call = 0;
+			if (CALL_Begin(call)) {
+				CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (oCMobInter__ScanIdealPositions_G1, oCMobInter__ScanIdealPositions_G2));
+				call = CALL_End();
+			};
+		//};
+
+		//func int oCMobInter_GetFreePosition (var int mobPtr, var int slfInstance, var int vecPtr) {
+			//0x0067CD00 public: int __thiscall oCMobInter::GetFreePosition(class oCNpc *,class zVEC3 &)
+			const int oCMobInter__GetFreePosition_G1 = 6802688;
+
+			//0x0071DF50 public: int __thiscall oCMobInter::GetFreePosition(class oCNpc *,class zVEC3 &)
+			const int oCMobInter__GetFreePosition_G2 = 7462736;
+
+			var int freePos[3]; var int freePosPtr; freePosPtr = _@(freePos);
+
+			const int call2 = 0;
+			if (CALL_Begin(call2)) {
+				CALL_PtrParam (_@ (freePosPtr));
+				CALL_PtrParam (_@ (slfPtr));
+				CALL__thiscall (_@ (vobPtr), MEMINT_SwitchG1G2 (oCMobInter__GetFreePosition_G1, oCMobInter__GetFreePosition_G2));
+				call2 = CALL_End();
+			};
+
+			var int retVal; retVal = CALL_RetValAsInt ();
+			if (retVal) {
+				MEM_CopyBytes(freePosPtr, _@(posVob), 12);
+			};
+		//};
+	};
+
 	//-- Get nearest waypoint to vob
 	//var string toWp; toWp = WP_GetNearestWPAtVob (vobPtr);
 
-	var string toWp; toWp = WP_GetByPosAndPortalRoom (_@ (posVob), "", SEARCHVOBLIST_CANSEE, vobPtr, 500, 500, 400);
+	var string toWp; toWp = WP_GetByPosAndPortalRoom (_@ (posVob), STR_EMPTY, STR_EMPTY, SEARCHVOBLIST_CANSEE, vobPtr, 500, 500, 400);
 
 	//if vob is not visible from waypoint ... ignore
 	if (!STR_Len (toWp)) {
@@ -230,12 +295,17 @@ func void AI_GotoVobPtr_EvalWaynetUse (var int slfInstance, var int vobPtr) {
 
 	//-- Get nearest waypoint to Npc
 	//var string fromWp; fromWp = WP_GetNearestWPAtVob (_@ (slf));
-	var string fromWp; fromWp = WP_GetByPosAndPortalRoom (_@ (posNpc), "", SEARCHVOBLIST_CANSEE, _@ (slf), 500, 500, 400);
+	var string fromWp; fromWp = WP_GetByPosAndPortalRoom (_@ (posNpc), STR_EMPTY, STR_EMPTY, SEARCHVOBLIST_CANSEE, _@ (slf), 500, 500, 400);
 
 	//if vob is not visible from waypoint ... ignore
 	if (!STR_Len (fromWp)) {
 		//zSpy_Info ("... npc waypoint - can't see npc. Waynet might not be reliable.");
 		//zSpy_Info ("<--");
+		return;
+	};
+
+	//If nearest fromWp & toWp are one and the same - exit
+	if (Hlp_StrCmp (fromWp, toWp)) {
 		return;
 	};
 
@@ -264,11 +334,10 @@ func void AI_GotoVobPtr_EvalWaynetUse (var int slfInstance, var int vobPtr) {
 	var int fromWpPtr; fromWpPtr = SearchWaypointByName (fromWp);
 	var int toWpPtr; toWpPtr = SearchWaypointByName (toWp);
 
-	var int routePtr;
-	routePtr = zCWayNet_FindRoute_Waypoints (fromWpPtr, toWpPtr, 0);
+	var int routePtr; routePtr = zCWayNet_FindRoute_Waypoints (fromWpPtr, toWpPtr, 0);
+	var int distWaynet; distWaynet = zCRoute_GetLength (routePtr); //float
+	zCRoute_Delete (routePtr);
 
-	var int distWaynet;
-	distWaynet = zCRoute_GetLength (routePtr); //float
 	distWaynet = RoundF (distWaynet);
 
 	var int isTooFar; isTooFar = (distWaynet > distToVobTolerance);
@@ -452,15 +521,13 @@ func void AI_GotoVobPtr_EvalWaynetUse (var int slfInstance, var int vobPtr) {
 		//zSpy_Info ("... chasm detected!");
 	};
 
-	if ((!Hlp_StrCmp (fromWp, toWp)) || isTooFar || chasmDetected) {
-		//var string s; s = "... navigating using waynet, from: ";
-		//s = ConcatStrings (s, fromWp);
-		//s = ConcatStrings (s, " to: ");
-		//s = ConcatStrings (s, toWp);
-		//zSpy_Info (s);
+	//var string s; s = "... navigating using waynet, from: ";
+	//s = ConcatStrings (s, fromWp);
+	//s = ConcatStrings (s, " to: ");
+	//s = ConcatStrings (s, toWp);
+	//zSpy_Info (s);
 
-		AI_GotoWp (slf, toWp);
-	};
+	AI_GotoWp (slf, toWp);
 
 	//zSpy_Info ("<--");
 };
@@ -530,59 +597,9 @@ func void AI_GotoVobPtr (var int slfInstance, var int vobPtr) {
 };
 
 func void _AI_TeleportKeepQueue (var string vobName) {
-	self = _^ (ECX); //wont be required with future LeGo version (> 2.7.1)
-
-	var int pos[3];
-
-	var zCVob vob;
-	var int vobPtr;
-
-	//Search for vob Name
-	vobPtr = MEM_SearchVobByName (vobName);
-
-	//if vob does not exist - search for waypoint
-	if (!vobPtr) {
-		var int wpPtr; wpPtr = SearchWaypointByName (vobName);
-
-		//if waypoint does not exist - exit
-		if (!wpPtr) { return; };
-
-		var zCWaypoint wp; wp = _^ (wpPtr);
-		copyVector (_@ (wp.pos), _@ (pos));
-	} else {
-		vob = _^ (vobPtr);
-		TrfToPos (_@ (vob.trafoObjToWorld), _@ (pos));
-	};
-
-	vob = Hlp_GetNPC (self);
-
-	//Update hero's position
-	//TODO: teleport to Vob needs to be updated
-	vob.trafoObjToWorld[3] = pos[0];
-	vob.trafoObjToWorld[7] = pos[1];
-	vob.trafoObjToWorld[11] = pos[2];
-
-	Wld_PlayEffect ("SPELLFX_TELEPORT_RING", hero, hero, 0, 0, 0, FALSE);
-};
-
-func string _AI_GetAniName_T_MAGRUN_2_HEASHOOT () {
-	//G1 version has much cooler teleportation animation with particle effects ;-)
-	if (MEMINT_SwitchG1G2 (1, 0)) {
-		return "T_STAND_2_TELEPORT";
-	};
-
-	//G2A teleportation animation
-	return "T_MAGRUN_2_HEASHOOT";
-};
-
-func string _AI_GetAniName_T_HEASHOOT_2_STAND () {
-	//G1 version has much cooler teleportation animation with particle effects ;-)
-	if (MEMINT_SwitchG1G2 (1, 0)) {
-		return "T_TELEPORT_2_STAND";
-	};
-
-	//G2A teleportation animation
-	return "T_HEASHOOT_2_STAND";
+	Npc_BeamToKeepQueue (self, vobName);
+	Wld_PlayEffect ("SPELLFX_TELEPORT_RING", self, self, 0, 0, 0, FALSE);
+	Snd_Play ("MFX_TELEPORT_CAST");
 };
 
 /*
@@ -593,9 +610,43 @@ func void AI_TeleportKeepQueue (var int slfInstance, var string vobName) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 
-	AI_PlayAni (slf, _AI_GetAniName_T_MAGRUN_2_HEASHOOT ());
+	if (!Npc_HasAni(slf, ANINAME_T_STAND_2_TELEPORT))
+	&& (!Npc_HasAni(slf, ANINAME_T_MAGRUN_2_HEASHOOT))
+	&& (!Npc_HasAni(slf, ANINAME_S_TELEPORT))
+	&& (!Npc_HasAni(slf, ANINAME_S_HEASHOOT))
+	{
+		//G1 version has much cooler teleportation animation with particle effects ;-)
+		if (MEMINT_SwitchG1G2(0, 1))
+		{
+			AI_PlayAni(slf, ANINAME_T_STAND_2_TELEPORT);
+		} else {
+			AI_PlayAni(slf, ANINAME_T_MAGRUN_2_HEASHOOT);
+		};
+	};
+
 	AI_Function_S (slf, _AI_TeleportKeepQueue, vobName);
-	AI_PlayAni (slf, _AI_GetAniName_T_HEASHOOT_2_STAND ());
+
+	//G1 version has much cooler teleportation animation with particle effects ;-)
+	if (MEMINT_SwitchG1G2 (1, 0)) {
+		AI_PlayAni(slf, ANINAME_T_TELEPORT_2_STAND);
+	} else {
+		AI_PlayAni(slf, ANINAME_T_HEASHOOT_2_STAND);
+	};
+};
+
+func void _AI_BeamToKeepQueue (var string vobName) {
+	Npc_BeamToKeepQueue (self, vobName);
+};
+
+/*
+ *	AI_BeamToKeepQueue
+ *	 - function beams Npc to target vobName / waypoint without clearing AI queue
+ */
+func void AI_BeamToKeepQueue (var int slfInstance, var string vobName) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	AI_Function_S (slf, _AI_BeamToKeepQueue, vobName);
 };
 
 /*
@@ -611,7 +662,18 @@ func void AI_TeleportToWorld (var int slfInstance, var string levelName, var str
 	if (Hlp_StrCmp (thisLevelName, levelName)) {
 		AI_TeleportKeepQueue (slfInstance, vobName);
 	} else {
-		AI_PlayAni (slf, _AI_GetAniName_T_MAGRUN_2_HEASHOOT ());
+		if (!Npc_HasAni (slf, ANINAME_T_STAND_2_TELEPORT))
+		&& (!Npc_HasAni (slf, ANINAME_T_MAGRUN_2_HEASHOOT))
+		{
+			//G1 version has much cooler teleportation animation with particle effects ;-)
+			if (MEMINT_SwitchG1G2(0, 1))
+			{
+				AI_PlayAni(slf, ANINAME_T_STAND_2_TELEPORT);
+			} else {
+				AI_PlayAni(slf, ANINAME_T_MAGRUN_2_HEASHOOT);
+			};
+		};
+
 		AI_Function_SS (slf, oCGame_TriggerChangeLevel, levelName, vobName);
 	};
 };
@@ -761,8 +823,7 @@ func int AI_GotoMobPtr (var int slfInstance, var int mobPtr) {
 	if (!retVal) { return FALSE; };
 
 	AI_GotoVobPtr_EvalWaynetUse (slfInstance, mobPtr);
-	AI_GotoPos (slfInstance, _@ (pos));
-
+	AI_GotoPos(slfInstance, _@ (pos));
 	return TRUE;
 };
 
@@ -907,26 +968,6 @@ func void AI_MobSetIdealPosition (var int slfInstance) {
 };
 
 /*
- *	Same as AI_Function - but using EV_CALLSCRIPT ... do we need this? :thinking:
- *	Advantage - self is set to NPC, other is always player ...
- *	Disadvantage - we don't have any parameters here!
- */
-func void AI_CallFunc (var int slfInstance, var string funcName) {
-	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
-	if (!Hlp_IsValidNPC (slf)) { return; };
-
-	//Create new message
-	funcName = STR_Upper (funcName);
-	var int eMsg; eMsg = oCMsgManipulate_Create (EV_CALLSCRIPT, funcName, 0, -1, "", "");
-
-	//Get Event Manager
-	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
-
-	//Add new msg to Event Manager
-	zCEventManager_OnMessage (eMgr, eMsg, _@ (slf));
-};
-
-/*
  *	Same as AI_UseMob - but you can specify vob pointer
  */
 func void AI_UseMobPtr (var int slfInstance, var int vobPtr, var int targetState) {
@@ -938,8 +979,8 @@ func void AI_UseMobPtr (var int slfInstance, var int vobPtr, var int targetState
 	//var oCMobInter mob; mob = _^ (vobPtr);
 
 	//Create new message
-	//var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, mob.sceme, vobPtr, targetState, "", "");
-	var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, oCMobInter_GetScemeName (vobPtr), vobPtr, targetState, "", "");
+	//var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, mob.sceme, vobPtr, targetState, STR_EMPTY, STR_EMPTY);
+	var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, oCMobInter_GetScemeName (vobPtr), vobPtr, targetState, STR_EMPTY, STR_EMPTY);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -960,8 +1001,8 @@ func void AI_UseMobPtr_Ext (var int slfInstance, var int vobPtr, var int targetS
 	//var oCMobInter mob; mob = _^ (vobPtr);
 
 	//Create new message
-	//var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, mob.sceme, vobPtr, targetState, "", "");
-	var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, oCMobInter_GetScemeName (vobPtr), vobPtr, targetState, name, "");
+	//var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, mob.sceme, vobPtr, targetState, STR_EMPTY, STR_EMPTY);
+	var int eMsg; eMsg = oCMsgManipulate_Create (EV_USEMOB, oCMobInter_GetScemeName (vobPtr), vobPtr, targetState, name, STR_EMPTY);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -980,7 +1021,7 @@ func void AI_DropVobPtr (var int slfInstance, var int vobPtr) {
 	if (!vobPtr) { return; };
 
 	//Create new message
-	var int eMsg; eMsg = oCMsgManipulate_Create (EV_DROPVOB, "", vobPtr, 0, "", "");
+	var int eMsg; eMsg = oCMsgManipulate_Create (EV_DROPVOB, STR_EMPTY, vobPtr, 0, STR_EMPTY, STR_EMPTY);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -999,7 +1040,24 @@ func void AI_EquipItemPtr (var int slfInstance, var int vobPtr) {
 	if (!vobPtr) { return; };
 
 	//Create new message
-	var int eMsg; eMsg = oCMsgManipulate_Create (EV_EQUIPITEM, "", vobPtr, 0, "", "");
+	var int eMsg; eMsg = oCMsgManipulate_Create (EV_EQUIPITEM, STR_EMPTY, vobPtr, 0, STR_EMPTY, STR_EMPTY);
+
+	//Get Event Manager
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+
+	//Add new msg to Event Manager
+	zCEventManager_OnMessage (eMgr, eMsg, _@ (slf));
+};
+
+/*
+ *	Allows item removal
+ */
+func void AI_DestroyInteractItem (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	//Create new message
+	var int eMsg; eMsg = oCMsgManipulate_Create (EV_DESTROYINTERACTITEM, STR_EMPTY, 0, 0, STR_EMPTY, STR_EMPTY);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -1014,7 +1072,6 @@ func void AI_EquipItemPtr (var int slfInstance, var int vobPtr) {
 func void AI_UnequipMeleeWeapon (var int slfInstance) {
 	var int itemPtr; itemPtr = oCNpc_GetEquippedMeleeWeapon (slfInstance);
 	if (itemPtr) {
-		//Equipping equipped item will unequip it :)
 		AI_EquipItemPtr (slfInstance, itemPtr);
 	};
 };
@@ -1025,7 +1082,6 @@ func void AI_UnequipMeleeWeapon (var int slfInstance) {
 func void AI_UnequipRangedWeapon (var int slfInstance) {
 	var int itemPtr; itemPtr = oCNpc_GetEquippedRangedWeapon (slfInstance);
 	if (itemPtr) {
-		//Equipping equipped item will unequip it :)
 		AI_EquipItemPtr (slfInstance, itemPtr);
 	};
 };
@@ -1051,6 +1107,38 @@ func void AI_DrawWeapon_Ext (var int slfInstance, var int targetMode, var int us
 };
 
 /*
+ *
+ */
+func void AI_DrawWeapon1 (var int slfInstance, var int targetMode, var int useFist, var int showMagicCircle) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	//Create new message
+	var int eMsg; eMsg = oCMsgWeapon_Create (EV_DRAWWEAPON1, targetMode, useFist);
+
+	if (showMagicCircle) {
+		var oCMsgWeapon msg; msg = _^(eMsg);
+		msg.bitfield_oCMsgWeapon = msg.bitfield_oCMsgWeapon | bitfield_oCMsgWeapon_ShowMagicCircle;
+	};
+
+	//Get Event Manager
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+
+	//Add new msg to Event Manager
+	zCEventManager_OnMessage (eMgr, eMsg, _@ (slf));
+};
+
+/*
+ *	Unequips armor using AI queue
+ */
+func void AI_UnequipArmorFromSlotName (var int slfInstance, var string slotName) {
+	var int itemPtr; itemPtr = oCNpc_GetSlotItem (slfInstance, slotName);
+	if (itemPtr) {
+		AI_EquipItemPtr (slfInstance, itemPtr);
+	};
+};
+
+/*
  *	AI_WhirlAroundToPos
  *	 - same as AI_WhirlAround, but allows us to use position
  */
@@ -1061,7 +1149,27 @@ func void AI_WhirlAroundToPos (var int slfInstance, var int posPtr) {
 	if (!posPtr) { return; };
 
 	//Create new message
-	var int eMsg; eMsg = oCMsgMovement_Create (EV_WHIRLAROUND, "", 0, posPtr, mkf (0), 0);
+	var int eMsg; eMsg = oCMsgMovement_Create (EV_WHIRLAROUND, STR_EMPTY, 0, posPtr, mkf (0), 0);
+
+	//Get Event Manager
+	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
+
+	//Add new msg to Event Manager
+	zCEventManager_OnMessage (eMgr, eMsg, _@ (slf));
+};
+
+/*
+ *	AI_ContinueState
+ *	 - alternative for AI_ContinueRoutine, which also creates event messages: EV_STANDUP, EV_STOPLOOKAT, EV_STOPPOINTAT, EV_REMOVEWEAPON, EV_STARTSTATE
+ *	 - I need this one for cutscene, where I don't want Npc to remove their weapons while switching from dialogue to fight :)
+ *	 - this one only creates EV_STARTSTATE
+ */
+func void AI_ContinueState (var int slfInstance) {
+	var oCNpc slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	//Create new message
+	var int eMsg; eMsg = oCMsgState_Create (EV_STARTSTATE, 0, 0, STR_EMPTY);
 
 	//Get Event Manager
 	var int eMgr; eMgr = zCVob_GetEM (_@ (slf));
@@ -1090,8 +1198,19 @@ func void AI_ResetStateTime (var int slfInstance) {
  *	 - function syncs AI queues
  */
 func void AI_SyncNpc (var int slfInstance, var int othInstance) {
+	/*
+	 *	EV_WaitTillEnd
+	 *	 - calls StopTurnAnis
+	 *	 - forces player to StandUp
+	 *	 - therefore adding check - if we are trying to sync npc with itself --> exit
+	 */
+	 if (slfInstance == othInstance) { return; };
+
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	var C_NPC oth; oth = Hlp_GetNPC (othInstance);
+
+	if (!HLp_IsValidNpc (slf)) { return; };
+	if (!HLp_IsValidNpc (oth)) { return; };
 
 	AI_WaitTillEnd (slf, oth);
 	AI_WaitTillEnd (oth, slf);
@@ -1103,6 +1222,10 @@ func void AI_SyncNpc (var int slfInstance, var int othInstance) {
  */
 func void AI_DiaSync () {
 	if (!MEM_Game.infoman) { return; };
+
+	//If npc & player are one and the same (then we are most likely in MOBSI production dialogue) - then we don't need synchronization (it has side-effects, see above note about EV_WaitTillEnd)
+	if (MEM_InformationMan.npc == MEM_InformationMan.player) { return; };
+
 	if (!Hlp_Is_oCNpc (MEM_InformationMan.npc)) { return; };
 	if (!Hlp_Is_oCNpc (MEM_InformationMan.player)) { return; };
 
@@ -1118,6 +1241,11 @@ func void AI_DiaSync () {
  */
 func void _AI_PutInSlot (var string slotName, var int itemInstanceID) {
 	if (Npc_GetInvItem (self, itemInstanceID)) {
+		var oCNpc slf; slf = Hlp_GetNpc(self);
+		if (slf.interactItem) {
+			oCNpc_SetInteractItem(self, _@(item));
+		};
+
 		oCNpc_PutInSlot_Fixed (self, slotName, _@ (item), 1);
 	};
 };
@@ -1143,7 +1271,13 @@ func void _AI_CreateItemInSlot (var string slotName, var int itemInstanceID) {
 	var int trafo[16];
 	NewTrafo(_@(trafo));
 	var int itemPtr; itemPtr = InsertItem (itemName, 1, _@ (trafo));
-	oCNpc_PutInSlot_Fixed (self, slotName, itemPtr, 0);
+
+	var oCNpc slf; slf = Hlp_GetNpc(self);
+	if (slf.interactMob) {
+		oCNpc_SetInteractItem(self, itemPtr);
+	};
+
+	oCNpc_PutInSlot_Fixed(self, slotName, itemPtr, 0);
 };
 
 func void AI_CreateItemInSlot (var int slfInstance, var string slotName, var int itemInstanceID) {
@@ -1173,13 +1307,187 @@ func void AI_PutInInvFromSlot (var int slfInstance, var string slotName) {
  */
 func void _AI_RemoveItemFromSlot (var string slotName) {
 	var int itemPtr; itemPtr = oCNpc_RemoveFromSlot_Fixed (self, slotName, 1, 1);
+	oCNpc_SetInteractItem(self, 0);
 	//var C_Item itm; itm = _^ (itemPtr);
 	//Wld_RemoveItem (itm);
-	RemoveoCVobSafe (itemPtr, 1);
+	RemoveoCVobSafe (itemPtr, 0);
 };
 
 func void AI_RemoveItemFromSlot (var int slfInstance, var string slotName) {
 	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
 	if (!Hlp_IsValidNPC (slf)) { return; };
 	AI_Function_S (slf, _AI_RemoveItemFromSlot, slotName);
+};
+
+/*
+ *	AI_TurnToWP
+ *	 - same as AI_TurnToNPC, but allows us to use vob waypoint
+ */
+//func void AI_TurnToWP (var int slfInstance, var string waypoint) {
+//	var oCNPC slf; slf = Hlp_GetNPC (slfInstance);
+//	if (!Hlp_IsValidNPC (slf)) { return; };
+//
+//	var int wpPtr; wpPtr = SearchWaypointByName (waypoint);
+//	if (!wpPtr) { return; };
+//
+//	var zCWaypoint wp; wp = _^ (wpPtr);
+//	AI_TurnToPos (slf, _@ (wp.pos));
+//};
+
+/*
+ *	AI_TurnToVob
+ *	 - same as AI_TurnToNPC, but allows us to use vob / waypoint
+ */
+func void AI_TurnToVob (var int slfInstance, var string vobName) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int vobPtr; vobPtr = MEM_SearchVobByName (vobName);
+
+	if (vobPtr) {
+		AI_TurnToVobPtr (slfInstance, vobPtr);
+	} else {
+		var int wpPtr; wpPtr = SearchWaypointByName (vobName);
+
+		if (wpPtr) {
+			var zCWaypoint wp; wp = _^ (wpPtr);
+			AI_TurnToPos (slfInstance, _@ (wp.pos));
+		};
+	};
+};
+
+func void _AI_DrawTorch () {
+	NPC_TorchSwitchOn (self);
+};
+
+func void AI_DrawTorch (var int slfInstance) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+	AI_Function (slf, _AI_DrawTorch);
+};
+
+func void _AI_RemoveTorch () {
+	NPC_TorchSwitchOff (self);
+};
+
+func void AI_RemoveTorch (var int slfInstance) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+	AI_Function (slf, _AI_RemoveTorch);
+};
+
+func void AI_GotoNpc_Ext (var int slfInstance, var int othInstance, var int maxTargetDist) {
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var C_NPC oth; oth = Hlp_GetNPC (othInstance);
+	if (!Hlp_IsValidNPC (oth)) { return; };
+
+	var int pos[3];
+	if (zCVob_GetPositionWorldToPos (_@ (oth), _@ (pos))) {
+		AI_GotoPos_Ext (slf, _@ (pos), maxTargetDist);
+	};
+};
+
+/*
+ *	AI_ActivateDialogCam
+ *	 - to be used in dialogues, switches camera target to oth (gives you control to switch camera at will)
+ */
+func void _AI_ActivateDialogCam(var int slfPtr, var int othPtr) {
+	var oCNpc slf; slf = _^(slfPtr);
+	var oCNpc oth; oth = _^(othPtr);
+
+	var int retVal; retVal = oCNpc_ActivateDialogCam(oth, slf, FLOATNULL);
+	var int aiPtr; aiPtr = zCSession_GetCameraAI ();
+	zCAICamera_ReceiveMsg (aiPtr, _@ (zPLAYER_BEAMED));
+};
+
+func void AI_ActivateDialogCam(var int slfInstance, var int othInstance) {
+	var C_NPC slf; slf = Hlp_GetNPC(slfInstance);
+	if (!Hlp_IsValidNPC(slf)) { return; };
+
+	var C_NPC oth; oth = Hlp_GetNPC(othInstance);
+	if (!Hlp_IsValidNPC(oth)) { return; };
+
+	AI_Function_II(slf, _AI_ActivateDialogCam, _@(slf), _@(oth));
+};
+
+/*
+ *	AI queue 'injection'
+ *	 - allows you to inject AI functions from executed ai_function
+ *
+ *	Example:
+ *	--------
+ *	func void AIQ_GotoWp_OC3() {
+ *		AI_Inject(self)
+ *		AI_GotoWp(self, "OC3");
+ *		AI_InjectEnd(self);
+ *	};
+ *
+ *	func void main() {
+ *		AI_GotoWp(self, "OC1";
+ *		AI_Function(hero, AIQ_GotoWp_OC3);
+ *		AI_GotoWp(self, "OC2";
+ *	};
+ *
+ *	Will on execution of function AIQ_GotoWp_OC3 translate in AI queue into:
+ *		AI_GotoWp(self, "OC3");
+ *		AI_GotoWp(self, "OC2";
+ */
+const int _AI_Inject_Index = -1;
+const int _AI_Inject_NumInArray = 0;
+
+func void AI_Inject(var int slfInstance) {
+	if (_AI_Inject_Index != -1) {
+		_AI_Inject_Index = -1;
+
+		zSpy_Info("AI_Inject called without AI_InjectEnd! Injection aborted.");
+		return;
+	};
+
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int emPtr; emPtr = zCVob_GetEM(_@(slf));
+	if (!emPtr) { return; };
+	var zCEventManager em; em = _^(emPtr);
+
+	if (em.messageList_numInArray) {
+		_AI_Inject_Index = 0;
+		_AI_Inject_NumInArray = em.messageList_numInArray;
+	};
+};
+
+func void AI_InjectEnd(var int slfInstance) {
+	if (_AI_Inject_Index == -1) {
+		zSpy_Info("AI_InjectEnd no AI queue available for injection.");
+		return;
+	};
+
+	var C_NPC slf; slf = Hlp_GetNPC (slfInstance);
+	if (!Hlp_IsValidNPC (slf)) { return; };
+
+	var int emPtr; emPtr = zCVob_GetEM(_@(slf));
+	if (!emPtr) { return; };
+	var zCEventManager em; em = _^(emPtr);
+
+	var int numInArray; numInArray = em.messageList_numInArray - _AI_Inject_NumInArray;
+	if (numInArray <= 0) { return; };
+
+	while(numInArray);
+		var int i; i = em.messageList_numInArray - 1;
+		var int e; e = MEM_ArrayRead(_@(em.messageList_array), i);
+
+		while(i > _AI_Inject_Index);
+			MEM_ArrayWrite(_@(em.messageList_array), i, MEM_ArrayRead(_@(em.messageList_array), i - 1));
+			i -= 1;
+		end;
+
+		MEM_ArrayWrite(_@(em.messageList_array), _AI_Inject_Index, e);
+
+		numInArray -= 1;
+	end;
+
+	_AI_Inject_Index = -1;
+	_AI_Inject_NumInArray = 0;
 };

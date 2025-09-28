@@ -107,6 +107,7 @@ func int oCSpawnManager_GetInsertRange () {
 
 	const int call = 0;
 	if (CALL_Begin (call)) {
+		CALL_RetValIsFloat ();
 		CALL_PutRetValTo (_@ (retVal));
 		CALL__cdecl (MEMINT_SwitchG1G2 (oCSpawnManager__GetInsertRange_G1, oCSpawnManager__GetInsertRange_G2));
 		call = CALL_End ();
@@ -147,6 +148,7 @@ func int oCSpawnManager_GetRemoveRange () {
 
 	const int call = 0;
 	if (CALL_Begin (call)) {
+		CALL_RetValIsFloat ();
 		CALL_PutRetValTo (_@ (retVal));
 		CALL__cdecl (MEMINT_SwitchG1G2 (oCSpawnManager__GetRemoveRange_G1, oCSpawnManager__GetRemoveRange_G2));
 		call = CALL_End ();
@@ -187,6 +189,7 @@ func int oCSpawnManager_GetSpawnTime () {
 
 	const int call = 0;
 	if (CALL_Begin (call)) {
+		CALL_RetValIsFloat ();
 		CALL_PutRetValTo (_@ (retVal));
 		CALL__cdecl (MEMINT_SwitchG1G2 (oCSpawnManager__GetSpawnTime_G1, oCSpawnManager__GetSpawnTime_G2));
 		call = CALL_End ();
@@ -205,7 +208,7 @@ func int oCSpawnManager_GetNodePtr (var int npcPtr) {
 	repeat (i, MEM_SpawnManager.spawnList_numInArray); var int i;
 		var int spawnNodePtr; spawnNodePtr = MEM_ReadIntArray (MEM_SpawnManager.spawnList_array, i);
 		if (spawnNodePtr) {
-			//NPC pointer is @ offset 0, we don't really need to converr pointer to oSSpawnNode object
+			//NPC pointer is @ offset 0, we don't really need to convert pointer to oSSpawnNode object
 
 			//var oSSpawnNode spawnNode; spawnNode = _^ (spawnNodePtr);
 			//if (npcPtr == spawnNode.npc) {

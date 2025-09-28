@@ -21,7 +21,7 @@ func void DisplayProperties__VobTransport () {
 	var int scaleF;
 
 	if (vobTransportMode != vobTransportMode_Idle) {
-		spaceWidth = Print_GetStringWidth (" ", vobTransportFontName);
+		spaceWidth = Font_GetStringWidth (STR_SPACE, vobTransportFontName);
 		spaceWidth = Print_ToVirtual (spaceWidth, PS_X);
 	};
 
@@ -42,45 +42,46 @@ func void DisplayProperties__VobTransport () {
 
 		//lastVobTPtr = vobTransportVobPtr;		//zCObject
 
-		var string s_vtbl; s_vtbl = "";
-		var string s_objectName; s_objectName = "";
-		var string s_visualName; s_visualName = "";
+		var string s;
+		var string s_vtbl; s_vtbl = STR_EMPTY;
+		var string s_objectName; s_objectName = STR_EMPTY;
+		var string s_visualName; s_visualName = STR_EMPTY;
 
 		//zCVob
-		var string s_collStatic; s_collStatic = "";
-		var string s_collDynamic; s_collDynamic = "";
-		var string s_vobType; s_vobType = "";
+		var string s_collStatic; s_collStatic = STR_EMPTY;
+		var string s_collDynamic; s_collDynamic = STR_EMPTY;
+		var string s_vobType; s_vobType = STR_EMPTY;
 
 		//oCMob
-		var string s_mobName; s_mobName = "";
-		var string s_ownerStr; s_ownerStr = "";
-		var string s_ownerGuildStr; s_ownerGuildStr = "";
+		var string s_mobName; s_mobName = STR_EMPTY;
+		var string s_ownerStr; s_ownerStr = STR_EMPTY;
+		var string s_ownerGuildStr; s_ownerGuildStr = STR_EMPTY;
 
 		//oCMobInter
-		var string s_triggerTarget; s_triggerTarget = "";
-		var string s_useWithItem; s_useWithItem = "";
-		var string s_sceme; s_sceme = "";
-		var string s_conditionFunc; s_conditionFunc = "";
-		var string s_onStateFuncName; s_onStateFuncName = "";
+		var string s_triggerTarget; s_triggerTarget = STR_EMPTY;
+		var string s_useWithItem; s_useWithItem = STR_EMPTY;
+		var string s_sceme; s_sceme = STR_EMPTY;
+		var string s_conditionFunc; s_conditionFunc = STR_EMPTY;
+		var string s_onStateFuncName; s_onStateFuncName = STR_EMPTY;
 
 		//oCMobContainer
-		var string s_keyInstance; s_keyInstance = "";
-		var string s_pickLockStr; s_pickLockStr = "";
+		var string s_keyInstance; s_keyInstance = STR_EMPTY;
+		var string s_pickLockStr; s_pickLockStr = STR_EMPTY;
 
 		//oCMobFire
-		var string s_fireSlot; s_fireSlot = "";
-		var string s_fireVobtreeName; s_fireVobtreeName = "";
+		var string s_fireSlot; s_fireSlot = STR_EMPTY;
+		var string s_fireVobtreeName; s_fireVobtreeName = STR_EMPTY;
 
 		//oCMobDoor
-		var string s_addName; s_addName = "";
+		var string s_addName; s_addName = STR_EMPTY;
 
 		//zCTrigger
-		var string s_respondToVobName; s_respondToVobName = "";
+		var string s_respondToVobName; s_respondToVobName = STR_EMPTY;
 
 		//oCTriggerScript
-		var string s_scriptFunc; s_scriptFunc = "";
+		var string s_scriptFunc; s_scriptFunc = STR_EMPTY;
 
-		var string s_Title; s_Title = "";
+		var string s_Title; s_Title = STR_EMPTY;
 
 		var int collStatic; collStatic = 0;
 		var int collDynamic; collDynamic = 0;
@@ -168,8 +169,8 @@ func void DisplayProperties__VobTransport () {
 			s_conditionFunc = ConcatStrings ("conditionFunc: ", mobDoor._oCMobInter_conditionFunc);
 			s_onStateFuncName = ConcatStrings ("onStateFuncName: ", mobDoor._oCMobInter_onStateFuncName);
 
-			s_keyInstance = ConcatStrings ("keyInstance: ", mobContainer._oCMobLockable_keyInstance);
-			s_pickLockStr = ConcatStrings ("pickLockStr: ", mobContainer._oCMobLockable_pickLockStr);
+			s_keyInstance = ConcatStrings ("keyInstance: ", mobDoor._oCMobLockable_keyInstance);
+			s_pickLockStr = ConcatStrings ("pickLockStr: ", mobDoor._oCMobLockable_pickLockStr);
 
 			s_addName = ConcatStrings ("addName: ", mobDoor.addName);
 		} else
@@ -307,9 +308,89 @@ func void DisplayProperties__VobTransport () {
 		//Default - white color
 		var int titleColor; titleColor = RGBA (255, 255, 255, 255);
 
-		//Properties
-		var int stringBuilder; stringBuilder = SB_New();
 
+		//Create
+		if (!vobTransportPropertiesViewVisible) {
+			scaleF = _getInterfaceScaling ();
+
+			//--- hVobTransportPropertiesViewFrame
+			viewWidth = vobTransportPropertiesView_WidthPxl;
+			viewWidth = Print_ToVirtual (viewWidth, PS_X);
+			viewWidth = roundf (mulf (mkf (viewWidth), scaleF));
+
+			fontHeight = Print_GetFontHeight (vobTransportFontName);
+			fontHeight = Print_ToVirtual (fontHeight, PS_Y);
+
+			if (vobTransportPropertiesView_PPosX == -1) {
+				posX = (PS_VMax - viewWidth) / 2;
+			} else {
+				posX = Print_ToVirtual (vobTransportPropertiesView_PPosX, PS_X);
+			};
+
+			if (vobTransportPropertiesView_VPosX > -1) {
+				posX = vobTransportPropertiesView_VPosX;
+			};
+
+			if (vobTransportPropertiesView_PPosY == -1) {
+				posY = (PS_VMax / 2 - (vobTransportPropertiesView_Lines * fontHeight) / 2);
+			} else {
+				posY = Print_ToVirtual (vobTransportPropertiesView_PPosY, PS_Y);
+			};
+
+			if (vobTransportPropertiesView_VPosY > -1) {
+				posY = vobTransportPropertiesView_VPosY;
+			};
+
+			if (!Hlp_IsValidHandle (hVobTransportPropertiesViewFrame)) {
+				hVobTransportPropertiesViewFrame  = View_Create (posX, posY, posX + viewWidth, posY + vobTransportPropertiesView_Lines * fontHeight);
+				View_SetTexture (hVobTransportPropertiesViewFrame, vobTransportViewTexture);
+			};
+
+			View_Open_Safe (hVobTransportPropertiesViewFrame);
+			View_MoveTo_Safe (hVobTransportPropertiesViewFrame, posX, posY);
+			View_Resize_Safe (hVobTransportPropertiesViewFrame, viewWidth, vobTransportPropertiesView_Lines * fontHeight);
+
+			//--- hVobTransportPropertiesViewHeader
+			if (!Hlp_IsValidHandle (hVobTransportPropertiesViewHeader)) {
+				hVobTransportPropertiesViewHeader = View_Create (posX, posY, posX + viewWidth, posY + 1 * fontHeight);
+				View_AddText (hVobTransportPropertiesViewHeader, 00, 00, STR_EMPTY, vobTransportFontName);
+			};
+
+			View_Open_Safe (hVobTransportPropertiesViewHeader);
+			View_MoveTo_Safe (hVobTransportPropertiesViewHeader, posX, posY);
+			View_Resize_Safe (hVobTransportPropertiesViewHeader, viewWidth, 1 * fontHeight);
+
+			posY += fontHeight;
+
+			//--- hVobTransportPropertiesView
+			if (!Hlp_IsValidHandle (hVobTransportPropertiesView)) {
+				hVobTransportPropertiesView = View_Create (posX, posY, posX + viewWidth, posY + vobTransportPropertiesView_Lines * fontHeight);
+				View_AddText (hVobTransportPropertiesView, 00, 00, STR_EMPTY, vobTransportFontName);
+			};
+
+			View_Open_Safe (hVobTransportPropertiesView);
+			View_MoveTo_Safe (hVobTransportPropertiesView, posX, posY);
+			View_Resize_Safe (hVobTransportPropertiesView, viewWidth, vobTransportPropertiesView_Lines * fontHeight);
+
+			vobTransportPropertiesViewVisible = TRUE;
+
+			//--- Delete texts
+			View_DeleteText (hVobTransportPropertiesViewHeader);
+			View_DeleteText (hVobTransportPropertiesView);
+		};
+
+		//Header
+		//View_SetFontColor (hVobTransportPropertiesViewHeader, titleColor);
+		View_SetTextMarginAndFontColor (hVobTransportPropertiesViewHeader, s_Title, titleColor, spaceWidth * 2);
+
+		//Properties
+		var int sbb; sbb = SB_Get();
+		const int sb0 = 0;
+		if (!sb0) {
+			sb0 = SB_New();
+		};
+
+		SB_Use(sb0);
 		if (vobTransportMode == vobTransportMode_SelectVob) {
 			s_Title = vobTransportView_TitleSelection;
 
@@ -363,7 +444,6 @@ func void DisplayProperties__VobTransport () {
 		if (vobTransportMode == vobTransportMode_Transform) {
 			s_Title = vobTransportView_TitleTransform;
 
-			var string s;
 			s = ConcatStrings (vobTransportView_InstructionRotateXYZ, " (");
 			if (vobTransportTransformationMode == vobTransportTransformation_RotX) {
 				s = ConcatStrings (s, "X");
@@ -399,80 +479,6 @@ func void DisplayProperties__VobTransport () {
 				SB (Print_LineSeperator);
 			};
 		};
-
-		//Create
-		if (!vobTransportPropertiesViewVisible) {
-			scaleF = _getInterfaceScaling ();
-
-			//--- hVobTransportPropertiesViewFrame
-			viewWidth = vobTransportPropertiesView_WidthPxl;
-			viewWidth = Print_ToVirtual (viewWidth, PS_X);
-			viewWidth = roundf (mulf (mkf (viewWidth), scaleF));
-
-			fontHeight = Print_GetFontHeight (vobTransportFontName);
-			fontHeight = Print_ToVirtual (fontHeight, PS_Y);
-
-			if (vobTransportPropertiesView_PPosX == -1) {
-				posX = (PS_VMax - viewWidth) / 2;
-			} else {
-				posX = Print_ToVirtual (vobTransportPropertiesView_PPosX, PS_X);
-			};
-
-			if (vobTransportPropertiesView_VPosX > -1) {
-				posX = vobTransportPropertiesView_VPosX;
-			};
-
-			if (vobTransportPropertiesView_PPosY == -1) {
-				posY = (PS_VMax / 2 - (vobTransportPropertiesView_Lines * fontHeight) / 2);
-			} else {
-				posY = Print_ToVirtual (vobTransportPropertiesView_PPosY, PS_Y);
-			};
-
-			if (vobTransportPropertiesView_VPosY > -1) {
-				posY = vobTransportPropertiesView_VPosY;
-			};
-
-			if (!Hlp_IsValidHandle (hVobTransportPropertiesViewFrame)) {
-				hVobTransportPropertiesViewFrame  = View_Create (posX, posY, posX + viewWidth, posY + vobTransportPropertiesView_Lines * fontHeight);
-				View_SetTexture (hVobTransportPropertiesViewFrame, vobTransportViewTexture);
-			};
-
-			View_Open (hVobTransportPropertiesViewFrame);
-			View_MoveTo (hVobTransportPropertiesViewFrame, posX, posY);
-			View_Resize (hVobTransportPropertiesViewFrame, viewWidth, vobTransportPropertiesView_Lines * fontHeight);
-
-			//--- hVobTransportPropertiesViewHeader
-			if (!Hlp_IsValidHandle (hVobTransportPropertiesViewHeader)) {
-				hVobTransportPropertiesViewHeader = View_Create (posX, posY, posX + viewWidth, posY + 1 * fontHeight);
-				View_AddText (hVobTransportPropertiesViewHeader, 00, 00, "", vobTransportFontName);
-			};
-
-			View_Open (hVobTransportPropertiesViewHeader);
-			View_MoveTo (hVobTransportPropertiesViewHeader, posX, posY);
-			View_Resize (hVobTransportPropertiesViewHeader, viewWidth, 1 * fontHeight);
-
-			posY += fontHeight;
-
-			//--- hVobTransportPropertiesView
-			if (!Hlp_IsValidHandle (hVobTransportPropertiesView)) {
-				hVobTransportPropertiesView = View_Create (posX, posY, posX + viewWidth, posY + vobTransportPropertiesView_Lines * fontHeight);
-				View_AddText (hVobTransportPropertiesView, 00, 00, "", vobTransportFontName);
-			};
-
-			View_Open (hVobTransportPropertiesView);
-			View_MoveTo (hVobTransportPropertiesView, posX, posY);
-			View_Resize (hVobTransportPropertiesView, viewWidth, vobTransportPropertiesView_Lines * fontHeight);
-
-			vobTransportPropertiesViewVisible = TRUE;
-
-			//--- Delete texts
-			View_DeleteText (hVobTransportPropertiesViewHeader);
-			View_DeleteText (hVobTransportPropertiesView);
-		};
-
-		//Header
-		//View_SetFontColor (hVobTransportPropertiesViewHeader, titleColor);
-		View_SetTextMarginAndFontColor (hVobTransportPropertiesViewHeader, s_Title, titleColor, spaceWidth * 2);
 
 		SB (Print_LineSeperator);
 		SB (Print_LineSeperator);
@@ -537,15 +543,17 @@ func void DisplayProperties__VobTransport () {
 			SB (Print_LineSeperator);
 		};
 
-		View_SetTextMargin (hVobTransportPropertiesView, SB_ToString (), spaceWidth * 2);
+		s = SB_ToString();
+		SB_Clear();
+		SB_Use(sbb);
 
-		SB_Destroy();
+		View_SetTextMargin (hVobTransportPropertiesView, s, spaceWidth * 2);
 
 	} else {
 		if (vobTransportPropertiesViewVisible) {
-			if (Hlp_IsValidHandle (hVobTransportPropertiesView)) { View_Close (hVobTransportPropertiesView); };
-			if (Hlp_IsValidHandle (hVobTransportPropertiesViewHeader)) { View_Close (hVobTransportPropertiesViewHeader); };
-			if (Hlp_IsValidHandle (hVobTransportPropertiesViewFrame)) { View_Close (hVobTransportPropertiesViewFrame); };
+			View_Close_Safe (hVobTransportPropertiesView);
+			View_Close_Safe (hVobTransportPropertiesViewHeader);
+			View_Close_Safe (hVobTransportPropertiesViewFrame);
 
 			//lastVobTPtr = 0;
 			vobTransportPropertiesViewVisible = FALSE;
@@ -589,131 +597,131 @@ func void DisplayProperties__VobTransport () {
 				View_SetTexture (hVobTransportBuyVobViewFrame, vobTransportViewTexture);
 			};
 
-			View_Open (hVobTransportBuyVobViewFrame);
-			View_MoveTo (hVobTransportBuyVobViewFrame, posX, posY);
-			View_Resize (hVobTransportBuyVobViewFrame, viewWidth, vobTransportBuyVobView_Lines * fontHeight);
+			View_Open_Safe (hVobTransportBuyVobViewFrame);
+			View_MoveTo_Safe (hVobTransportBuyVobViewFrame, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobViewFrame, viewWidth, vobTransportBuyVobView_Lines * fontHeight);
 
 			posY += (spaceWidth);
 
 			//--- hVobTransportBuyVobView_Description
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Description)) {
 				hVobTransportBuyVobView_Description = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Description, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Description, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Description);
-			View_MoveTo (hVobTransportBuyVobView_Description, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Description, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Description);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Description, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Description, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
 			//--- hVobTransportBuyVobView_Line1
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Line1)) {
 				hVobTransportBuyVobView_Line1 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Line1, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Line1, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Line1);
-			View_MoveTo (hVobTransportBuyVobView_Line1, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Line1, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Line1);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Line1, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Line1, viewWidth, fontHeight);
 
 			//--- hVobTransportBuyVobView_Count1
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Count1)) {
 				hVobTransportBuyVobView_Count1 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Count1, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Count1, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Count1);
-			View_MoveTo (hVobTransportBuyVobView_Count1, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Count1, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Count1);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Count1, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Count1, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
 			//--- hVobTransportBuyVobView_Line2
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Line2)) {
 				hVobTransportBuyVobView_Line2 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Line2, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Line2, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Line2);
-			View_MoveTo (hVobTransportBuyVobView_Line2, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Line2, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Line2);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Line2, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Line2, viewWidth, fontHeight);
 
 			//--- hVobTransportBuyVobView_Count2
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Count2)) {
 				hVobTransportBuyVobView_Count2 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Count2, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Count2, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Count2);
-			View_MoveTo (hVobTransportBuyVobView_Count2, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Count2, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Count2);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Count2, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Count2, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
 			//--- hVobTransportBuyVobView_Line3
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Line3)) {
 				hVobTransportBuyVobView_Line3 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Line3, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Line3, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Line3);
-			View_MoveTo (hVobTransportBuyVobView_Line3, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Line3, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Line3);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Line3, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Line3, viewWidth, fontHeight);
 
 			//--- hVobTransportBuyVobView_Count3
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Count3)) {
 				hVobTransportBuyVobView_Count3 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Count3, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Count3, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Count3);
-			View_MoveTo (hVobTransportBuyVobView_Count3, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Count3, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Count3);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Count3, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Count3, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
 			//--- hVobTransportBuyVobView_Line4
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Line4)) {
 				hVobTransportBuyVobView_Line4 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Line4, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Line4, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Line4);
-			View_MoveTo (hVobTransportBuyVobView_Line4, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Line4, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Line4);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Line4, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Line4, viewWidth, fontHeight);
 
 			//--- hVobTransportBuyVobView_Count4
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Count4)) {
 				hVobTransportBuyVobView_Count4 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Count4, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Count4, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Count4);
-			View_MoveTo (hVobTransportBuyVobView_Count4, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Count4, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Count4);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Count4, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Count4, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
 			//--- hVobTransportBuyVobView_Line5
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Line5)) {
 				hVobTransportBuyVobView_Line5 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Line5, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Line5, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Line5);
-			View_MoveTo (hVobTransportBuyVobView_Line5, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Line5, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Line5);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Line5, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Line5, viewWidth, fontHeight);
 
 			//--- hVobTransportBuyVobView_Count5
 			if (!Hlp_IsValidHandle (hVobTransportBuyVobView_Count5)) {
 				hVobTransportBuyVobView_Count5 = View_Create (posX, posY, posX + viewWidth, posY + (1 * fontHeight) + spaceWidth);
-				View_AddText (hVobTransportBuyVobView_Count5, 00, 00, "", vobTransportFontName);
+				View_AddText (hVobTransportBuyVobView_Count5, 00, 00, STR_EMPTY, vobTransportFontName);
 			};
 
-			View_Open (hVobTransportBuyVobView_Count5);
-			View_MoveTo (hVobTransportBuyVobView_Count5, posX, posY);
-			View_Resize (hVobTransportBuyVobView_Count5, viewWidth, fontHeight);
+			View_Open_Safe (hVobTransportBuyVobView_Count5);
+			View_MoveTo_Safe (hVobTransportBuyVobView_Count5, posX, posY);
+			View_Resize_Safe (hVobTransportBuyVobView_Count5, viewWidth, fontHeight);
 
 			posY += (fontHeight);
 
@@ -740,21 +748,21 @@ func void DisplayProperties__VobTransport () {
 		View_SetTextMarginAndFontColor (hVobTransportBuyVobView_Count5, sVobTransportBuyVobView_Count5, colorVobTransportBuyVobView_Count5, - spaceWidth * 2);
 	} else {
 		if (vobTransportBuyVobViewVisible) {
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Description)) { View_Close (hVobTransportBuyVobView_Description); };
+			View_Close_Safe (hVobTransportBuyVobView_Description);
 
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Line1)) { View_Close (hVobTransportBuyVobView_Line1); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Line2)) { View_Close (hVobTransportBuyVobView_Line2); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Line4)) { View_Close (hVobTransportBuyVobView_Line3); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Line4)) { View_Close (hVobTransportBuyVobView_Line4); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Line5)) { View_Close (hVobTransportBuyVobView_Line5); };
+			View_Close_Safe (hVobTransportBuyVobView_Line1);
+			View_Close_Safe (hVobTransportBuyVobView_Line2);
+			View_Close_Safe (hVobTransportBuyVobView_Line3);
+			View_Close_Safe (hVobTransportBuyVobView_Line4);
+			View_Close_Safe (hVobTransportBuyVobView_Line5);
 
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Count1)) { View_Close (hVobTransportBuyVobView_Count1); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Count2)) { View_Close (hVobTransportBuyVobView_Count2); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Count3)) { View_Close (hVobTransportBuyVobView_Count3); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Count4)) { View_Close (hVobTransportBuyVobView_Count4); };
-			if (Hlp_IsValidHandle (hVobTransportBuyVobView_Count5)) { View_Close (hVobTransportBuyVobView_Count5); };
+			View_Close_Safe (hVobTransportBuyVobView_Count1);
+			View_Close_Safe (hVobTransportBuyVobView_Count2);
+			View_Close_Safe (hVobTransportBuyVobView_Count3);
+			View_Close_Safe (hVobTransportBuyVobView_Count4);
+			View_Close_Safe (hVobTransportBuyVobView_Count5);
 
-			if (Hlp_IsValidHandle (hVobTransportBuyVobViewFrame)) { View_Close (hVobTransportBuyVobViewFrame); };
+			View_Close_Safe (hVobTransportBuyVobViewFrame);
 
 			vobTransportBuyVobViewVisible = FALSE;
 		};

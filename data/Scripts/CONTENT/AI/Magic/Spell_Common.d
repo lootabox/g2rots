@@ -321,6 +321,9 @@ func void Spell_Cast_Summon(var C_NPC slf, var int npcSummonInstance, var int pl
 		return;
 	};
 
+	// Enforce player summon limit
+	BroadcastEx(slf, BC_Kill_Summon, TRUE, FALSE, FALSE);
+
 	if (GFA_ACTIVE)
 	{
 		if (Move_Aim_Waypoint(slf))
@@ -336,4 +339,21 @@ func void Spell_Cast_Summon(var C_NPC slf, var int npcSummonInstance, var int pl
 
 	// Fallback incase free aim is off or moving the aim waypoint is not possible for some reason
 	Wld_SpawnNpcRange(slf, playerSummonInstance, summonCount, 500);
+};
+
+func void BC_Kill_Summon(var C_NPC slf, var C_NPC npc)
+{
+	if (slf.aivar[AIV_PARTYMEMBER] == TRUE)
+	{
+		if (slf.guild == GIL_SUMMONED_WOLF)
+		|| (slf.guild == GIL_SUMMONED_GOBBO_SKELETON)
+		|| (slf.guild == GIL_SUMMONED_SKELETON)
+		//|| (slf.guild == GIL_SUMMONED_GOLEM)
+		|| (slf.guild == GIL_SUMMONED_DEMON)
+		//|| (slf.guild == GIL_SummonedGuardian)
+		//|| (slf.guild == GIL_SummonedZombie)
+		{
+			Npc_ChangeAttribute	(slf, ATR_HITPOINTS, -slf.attribute[ATR_HITPOINTS_MAX]);
+		};
+	};
 };

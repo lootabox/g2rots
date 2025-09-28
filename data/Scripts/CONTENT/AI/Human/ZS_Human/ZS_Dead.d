@@ -175,12 +175,9 @@ func void ZS_Dead ()
 	
 	self.aivar[AIV_TAPOSITION] = FALSE;
 	
-	if (self.guild == GIL_SUMMONED_WOLF)
-	|| (self.guild == GIL_SUMMONED_GOBBO_SKELETON)
-	|| (self.guild == GIL_SUMMONED_SKELETON)
-	//|| (self.guild == GIL_SUMMONED_GOLEM)
-	|| (self.guild == GIL_SUMMONED_DEMON)
+	if (C_Npc_IsSummoned(self))
 	{
+		Wld_PlayEffect("spellFX_Summon_Dead", self, self, 0, 0, 0, FALSE);
 		oCNpc_StartFadeAway(self);
 	};
 };

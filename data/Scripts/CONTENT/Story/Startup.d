@@ -22,10 +22,10 @@ func void INIT_GLOBAL()
 	Game_InitGerman();
 	
 	// Ikarus
-	//MEM_InitAll();
+	MEM_InitAll();
 
 	// LeGo
-	const int AFIP_LEGO_FLAGS = LeGo_HookEngine | LeGo_View | LeGo_FrameFunctions | LeGo_Gamestate | LeGo_Render;
+	const int AFIP_LEGO_FLAGS = LeGo_HookEngine | LeGo_View | LeGo_FrameFunctions | LeGo_Gamestate | LeGo_Render | LeGo_EventHandler;
 	LeGo_Init(GFA_LEGO_FLAGS | AFIP_LEGO_FLAGS | LeGo_Focusnames | LeGo_Bars | LeGo_Buffs | LeGo_Names | LeGo_Trialoge);
 
 	// Prevent alpha issues

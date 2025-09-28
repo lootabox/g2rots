@@ -2073,7 +2073,7 @@ INSTANCE BFX_DEMON_DEAD (C_PARTICLEFX)
      dirangleelev = 90;
      dirangleelevvar = 15;
      velavg = 0.00999999978;
-     lsppartavg = 8000;
+     lsppartavg = 5000;
      lsppartvar = 300;
      flygravity_s = "0 0 0";
      visname_s = "MFX_MAGICCLOUD.TGA";
@@ -2083,8 +2083,8 @@ INSTANCE BFX_DEMON_DEAD (C_PARTICLEFX)
      vistexaniislooping = 2;
      vistexcolorstart_s = "255 255 255";
      vistexcolorend_s = "0 0 255";
-     vissizestart_s = "5 5";
-     vissizeendscale = 50;
+     vissizestart_s = "10 10";
+     vissizeendscale = 20;
      visalphafunc_s = "ADD";
      visalphastart = 255;
      trltexture_s = "=";

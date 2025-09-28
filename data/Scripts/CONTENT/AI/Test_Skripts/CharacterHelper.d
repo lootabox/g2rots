@@ -248,7 +248,7 @@ FUNC VOID B_SetKDFRunes ()
 		CreateInvItems(hero,ItRu_Light,1);
 		CreateInvItems(hero,ItRu_Firebolt,1);
 		CreateInvItems(hero,ItRu_LightHeal,1);
-		CreateInvItems(hero,ItRu_SumGobSkel,1);
+		CreateInvItems(hero,ItRu_SumWolf,1);
 		CreateInvItems(hero,ItRu_Zap,1);
 	
 	}
@@ -256,7 +256,7 @@ FUNC VOID B_SetKDFRunes ()
 	{
 		CreateInvItems(hero,ItRu_InstantFireball,1);
 		CreateInvItems(hero,ItRu_Icebolt,1);
-		CreateInvItems(hero,ItRu_SumWolf,1);
+		CreateInvItems(hero,ItRu_SumGobSkel,1);
 		CreateInvItems(hero,ItRu_Windfist,1);
 		CreateInvItems(hero,ItRu_Sleep,1);
 	}

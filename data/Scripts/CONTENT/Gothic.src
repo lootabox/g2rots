@@ -4,6 +4,7 @@ _INTERN\CLASSES.D
 _IKARUS\Ikarus_G2.src
 LeGo\Header_G2.src
 AFSP\_headers_G2_All.src
+AFSP_API\*.d
 AFSP\AF_ItemPreview.d
 
 AI\AI_INTERN\AI_CONSTANTS.D

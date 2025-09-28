@@ -5859,3 +5859,11 @@ INSTANCE spellFX_Block_Spread (CFx_Base_Proto)
     emTrjOriginNode         = "ZS_SWORD";
     emtrjmode_s             = "TARGET";
 };
+
+INSTANCE spellFX_Summon_Dead		(CFx_Base_Proto)
+{
+		visname_S 				= "BFX_DEMON_DEAD";
+		emTrjOriginNode 		= "BIP01";
+		emFXCreatedOwnTrj 		= 1;
+		emtrjmode_s 			= "FIXED";
+};

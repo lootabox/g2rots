@@ -3,7 +3,7 @@
 //  Kern des Skriptpakets "Ikarus"
 //      Autor      : Sektenspinner
 //      Co-Autor   : Gottfried, mud-freak, Neconspictor
-//	    Version    : 1.2.2
+//	    Version    : 1.2.3
 //
 //######################################################
 
@@ -146,7 +146,7 @@
 //   that may have old versions, use this:
 //----------------------------------------------
 
-const int IKARUS_VERSION = 10202; //2 digits for Major and Minor Revision number.
+const int IKARUS_VERSION = 10203; //2 digits for Major and Minor Revision number.
 
 /* returns 1 if the version of Ikarus is the specified version or newer */
 func int MEM_CheckVersion(var int base, var int major, var int minor) {
@@ -1463,15 +1463,15 @@ func void CALL_cStringPtrParam (var string param) {
 
 /* struct (not a Pointer to a struct, but a struct as is) */
 func void CALL_StructParam (var int ptr, var int words) {
-    if (CALLINT_CodeMode == CALLINT_CodeMode_Recyclable) {
-        CALL_IntParam (ptr + 4 * (words -1)); /* this is where i expect the last word */
-        CALL_StructParam (ptr, words - 1);
-        return;
-    };
-
     /* the struct as a whole has to be pushed onto the stack
      * it has to be pushed in reverse order to lie correctly */
     if (words > 0) {
+        if (CALLINT_CodeMode == CALLINT_CodeMode_Recyclable) {
+            CALL_IntParam (ptr + 4 * (words -1)); /* this is where i expect the last word */
+            CALL_StructParam (ptr, words - 1);
+            return;
+        };
+
         CALL_IntParam (MEM_ReadIntArray (ptr, words - 1));
         CALL_StructParam (ptr, words - 1);
     };
@@ -2436,7 +2436,7 @@ func string STR_SubStr (var string str, var int start, var int count) {
             /* Careful! MEM_Warn will use STR_SubStr (but will never use it in a way that would produce a warning) */
             var string saveStr; var int saveStart; var int saveCount;
             saveStr = str; saveStart = start; saveCount = count;
-            MEM_Warn ("STR_SubStr: The end of the desired substring exceeds the end of the string.");
+            MEM_SendToSpy(zERR_TYPE_WARN, "STR_SubStr: The end of the desired substring exceeds the end of the string.");
             str = saveStr; start = saveStart; count = saveCount;
             count = zStrSrc.len - start;
         };
@@ -3224,7 +3224,7 @@ func void MEMINT_TokenizeFunction(var int funcID, var int tokenArray, var int pa
     
     if (tok == zPAR_TOK_RET) {
         if (MEM_GetFuncIDByOffset(pos - currParserStackAddress) != funcID)
-        || (pos - currParserStackAddress >= MEM_Parser.stack_stacksize) {
+        || (pos - currParserStackAddress >= MEM_Parser.stack_stacklast - currParserStackAddress) {
             /* mark end of function */
             MEM_ArrayInsert(posArr, pos);
             MEM_ArrayInsert(tokenArray, -1);

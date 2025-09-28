@@ -135,8 +135,6 @@ INSTANCE Summoned_Skeleton (Mst_Default_Skeleton)
 	level							=	0;
 	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton * 2;
 	
-	fight_tactic	=	FAI_HUMAN_NORMAL;
-	
 	// ------ visual ------
 	B_SetVisuals_Lesser_Skeleton();
 	

@@ -6,6 +6,7 @@
 // **************************************
 
 const int SPL_TIME_SHORTZAPPED = 2;
+const int SPL_SHORTZAPPED_DAMAGE_PER_SEC = 5;
 
 // **********************************
 // ZS_ShortZapped
@@ -48,7 +49,7 @@ func int ZS_ShortZapped_Loop ()
 	if (Npc_GetStateTime(self) != self.aivar[AIV_FreezeStateTime])
 	{
 		self.aivar[AIV_FreezeStateTime] = Npc_GetStateTime(self);
-		//B_MagicHurtNpc(other, self, SPL_ZAPPED_DAMAGE_PER_SEC);
+		B_MagicHurtNpc(other, self, SPL_SHORTZAPPED_DAMAGE_PER_SEC);
 	};
 	return LOOP_CONTINUE;
 };
@@ -56,7 +57,7 @@ func int ZS_ShortZapped_Loop ()
 
 func void ZS_ShortZapped_End()
 {
-//	Npc_PercEnable	(self, PERC_ASSESSMAGIC, B_AssessMagic);
+	Npc_PercEnable	(self, PERC_ASSESSMAGIC, B_AssessMagic);
 	
 	Npc_ClearAIQueue(self);
 	AI_StandUp		(self);

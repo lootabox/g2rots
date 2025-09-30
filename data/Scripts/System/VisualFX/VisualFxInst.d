@@ -2538,7 +2538,7 @@ INSTANCE spellFX_Zap	(CFx_Base_Proto)
 		{
 		     	pfx_flygravity_s		= "0 0.0002 0";
 		     	emtrjeasevel 			= 0.000001;
-	 			emCheckCollision		= 0;
+	 			//emCheckCollision		= 0;
 };
 
 instance spellFX_Zap_COLLIDE	(CFx_Base_Proto)
@@ -5863,6 +5863,14 @@ INSTANCE spellFX_Block_Spread (CFx_Base_Proto)
 INSTANCE spellFX_Summon_Dead		(CFx_Base_Proto)
 {
 		visname_S 				= "BFX_DEMON_DEAD";
+		emTrjOriginNode 		= "BIP01";
+		emFXCreatedOwnTrj 		= 1;
+		emtrjmode_s 			= "FIXED";
+};
+
+INSTANCE spellFX_Summon_New		(CFx_Base_Proto)
+{
+		visname_S 				= "SPAWN_DEMON";
 		emTrjOriginNode 		= "BIP01";
 		emFXCreatedOwnTrj 		= 1;
 		emtrjmode_s 			= "FIXED";

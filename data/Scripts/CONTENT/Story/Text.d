@@ -407,7 +407,7 @@ const string NAME_SPL_Icebolt				= "Ice Arrow";
 
 // Kreis 1
 const string NAME_SPL_LightHeal				= "Heal Light Wounds";
-const string NAME_SPL_SummonGoblinSkeleton	= "Summon Goblin Skeleton";
+const string NAME_SPL_SummonGoblinSkeleton	= "Summon Goblin Skeletons";
 
 // Kreis 2
 const string NAME_SPL_InstantFireball		= "Fireball";
@@ -723,7 +723,7 @@ const string NAME_Dot_Full				= "All damage is dealt over time. ";
 const string NAME_Ice_Freeze			= "Targets are frozen during effect. ";
 
 // MAX LENGTH							"------------------------------------------------------------";
-const string NAME_Zap_Living			= "Shocks unharmed living targets. ";
+const string NAME_Zap_Damage			= "Zap damage:";
 const string NAME_Nonlethal				= "Non-lethal. ";
 const string NAME_Instant				= "Instant effect. ";
 const string NAME_ShortRange			= "Short range. ";

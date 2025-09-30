@@ -556,8 +556,8 @@ INSTANCE ItSc_Zap (C_Item)
 	TEXT	[2]			=	NAME_Dam_Magic;
 	COUNT	[2]			=	SPL_DAMAGE_ZAP;
 
-	TEXT	[3]			=	ConcatStrings(NAME_Zap_Living, NAME_Sec_Duration);
-	COUNT	[3]			=	SPL_TIME_SHORTZAPPED;
+	TEXT	[3]			=	NAME_Zap_Damage;
+	COUNT	[3]			=	SPL_SHORTZAPPED_DAMAGE_PER_SEC * SPL_TIME_SHORTZAPPED;
 
 	TEXT	[4]			=	NAME_Nonlethal;
 	
@@ -763,11 +763,10 @@ INSTANCE ItSc_LightningFlash (C_Item)
 	TEXT	[2]			=	NAME_Dam_Magic;
 	COUNT	[2]			=	SPL_Damage_LightningFlash;
 
-	TEXT	[3]			=	ConcatStrings(NAME_Zap_Living, NAME_Sec_Duration);
-	COUNT	[3]			=	SPL_TIME_ZAPPED;
+	TEXT	[3]			=	NAME_Zap_Damage;
+	COUNT	[3]			=	SPL_ZAPPED_DAMAGE_PER_SEC * SPL_TIME_ZAPPED;
 
-	TEXT	[4]			=	ConcatStrings(NAME_Instant, NAME_DamagePerSec);
-	COUNT	[4]			=	SPL_ZAPPED_DAMAGE_PER_SEC;
+	TEXT	[4]			=	NAME_Instant;
 	
 	TEXT	[5]			=	NAME_Value;
 	COUNT	[5]			=	value;
@@ -949,8 +948,8 @@ INSTANCE ItSc_ThunderBall (C_Item)
 	TEXT	[2]			=	NAME_Dam_Magic_Per;
 	count 	[2]			=   SPL_Damage_ChargeZap;
 
-	TEXT	[3]			=	ConcatStrings(NAME_Zap_Living, NAME_Sec_Duration);
-	COUNT	[3]			=	SPL_TIME_SHORTZAPPED;
+	TEXT	[3]			=	NAME_Zap_Damage;
+	COUNT	[3]			=	SPL_SHORTZAPPED_DAMAGE_PER_SEC * SPL_TIME_SHORTZAPPED;
 
 	TEXT	[4]			=	NAME_Nonlethal;
 	

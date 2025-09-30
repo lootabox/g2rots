@@ -55,7 +55,7 @@ func int ZS_Zapped_Loop ()
 
 func void ZS_Zapped_End()
 {
-//	Npc_PercEnable	(self, PERC_ASSESSMAGIC, B_AssessMagic);
+	Npc_PercEnable	(self, PERC_ASSESSMAGIC, B_AssessMagic);
 	
 	Npc_ClearAIQueue(self);
 	AI_StandUp		(self);

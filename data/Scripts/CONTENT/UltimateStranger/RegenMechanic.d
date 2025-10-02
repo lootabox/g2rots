@@ -144,7 +144,7 @@ func void RegenMechanic_Init() {
 
     // For life
     address = oCNpc__Regenerate__Life_CallChangeAttribute_Start;
-    ASM_Open(56); // 49 + retn + 1
+    ASM_Open(68); // 49 + retn + 1
     // ----- Add jump from engine function to new code -----
         MEM_WriteByte(address + 0, ASMINT_OP_jmp);
         MEM_WriteInt (address + 1, ASMINT_CurrRun-address-5); // relative address
@@ -157,9 +157,23 @@ func void RegenMechanic_Init() {
     /*  mov edx, edx+TALENT_INDEX_OFFSET
         0x8b        0x92        4*NPC_TALENT_REGENERATE */
         ASM_1(139); ASM_1(146); ASM_4(4*NPC_TALENT_REGENERATE);
-    /*  mov edx, edx+TALENT_SKILL_OFFSET
-        0x8b        0x92        28h */
-        ASM_1(139); ASM_1(146); ASM_4(40);
+    /*  cmp edx, 0
+        0x83        0xfa        0x00 */
+        ASM_1(131); ASM_1(250); ASM_1(0);
+    /*  jz .set_fallback
+        0x74        0x08 */
+        ASM_1(116); ASM_1(8);
+    /*  mov edx, edx+TALENT_VALUE_OFFSET
+        0x8b        0x92        44 */
+        ASM_1(139); ASM_1(146); ASM_4(44);
+    /*  jmp .skip_fallback
+        0xeb        0x05 */
+        ASM_1(235); ASM_1(5);
+        // .set_fallback
+    /*  mov edx, 0
+        0xba    0x00 */
+        ASM_1(186); ASM_4(0);
+        // .skip_fallback
 
     // Ensure regen amount does not exceed remaining regen count
     /*  mov ecx, esi+ATTRIBUTES_ARRAY_OFFSET+ATR_REGENERATEHP_OFFSET
@@ -176,10 +190,11 @@ func void RegenMechanic_Init() {
         ASM_1(139); ASM_1(209);
     // skipEnsure:
 
-    // Add to hitpoints attribute
+    // Store regen amount on stack to pop later
     /*  push edx
         0x52 */
         ASM_1(82);
+    // Add to hitpoints attribute
     /*  push edx
         0x52 */
         ASM_1(82);
@@ -219,7 +234,7 @@ func void RegenMechanic_Init() {
 
     // For mana
     address = oCNpc__Regenerate__Mana_CallChangeAttribute_Start;
-    ASM_Open(56); // 49 + retn + 1
+    ASM_Open(68); // 49 + retn + 1
     // ----- Add jump from engine function to new code -----
         MEM_WriteByte(address + 0, ASMINT_OP_jmp);
         MEM_WriteInt (address + 1, ASMINT_CurrRun-address-5); // relative address
@@ -230,11 +245,26 @@ func void RegenMechanic_Init() {
         0x8b        0x96        568h */
         ASM_1(139); ASM_1(150); ASM_4(1384);
     /*  mov edx, edx+TALENT_INDEX_OFFSET
-        0x8b        0x92        4*NPC_TALENT_2H */
-        ASM_1(139); ASM_1(146); ASM_4(4*NPC_TALENT_2H);
-    /*  mov edx, edx+TALENT_SKILL_OFFSET
-        0x8b        0x92        28h */
-        ASM_1(139); ASM_1(146); ASM_4(40);
+        0x8b        0x92        4*NPC_TALENT_FIREMASTER */
+        ASM_1(139); ASM_1(146); ASM_4(4*NPC_TALENT_FIREMASTER);
+    /*  cmp edx, 0
+        0x83        0xfa        0x00 */
+        ASM_1(131); ASM_1(250); ASM_1(0);
+    /*  jz .set_fallback
+        0x74        0x08 */
+        ASM_1(116); ASM_1(8);
+    /*  mov edx, edx+TALENT_VALUE_OFFSET
+        0x8b        0x92        44 */
+        ASM_1(139); ASM_1(146); ASM_4(44);
+    /*  jmp .skip_fallback
+        0xeb        0x05 */
+        ASM_1(235); ASM_1(5);
+        // .set_fallback
+    /*  mov edx, 0
+        0xba    0x00 */
+        ASM_1(186); ASM_4(0);
+        // .skip_fallback
+
 
     // Ensure regen amount does not exceed remaining regen count
     /*  mov ecx, esi+ATTRIBUTES_ARRAY_OFFSET+ATR_REGENERATEMANA_OFFSET
@@ -251,10 +281,11 @@ func void RegenMechanic_Init() {
         ASM_1(139); ASM_1(209);
     // skipEnsure:
 
-    // Add to hitpoints attribute
+    // Store regen amount on stack to pop later
     /*  push edx
         0x52 */
         ASM_1(82);
+    // Add to hitpoints attribute
     /*  push edx
         0x52 */
         ASM_1(82);

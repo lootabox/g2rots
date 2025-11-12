@@ -20,6 +20,9 @@ func void Npc_SetManaRegenRate(var c_npc slf, var int speed) {
 
 /** Add (or remove) hitpoint regen. */
 func void B_AddHitpointRegen(var c_npc slf, var int amount, var int unlimited) {
+    if (slf.attribute[ATR_REGENERATEHP] < 0) {
+        return; // negative is permanent
+    };
     if (slf.attribute[ATR_HITPOINTS] <= 0) {
         return; // no revives
     };
@@ -35,6 +38,9 @@ func void B_AddHitpointRegen(var c_npc slf, var int amount, var int unlimited) {
 
 /** Add (or remove) mana regen. */
 func void B_AddManaRegen(var c_npc slf, var int amount, var int unlimited) {
+    if (slf.attribute[ATR_REGENERATEMANA] < 0) {
+        return; // negative is permanent
+    };
     const int newRegen = slf.attribute[ATR_REGENERATEMANA] + amount;
     if (newRegen < 0) {
         slf.attribute[ATR_REGENERATEMANA] = 0;
@@ -62,6 +68,13 @@ func void RegenMechanic_Init() {
     // Fix: mana regen triggers if ATR_REGENERATEMANA != 0 (instead of ATR_REGENERATEHP)
     MemoryProtectionOverride(7610451, 1);
     MEM_WriteByte(7610451 /* 0x742053 */, 212 /* 0xd4 */); // [esi+1D0h] -> [esi+1D4h]
+
+    // ------------------------------------------------------------------------------
+    // Change regen condition from "ATR_X > 0" to "ATR_X != 0" so negative is permanent regen
+    MemoryProtectionOverride(7610387, 1); // life
+    MemoryProtectionOverride(7610457, 1); // mana
+    MEM_WriteByte(7610387 /* 0x742013 */,116 /* 0x74 */); // jle -> jz
+    MEM_WriteByte(7610457 /* 0x742059 */,116 /* 0x74 */); // jle -> jz
 
     // ------------------------------------------------------------------------------
     // Remove resetting of regen timers on taking damage (not needed)
@@ -296,24 +309,22 @@ func void RegenMechanic_Init() {
     const int oCNpc__Regenerate__Mana_CallChangeAttribute_Start = 7610492; // 0x74207C
 
     address = oCNpc__Regenerate__Life_CallChangeAttribute_Start;
-    ASM_Open(24); // 19 + retn(6) + 1
+    ASM_Open(35); // 28 + retn(6) + 1
     // ----- Add jump from engine function to new code -----
         MEM_WriteByte(address + 0, ASMINT_OP_jmp);
         MEM_WriteInt (address + 1, ASMINT_CurrRun-address-5); // relative address
         MEM_WriteByte(address + 5, ASMINT_OP_nop);
 
-    // Add to main attribute
-    /*  push 1
-        0x6a        0x01 */
-        ASM_1(106); ASM_1(1);
-    /*  push ATR_HITPOINTS
-        0x6a        ATR_HITPOINTS */
-        ASM_1(106); ASM_1(ATR_HITPOINTS);
-    /*  mov ecx, esi
-        0x8b        0xce */
-        ASM_1(139); ASM_1(206);
-    /*  call    ?ChangeAttribute@oCNpc@@QAEXHH@Z */
-        ASM_1(ASMINT_OP_call);  ASM_4(oCNpc__ChangeAttribute - ASM_Here() - 4);
+    // Check if negative (permanent regen)
+    /*  mov edx, esi+ATTRIBUTES_ARRAY_OFFSET+ATR_REGENERATEHP
+        0x8b        0x96        1B8h+4*ATR_REGENERATEHP */
+        ASM_1(139); ASM_1(150); ASM_4(440+4*ATR_REGENERATEHP);
+    /*  cmp edx, 0
+        0x83        0xfa        0 */
+        ASM_1(131); ASM_1(250); ASM_1(0);
+    /*  jle .skip_regen_reduce
+        0x7e        0x0b */
+        ASM_1(126); ASM_1(11);
 
     // Reduce from regen attribute
     /*  push -1
@@ -322,6 +333,20 @@ func void RegenMechanic_Init() {
     /*  push ATR_REGENERATEHP
         0x6a        ATR_REGENERATEHP */
         ASM_1(106); ASM_1(ATR_REGENERATEHP);
+    /*  mov ecx, esi
+        0x8b        0xce */
+        ASM_1(139); ASM_1(206);
+    /*  call    ?ChangeAttribute@oCNpc@@QAEXHH@Z */
+        ASM_1(ASMINT_OP_call);  ASM_4(oCNpc__ChangeAttribute - ASM_Here() - 4);
+        // .skip_regen_reduce
+
+    // Add to main attribute (recreate, since jump overwrites the original)
+    /*  push 1
+        0x6a        0x01 */
+        ASM_1(106); ASM_1(1);
+    /*  push ATR_HITPOINTS
+        0x6a        ATR_HITPOINTS */
+        ASM_1(106); ASM_1(ATR_HITPOINTS);
     /*  mov ecx, esi
         0x8b        0xce */
         ASM_1(139); ASM_1(206);
@@ -335,24 +360,22 @@ func void RegenMechanic_Init() {
     ASM_Close();
 
     address = oCNpc__Regenerate__Mana_CallChangeAttribute_Start;
-    ASM_Open(24); // 19 + retn(6) + 1
+    ASM_Open(35); // 28 + retn(6) + 1
     // ----- Add jump from engine function to new code -----
         MEM_WriteByte(address + 0, ASMINT_OP_jmp);
         MEM_WriteInt (address + 1, ASMINT_CurrRun-address-5); // relative address
         MEM_WriteByte(address + 5, ASMINT_OP_nop);
 
-    // Add to main attribute
-    /*  push 1
-        0x6a        0x01 */
-        ASM_1(106); ASM_1(1);
-    /*  push ATR_MANA
-        0x6a        ATR_MANA */
-        ASM_1(106); ASM_1(ATR_MANA);
-    /*  mov ecx, esi
-        0x8b        0xce */
-        ASM_1(139); ASM_1(206);
-    /*  call    ?ChangeAttribute@oCNpc@@QAEXHH@Z */
-        ASM_1(ASMINT_OP_call);  ASM_4(oCNpc__ChangeAttribute - ASM_Here() - 4);
+    // Check if negative (permanent regen)
+    /*  mov edx, esi+ATTRIBUTES_ARRAY_OFFSET+ATR_REGENERATEMANA
+        0x8b        0x96        1B8h+4*ATR_REGENERATEMANA */
+        ASM_1(139); ASM_1(150); ASM_4(440+4*ATR_REGENERATEMANA);
+    /*  cmp edx, 0
+        0x83        0xfa        0 */
+        ASM_1(131); ASM_1(250); ASM_1(0);
+    /*  jle .skip_regen_reduce
+        0x7e        0x0b */
+        ASM_1(126); ASM_1(11);
 
     // Reduce from regen attribute
     /*  push -1
@@ -361,6 +384,20 @@ func void RegenMechanic_Init() {
     /*  push ATR_REGENERATEMANA
         0x6a        ATR_REGENERATEMANA */
         ASM_1(106); ASM_1(ATR_REGENERATEMANA);
+    /*  mov ecx, esi
+        0x8b        0xce */
+        ASM_1(139); ASM_1(206);
+    /*  call    ?ChangeAttribute@oCNpc@@QAEXHH@Z */
+        ASM_1(ASMINT_OP_call);  ASM_4(oCNpc__ChangeAttribute - ASM_Here() - 4);
+        // .skip_regen_reduce
+
+    // Add to main attribute (recreate, since jump overwrites the original)
+    /*  push 1
+        0x6a        0x01 */
+        ASM_1(106); ASM_1(1);
+    /*  push ATR_MANA
+        0x6a        ATR_MANA */
+        ASM_1(106); ASM_1(ATR_MANA);
     /*  mov ecx, esi
         0x8b        0xce */
         ASM_1(139); ASM_1(206);

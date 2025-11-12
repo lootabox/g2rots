@@ -37,8 +37,7 @@ instance MENU_STATUS (C_MENU_DEF)
 	items[18]	= "MENU_ITEM_ATTRIBUTE_1_SCRIPTED";
 	//items[19]	= "MENU_ITEM_ATTRIBUTE_2";
 	items[19]	= "MENU_ITEM_ATTRIBUTE_2_SCRIPTED";
-	//items[20]	= "MENU_ITEM_ATTRIBUTE_3";
-	items[20]	= "MENU_ITEM_ATTRIBUTE_3_SCRIPTED";
+	items[20]	= "MENU_ITEM_ATTRIBUTE_3";
 	items[21]	= "MENU_ITEM_ATTRIBUTE_4";
 
 
@@ -123,8 +122,8 @@ instance MENU_STATUS (C_MENU_DEF)
 
 // ------ 1. Spalte ------
 const int STAT_A_X1 =  500; //Titel
-const int STAT_A_X2 = 2300; //Werte
-const int STAT_A_X3 = 3000; //hintere Werte (Level _0_)
+const int STAT_A_X2 = 2400; //Werte
+const int STAT_A_X3 = 3100; //hintere Werte (Level _0_)
 const int STAT_A_X4 = 3400;	//Ende der A-Spalte (zum zentrieren der Headings)
 
 // ------ 2. Spalte ------
@@ -318,8 +317,7 @@ INSTANCE MENU_ITEM_ATTRIBUTE_3_TITLE(C_MENU_ITEM_DEF)
 	flags		= flags & ~IT_SELECTABLE;
 };
 
-//INSTANCE MENU_ITEM_ATTRIBUTE_3(C_MENU_ITEM_DEF)
-INSTANCE MENU_ITEM_ATTRIBUTE_3_SCRIPTED(C_MENU_ITEM_DEF)
+INSTANCE MENU_ITEM_ATTRIBUTE_3(C_MENU_ITEM_DEF)
 {
 	posx 		= STAT_A_X2;				posy = STAT_ATR_Y + STAT_DY*2;
 	fontName	= STAT_FONT_DEFAULT;	
@@ -345,7 +343,7 @@ INSTANCE MENU_ITEM_ATTRIBUTE_4(C_MENU_ITEM_DEF)
 INSTANCE MENU_ITEM_ATTRIBUTE_5_TITLE(C_MENU_ITEM_DEF)
 {
 	posx 		= STAT_A_X1;				posy = STAT_ATR_Y + STAT_DY*4;
-	text[0]		= "Placeholder";
+	text[0]		= "Life recovery";
 	fontName	= STAT_FONT_DEFAULT;
 	flags		= flags & ~IT_SELECTABLE;
 };
@@ -360,7 +358,7 @@ INSTANCE MENU_ITEM_ATTRIBUTE_5_SCRIPTED(C_MENU_ITEM_DEF)
 INSTANCE MENU_ITEM_ATTRIBUTE_6_TITLE(C_MENU_ITEM_DEF)
 {
 	posx 		= STAT_A_X1;				posy = STAT_ATR_Y + STAT_DY*5;
-	text[0]		= "Placeholder";
+	text[0]		= "Mana recovery";
 	fontName	= STAT_FONT_DEFAULT;
 	flags		= flags & ~IT_SELECTABLE;
 };

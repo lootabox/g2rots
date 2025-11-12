@@ -15,7 +15,7 @@ func int B_GetLearnCostAttribute (var C_NPC oth, var int attribute, var int amou
 
 	// Different attributes have different intervals for LP cost increases
 	var int interval;				  interval = 20;
-	if (attribute == ATR_MANA_MAX)	{ interval = 30; };
+	if (attribute == ATR_MANA_MAX)	{ return 2; };
 
 	// Base cost (x amount) based on current attribute value
 	var int cost; cost = amount + amount * (current/interval);

@@ -744,19 +744,14 @@ func void Install_Character_Menu_Hook() {
     };
 };
 
-// Returns "boosted/max (trained)" or "boosted (trained)" for given values
-func string getAttributeString(var int boosted, var int max, var int trained)
+// Returns "boosted (base)" for given values
+func string getAttributeString(var int boosted, var int base)
 {
     var string s; s = IntToString(boosted);
-    if (max >= 0)
-    {
-        s = ConcatStrings(s, "/");
-        s = ConcatStrings(s, IntToString(max));
-    };
-    if (trained > 0)
+    if (base > 0)
     {
         s = ConcatStrings(s, " (");
-        s = ConcatStrings(s, IntToString(trained));
+        s = ConcatStrings(s, IntToString(base));
         s = ConcatStrings(s, ")");
     };
     return s;
@@ -769,15 +764,22 @@ func void Update_Character_Menu() {
     {
         Update_Menu_Item("MENU_ITEM_TALENT_7_CIRCLE", "Paladin");
     }
-    else if (hero.guild != GIL_KDF)
+    else if (Npc_GetTalentSkill (hero, NPC_TALENT_MAGE) == 0)
     {
         Update_Menu_Item("MENU_ITEM_TALENT_7_CIRCLE", "Scrolls");
     };
 
     // Replace Strength, Dexterity and Mana values
-    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_1_SCRIPTED", GetAttributeString(hero.attribute[ATR_STRENGTH], -1, hero.aivar[REAL_STRENGTH]));
-    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_2_SCRIPTED", GetAttributeString(hero.attribute[ATR_DEXTERITY], -1, hero.aivar[REAL_DEXTERITY]));
-    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_3_SCRIPTED", GetAttributeString(hero.attribute[ATR_MANA], hero.attribute[ATR_MANA_MAX], hero.aivar[REAL_MANA_MAX]));
+    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_1_SCRIPTED", GetAttributeString(hero.attribute[ATR_STRENGTH], hero.aivar[REAL_STRENGTH]));
+    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_2_SCRIPTED", GetAttributeString(hero.attribute[ATR_DEXTERITY], hero.aivar[REAL_DEXTERITY]));
+
+    // Replace recovery speeds
+    var int speed;
+    speed = Npc_GetHitpointRegenRate(hero);
+    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_5_SCRIPTED", ConcatStrings(IntToString(speed), "%"));
+    speed = Npc_GetManaRegenRate(hero);
+    Update_Menu_Item("MENU_ITEM_ATTRIBUTE_6_SCRIPTED", ConcatStrings(IntToString(speed), "%"));
+ 
 };
 
 //************************************************

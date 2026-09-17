@@ -2,12 +2,12 @@
 // SPL_ArmyOfDarkness
 // ******************
 
-const int SPL_Cost_ArmyOfDarkness	= 30;
+const int SPL_Cost_ArmyOfDarkness	= 100;
 
 
 INSTANCE Spell_ArmyOfDarkness (C_Spell_Proto)
 {
-	time_per_mana			= 11; // 333/cost
+	time_per_mana			= 10; // 1000/cost
 	targetCollectAlgo		= TARGET_COLLECT_FOCUS_FALLBACK_NONE;	// Do not change.
 	targetCollectRange		= 1000;				// Maximum distance (cm) to traverse. Can be freely adjusted.
 	targetCollectAzi		= 0;				// Do not display focus names.
@@ -17,7 +17,7 @@ INSTANCE Spell_ArmyOfDarkness (C_Spell_Proto)
 
 func int Spell_Logic_ArmyOfDarkness (var int manaInvested)
 {
-	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_ArmyOfDarkness, 9);
+	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_ArmyOfDarkness, MageStaff_Normal_2H_03_Equipped + 1);
 };
 
 // NEU:
@@ -31,5 +31,5 @@ func int Spell_Logic_ArmyOfDarkness (var int manaInvested)
 // beendet wurden
 func void Spell_Cast_ArmyOfDarkness(var int spellLevel)
 {
-	Spell_Cast_Summon(self, Summoned_Skeleton_Evil, Summoned_Skeleton, spellLevel);
+	Spell_Cast_Summon(self, Summoned_Skeleton_Evil, Summoned_Skeleton, spellLevel * 6);
 };

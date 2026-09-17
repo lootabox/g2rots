@@ -133,7 +133,7 @@ INSTANCE Summoned_Skeleton (Mst_Default_Skeleton)
 	guild							=	GIL_SUMMONED_SKELETON;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_SKELETON;
 	level							=	0;
-	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton * 2;
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton;
 	
 	// ------ visual ------
 	B_SetVisuals_Lesser_Skeleton();
@@ -192,7 +192,7 @@ INSTANCE Summoned_Lesser_Skeleton (Mst_Default_Skeleton)
 	guild							=	GIL_SUMMONED_SKELETON;
 	aivar[AIV_MM_REAL_ID]			= 	ID_SUMMONED_SKELETON;
 	level							=	0;
-	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton * 2;
+	aivar[AIV_SummonTime]			= 	SPL_Duration_SummonSkeleton;
 	
 	//----- Attribute ----	
 	attribute	[ATR_STRENGTH]		=	60;

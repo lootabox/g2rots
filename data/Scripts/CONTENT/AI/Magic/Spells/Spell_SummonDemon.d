@@ -2,7 +2,8 @@
 // SPL_SummonDemon
 // ***************
 
-const int SPL_Cost_SummonDemon		= 100;
+const int SPL_Cost_SummonDemon		= 50;
+const int SPL_Cost_SummonDemon_Dur	= 5;
 const int SPL_Duration_SummonDemon	= 20; // MONSTER_SUMMON_TIME
 
 
@@ -17,18 +18,18 @@ INSTANCE Spell_SummonDemon (C_Spell_Proto)	//ehem. Spell_Demon
 
 func int Spell_Logic_SummonDemon(var int manaInvested)
 {
-	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonDemon, 2);
+	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonDemon, MageStaff_Normal_2H_03_Equipped + 1);
 };
 
 func void Spell_Cast_SummonDemon(var int spellLevel)
 {
 	if (spellLevel > 1)
 	{
-		Spell_Cast_Summon(self, Demon, Summoned_Demon, 1);
+		Spell_Cast_Summon(self, Demon, Summoned_DemonLord, 1);
 	}
 	else
 	{
-		Spell_Cast_Summon(self, Demon, Summoned_Demon_Hostile, 1);
+		Spell_Cast_Summon(self, Demon, Summoned_Demon, 1);
 	};
 };
 

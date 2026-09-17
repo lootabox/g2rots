@@ -54,14 +54,31 @@ func int ZS_MM_Rtn_Summoned_Loop()
 			};
 			
 			// ------ Summon Time -------
-			self.aivar[AIV_SummonTime] = (self.aivar[AIV_SummonTime] - 1); //weil AI_Goto länger dauern kann
-			if (MageStaff_Normal_2H_03_Equipped)
+			self.aivar[AIV_SummonTime] = (self.aivar[AIV_SummonTime] - 1);
+			if	(self.aivar[AIV_MM_REAL_ID] == ID_SUMMONED_DEMON)
+			&&	(self.aivar[AIV_PARTYMEMBER] == TRUE)
 			{
-				self.aivar[AIV_SummonTime] = (self.aivar[AIV_SummonTime] - 1);
+				if (hero.attribute[ATR_MANA] < SPL_Cost_SummonDemon_Dur)
+				{
+					B_SetAttitude (self, ATT_HOSTILE);
+					self.aivar[AIV_PARTYMEMBER] = FALSE;
+					Wld_PlayEffect("SPELLFX_FEAR_GROUND", self, self, 0, 0, 0, FALSE);
+				}
+				else
+				{
+					if (self.attribute[ATR_STRENGTH] < 200)
+					{
+						Npc_ChangeAttribute (hero, ATR_MANA, -SPL_Cost_SummonDemon_Dur);
+					}
+					else
+					{
+						Npc_ChangeAttribute (hero, ATR_MANA, -SPL_Cost_SummonDemon_Dur * 2);
+					};
+				};
 			};
 			if	(self.aivar[AIV_SummonTime] <= 0)
 			{
-				 Npc_ChangeAttribute (self, ATR_HITPOINTS, -self.attribute[ATR_HITPOINTS_MAX]);
+				Npc_ChangeAttribute (self, ATR_HITPOINTS, -self.attribute[ATR_HITPOINTS_MAX]);
 			};
 
 			Npc_SetStateTime (self, 0);

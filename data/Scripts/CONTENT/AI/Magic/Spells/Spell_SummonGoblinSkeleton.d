@@ -17,7 +17,7 @@ INSTANCE Spell_SummonGoblinSkeleton (C_Spell_Proto)	//ehem. Spell_Skeleton
 
 func int Spell_Logic_SummonGoblinSkeleton (var int manaInvested)
 {
-	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonGoblinSkeleton, 2);
+	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonGoblinSkeleton, MageStaff_Normal_2H_03_Equipped + 1);
 };
 
 func void Spell_Cast_SummonGoblinSkeleton(var int spellLevel)

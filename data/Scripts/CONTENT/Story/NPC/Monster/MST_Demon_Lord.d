@@ -85,3 +85,24 @@ INSTANCE Xardas_DT_DemonLord	(Mst_Default_DemonLord)
 	B_SetVisuals_DemonLord();
 	Npc_SetToFistMode(self);
 };
+
+//******************
+//	Summoned_DemonLord    															
+//******************
+
+INSTANCE Summoned_DemonLord (Mst_Default_DemonLord)
+{
+	name							= "Summoned Demon Lord";
+	guild							= GIL_SUMMONED_DEMON;
+	aivar[AIV_MM_REAL_ID]			= ID_SUMMONED_DEMON;
+	level							= 0;
+	aivar[AIV_SummonTime]			= SPL_Duration_SummonDemon;
+	
+	aivar[AIV_PARTYMEMBER] = TRUE;
+	B_SetAttitude (self, ATT_FRIENDLY);
+	
+	start_aistate = ZS_MM_Rtn_Summoned;
+	
+	B_SetVisuals_DemonLord();
+	Npc_SetToFistMode(self);
+};

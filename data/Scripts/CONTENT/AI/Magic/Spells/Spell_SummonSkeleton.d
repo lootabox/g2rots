@@ -17,7 +17,7 @@ INSTANCE Spell_SummonSkeleton (C_Spell_Proto)	//ehem. Spell_Skeleton
 
 func int Spell_Logic_SummonSkeleton(var int manaInvested)
 {
-	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonSkeleton, 2);
+	return Spell_Logic_Invest_Summon(self, manaInvested, SPL_Cost_SummonSkeleton, MageStaff_Normal_2H_03_Equipped + 1);
 };
 
 func void Spell_Cast_SummonSkeleton(var int spellLevel)
